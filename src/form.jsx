@@ -70,7 +70,7 @@ class ReactForm extends React.Component {
     return defaultChecked;
   }
 
-  _getItemValue(item, ref) {
+  _getItemValue(item, ref, trimValue) {
     let $item = {
       element: item.element,
       value: '',
@@ -87,7 +87,7 @@ class ReactForm extends React.Component {
       $item.value = ref.state.fileUpload;
     } else if (ref && ref.inputField && ref.inputField.current) {
       $item = ReactDOM.findDOMNode(ref.inputField.current);
-      if ($item && typeof $item.value === 'string') {
+      if (trimValue && $item && typeof $item.value === 'string') {
         $item.value = $item.value.trim();
       }
     }
@@ -149,7 +149,7 @@ class ReactForm extends React.Component {
     return invalid;
   }
 
-  _collect(item) {
+  _collect(item, trimValue) {
     const itemData = {
       id: item.id,
       name: item.field_name,
@@ -168,15 +168,15 @@ class ReactForm extends React.Component {
       itemData.value = checked_options;
     } else {
       if (!ref) return null;
-      itemData.value = this._getItemValue(item, ref).value;
+      itemData.value = this._getItemValue(item, ref, trimValue).value;
     }
     return itemData;
   }
 
-  _collectFormData(data) {
+  _collectFormData(data, trimValue) {
     const formData = [];
     data.forEach(item => {
-      const item_data = this._collect(item);
+      const item_data = this._collect(item, trimValue);
       if (item_data) {
         formData.push(item_data);
       }
@@ -213,7 +213,7 @@ class ReactForm extends React.Component {
     if (errors.length < 1) {
       const { onSubmit } = this.props;
       if (onSubmit) {
-        const data = this._collectFormData(this.props.data);
+        const data = this._collectFormData(this.props.data, true);
         onSubmit(data);
       } else {
         const $form = ReactDOM.findDOMNode(this.form);
@@ -225,8 +225,8 @@ class ReactForm extends React.Component {
    handleBlur(event) {
     // Call submit function on blur
     if (this.props.onBlur) {
-      const {onBlur} = this.props;
-      const data = this._collectFormData(this.props.data);
+      const { onBlur } = this.props;
+      const data = this._collectFormData(this.props.data, true);
       onBlur(data);
     }
   }
@@ -234,8 +234,8 @@ class ReactForm extends React.Component {
   handleChange(event) {
     // Call submit function on change
     if (this.props.onChange) {
-      const {onChange} = this.props;
-      const data = this._collectFormData(this.props.data);
+      const { onChange } = this.props;
+      const data = this._collectFormData(this.props.data, false);
       onChange(data);
     }
   }

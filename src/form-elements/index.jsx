@@ -335,6 +335,7 @@ class Signature extends React.Component {
       pad_props.ref = this.canvas;
       canClear = !this.props.read_only;
     }
+    pad_props.clearOnResize = false;
 
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }

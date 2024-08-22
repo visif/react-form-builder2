@@ -160,7 +160,7 @@ class ReactForm extends React.Component {
     if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
       const checked_options = [];
       item.options.forEach(option => {
-        const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+        const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.value}`]);
         if ($option.checked) {
           checked_options.push(option.value);
         }

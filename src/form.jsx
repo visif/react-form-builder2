@@ -162,7 +162,7 @@ class ReactForm extends React.Component {
       item.options.forEach(option => {
         const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
         if ($option.checked) {
-          checked_options.push(option.key);
+          checked_options.push(option.value);
         }
       });
       itemData.value = checked_options;

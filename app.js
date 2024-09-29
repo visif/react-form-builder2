@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import DemoBar from './demobar';
+import React from "react";
+import ReactDOM from "react-dom";
+import DemoBar from "./demobar";
 // eslint-disable-next-line no-unused-vars
-import FormBuilder, { Registry } from './src/index';
-import * as variables from './variables';
+import FormBuilder, { Registry } from "./src/index";
+import * as variables from "./variables";
 
 // Add our stylesheets for the demo.
-require('./scss/application.scss');
+require("./scss/application.scss");
 
-const url = '/api/formdata';
-const saveUrl = '/api/formdata';
+const url = "/api/formdata";
+const saveUrl = "/api/formdata";
 
 const TestComponent = () => <h2>Hello</h2>;
 
@@ -43,7 +43,7 @@ const TestComponent = () => <h2>Hello</h2>;
 //     key: 'FieldSet',
 //     label:"Field Set",
 //     name:"Field Set",
-    
+
 //   },
 //   {
 //     group_name: 'Multi Column Row',
@@ -62,7 +62,7 @@ const TestComponent = () => <h2>Hello</h2>;
 //     group_name: 'Multi Column Row',
 //     key: 'FiveColumnRow',
 //     element: 'MultiColumnRow',
-//   },  
+//   },
 //   {
 //     group_name: 'Multi Column Row',
 //     key: 'SixColumnRow',
@@ -97,24 +97,32 @@ const TestComponent = () => <h2>Hello</h2>;
 //   },
 // ];
 
-
 const App = () => (
   <FormBuilder.ReactFormBuilder
     variables={variables}
     url={url}
     saveUrl={saveUrl}
-    locale='en'
+    locale="en"
     saveAlways={false}
     // toolbarItems={items}
-  
-  />);
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('form-builder'),
+  />
 );
 
-ReactDOM.render(
-  <DemoBar variables={variables} />,
-  document.getElementById('demo-bar'),
+// ReactDOM.render(
+//   <App />,
+//   document.getElementById('form-builder'),
+// );
+
+const root = ReactDOM.createRoot(document.getElementById("form-builder"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+const root2 = ReactDOM.createRoot(document.getElementById("demo-bar"));
+root2.render(
+  <React.StrictMode>
+    <DemoBar variables={variables} />,
+  </React.StrictMode>
 );

@@ -10,6 +10,7 @@
     "navigator": true
   },
   "rules": {
+    "single-quote": "off",
     "max-len": [1, 180, 2, {"ignoreComments": true}],
     "semi": [2, "always"],
     "comma-dangle": "warn",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { IntlProvider } from "react-intl";
@@ -7,92 +7,72 @@ import Toolbar from "../toolbar";
 import Registry from "../stores/registry";
 import AppLocale from "../language-provider";
 
-class ReactFormBuilder extends React.Component {
-  constructor(props) {
-    super(props);
+const ReactFormBuilder = (props) => {
+  const [editMode, setEditMode] = useState(false);
+  const [editElement, setEditElement] = useState(null);
 
-    this.state = {
-      editMode: false,
-      editElement: null,
-    };
-    this.editModeOn = this.editModeOn.bind(this);
-  }
-
-  editModeOn(data, e) {
+  const editModeOn = (data, e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (this.state.editMode) {
-      this.setState({ editMode: !this.state.editMode, editElement: null });
+    if (editMode) {
+      setEditMode(false);
+      setEditElement(null);
     } else {
-      this.setState({ editMode: !this.state.editMode, editElement: data });
+      setEditMode(true);
+      setEditElement(data);
     }
-  }
+  };
 
-  manualEditModeOff() {
-    if (this.state.editMode) {
-      this.setState({
-        editMode: false,
-        editElement: null,
-      });
+  const manualEditModeOff = () => {
+    if (editMode) {
+      setEditMode(false);
+      setEditElement(null);
     }
-  }
+  };
 
-  render() {
-    const toolbarProps = {
-      showDescription: this.props.show_description,
-    };
+  const toolbarProps = {
+    showDescription: props.show_description,
+    items: props.toolbarItems,
+  };
 
-    const language = this.props.locale ? this.props.locale : "en";
-    const currentAppLocale = AppLocale[language];
-    if (this.props.toolbarItems) {
-      toolbarProps.items = this.props.toolbarItems;
-    }
-    return (
-      <DndProvider backend={HTML5Backend} context={window}>
-        <IntlProvider
-          locale={currentAppLocale.locale}
-          messages={currentAppLocale.messages}
-        >
+  const language = props.locale || "en";
+  const currentAppLocale = AppLocale[language];
+
+  return (
+    <DndProvider backend={HTML5Backend} context={window}>
+      <IntlProvider
+        locale={currentAppLocale.locale}
+        messages={currentAppLocale.messages}
+      >
+        <div className="react-form-builder clearfix">
           <div>
-            {/* <div>
-           <p>
-             It is easy to implement a sortable interface with React DnD. Just make
-             the same component both a drag source and a drop target, and reorder
-             the data in the <code>hover</code> handler.
-           </p>
-           <Container />
-         </div> */}
-            <div className="react-form-builder clearfix">
-              <div>
-                <Preview
-                  files={this.props.files}
-                  manualEditModeOff={this.manualEditModeOff.bind(this)}
-                  showCorrectColumn={this.props.showCorrectColumn}
-                  parent={this}
-                  data={this.props.data}
-                  url={this.props.url}
-                  saveUrl={this.props.saveUrl}
-                  onLoad={this.props.onLoad}
-                  onPost={this.props.onPost}
-                  editModeOn={this.editModeOn}
-                  editMode={this.state.editMode}
-                  variables={this.props.variables}
-                  registry={Registry}
-                  editElement={this.state.editElement}
-                  renderEditForm={this.props.renderEditForm}
-                  saveAlways={this.props.saveAlways}
-                />
-                <Toolbar
-                  {...toolbarProps}
-                  customItems={this.props.customToolbarItems}
-                />
-              </div>
-            </div>
+            <Preview
+              files={props.files}
+              manualEditModeOff={manualEditModeOff}
+              showCorrectColumn={props.showCorrectColumn}
+              parent={null} // Note: 'this' reference removed
+              data={props.data}
+              url={props.url}
+              saveUrl={props.saveUrl}
+              onLoad={props.onLoad}
+              onPost={props.onPost}
+              editModeOn={editModeOn}
+              editMode={editMode}
+              variables={props.variables}
+              registry={Registry}
+              editElement={editElement}
+              renderEditForm={props.renderEditForm}
+              saveAlways={props.saveAlways}
+            />
+            <Toolbar
+              {...toolbarProps}
+              customItems={props.customToolbarItems}
+            />
           </div>
-        </IntlProvider>
-      </DndProvider>
-    );
-  }
-}
+        </div>
+      </IntlProvider>
+    </DndProvider>
+  );
+};
 
 export default ReactFormBuilder;

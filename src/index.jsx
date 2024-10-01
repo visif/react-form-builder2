@@ -1,6 +1,6 @@
 import React from "react";
 import { IntlProvider } from "react-intl";
-import FormGenerator from "./form";
+import FormGenerator from "./ReactFormGenerator";
 import store from "./stores/store";
 import Registry from "./stores/registry";
 import AppLocale from "./language-provider";

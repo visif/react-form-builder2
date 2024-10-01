@@ -1,7 +1,3 @@
-/**
- * <Form />
- */
-
 import React from "react";
 import ReactDOM from "react-dom";
 import { EventEmitter } from "fbemitter";
@@ -16,7 +12,7 @@ import Registry from "./stores/registry";
 const { Image, Checkboxes, Signature, Download, Camera, FileUpload } =
   FormElements;
 
-class ReactForm extends React.Component {
+class ReactFormGenerator extends React.Component {
   form;
 
   inputs = {};
@@ -587,5 +583,8 @@ class ReactForm extends React.Component {
   }
 }
 
-export default injectIntl(ReactForm);
-ReactForm.defaultProps = { validateForCorrectness: false };
+export default injectIntl(ReactFormGenerator);
+
+ReactFormGenerator.defaultProps = {
+  validateForCorrectness: false,
+};

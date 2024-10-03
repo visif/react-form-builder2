@@ -1,26 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { IntlProvider } from "react-intl";
 import { EventEmitter } from "fbemitter";
-import { injectIntl } from "react-intl";
 import FormValidator from "./form-validator";
 import FormElements from "./form-elements";
 import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from "./multi-column";
 import { FieldSet } from "./fieldset";
 import CustomElement from "./form-elements/custom-element";
 import Registry from "./stores/registry";
+import AppLocale from "./language-provider";
 
 const { Image, Checkboxes, Signature, Download, Camera, FileUpload } =
   FormElements;
 
 const ReactFormGenerator = (props) => {
+  const { locale } = props;
+  const currentAppLocale = AppLocale[locale || "en"];
+
   const form = useRef(null);
   const inputs = {};
   const [answerData, setAnswerData] = useState({});
   const emitter = new EventEmitter();
-
-  useEffect(() => {
-    setAnswerData(convert(props.answer_data));
-  }, [props.answer_data]);
 
   const convert = (answers) => {
     if (Array.isArray(answers)) {
@@ -36,6 +36,10 @@ const ReactFormGenerator = (props) => {
     }
     return answers || {};
   };
+
+  useEffect(() => {
+    setAnswerData(convert(props.answer_data));
+  }, [props.answer_data]);
 
   const _getDefaultValue = (item) => {
     return answerData[item.field_name];
@@ -405,126 +409,129 @@ const ReactFormGenerator = (props) => {
     );
   };
 
-  const render = () => {
-    let data_items = props.data;
+  let data_items = props.data;
 
-    if (props.display_short) {
-      data_items = props.data.filter((i) => i.alternateForm === true);
+  if (props.display_short) {
+    data_items = props.data.filter((i) => i.alternateForm === true);
+  }
+
+  data_items.forEach((item) => {
+    if (
+      item &&
+      item.readOnly &&
+      item.variableKey &&
+      props.variables[item.variableKey]
+    ) {
+      answerData[item.field_name] = props.variables[item.variableKey];
     }
+  });
 
-    data_items.forEach((item) => {
-      if (
-        item &&
-        item.readOnly &&
-        item.variableKey &&
-        props.variables[item.variableKey]
-      ) {
-        answerData[item.field_name] = props.variables[item.variableKey];
+  const items = data_items
+    .filter((x) => !x.parentId)
+    .map((item) => {
+      if (!item) return null;
+      switch (item.element) {
+        case "TextInput":
+        case "EmailInput":
+        case "PhoneNumber":
+        case "NumberInput":
+        case "TextArea":
+        case "Dropdown":
+        case "DatePicker":
+        case "RadioButtons":
+        case "Rating":
+        case "Tags":
+        case "Range":
+          return getInputElement(item);
+        case "CustomElement":
+          return getCustomElement(item);
+        case "MultiColumnRow":
+          return getContainerElement(item, MultiColumnRow);
+        case "ThreeColumnRow":
+          return getContainerElement(item, ThreeColumnRow);
+        case "TwoColumnRow":
+          return getContainerElement(item, TwoColumnRow);
+        case "FieldSet":
+          return getContainerElement(item, FieldSet);
+        case "Signature":
+          return (
+            <Signature
+              ref={(c) => (inputs[item.field_name] = c)}
+              read_only={props.read_only || item.readOnly}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+              defaultValue={_getDefaultValue(item)}
+            />
+          );
+        case "Checkboxes":
+          return (
+            <Checkboxes
+              ref={(c) => (inputs[item.field_name] = c)}
+              read_only={props.read_only}
+              handleChange={handleChange}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+              defaultValue={_optionsDefaultValue(item)}
+            />
+          );
+        case "Image":
+          return (
+            <Image
+              ref={(c) => (inputs[item.field_name] = c)}
+              handleChange={handleChange}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+              defaultValue={_getDefaultValue(item)}
+            />
+          );
+        case "Download":
+          return (
+            <Download
+              download_path={props.download_path}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+            />
+          );
+        case "Camera":
+          return (
+            <Camera
+              ref={(c) => (inputs[item.field_name] = c)}
+              read_only={props.read_only || item.readOnly}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+              defaultValue={_getDefaultValue(item)}
+            />
+          );
+        case "FileUpload":
+          return (
+            <FileUpload
+              ref={(c) => (inputs[item.field_name] = c)}
+              read_only={props.read_only || item.readOnly}
+              mutable={true}
+              key={`form_${item.id}`}
+              data={item}
+              defaultValue={_getDefaultValue(item)}
+            />
+          );
+        default:
+          return getSimpleElement(item);
       }
     });
 
-    const items = data_items
-      .filter((x) => !x.parentId)
-      .map((item) => {
-        if (!item) return null;
-        switch (item.element) {
-          case "TextInput":
-          case "EmailInput":
-          case "PhoneNumber":
-          case "NumberInput":
-          case "TextArea":
-          case "Dropdown":
-          case "DatePicker":
-          case "RadioButtons":
-          case "Rating":
-          case "Tags":
-          case "Range":
-            return getInputElement(item);
-          case "CustomElement":
-            return getCustomElement(item);
-          case "MultiColumnRow":
-            return getContainerElement(item, MultiColumnRow);
-          case "ThreeColumnRow":
-            return getContainerElement(item, ThreeColumnRow);
-          case "TwoColumnRow":
-            return getContainerElement(item, TwoColumnRow);
-          case "FieldSet":
-            return getContainerElement(item, FieldSet);
-          case "Signature":
-            return (
-              <Signature
-                ref={(c) => (inputs[item.field_name] = c)}
-                read_only={props.read_only || item.readOnly}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-                defaultValue={_getDefaultValue(item)}
-              />
-            );
-          case "Checkboxes":
-            return (
-              <Checkboxes
-                ref={(c) => (inputs[item.field_name] = c)}
-                read_only={props.read_only}
-                handleChange={handleChange}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-                defaultValue={_optionsDefaultValue(item)}
-              />
-            );
-          case "Image":
-            return (
-              <Image
-                ref={(c) => (inputs[item.field_name] = c)}
-                handleChange={handleChange}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-                defaultValue={_getDefaultValue(item)}
-              />
-            );
-          case "Download":
-            return (
-              <Download
-                download_path={props.download_path}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-              />
-            );
-          case "Camera":
-            return (
-              <Camera
-                ref={(c) => (inputs[item.field_name] = c)}
-                read_only={props.read_only || item.readOnly}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-                defaultValue={_getDefaultValue(item)}
-              />
-            );
-          case "FileUpload":
-            return (
-              <FileUpload
-                ref={(c) => (inputs[item.field_name] = c)}
-                read_only={props.read_only || item.readOnly}
-                mutable={true}
-                key={`form_${item.id}`}
-                data={item}
-                defaultValue={_getDefaultValue(item)}
-              />
-            );
-          default:
-            return getSimpleElement(item);
-        }
-      });
+  const formTokenStyle = {
+    display: "none",
+  };
 
-    const formTokenStyle = {
-      display: "none",
-    };
-
-    return (
+  return (
+    <IntlProvider
+      locale={currentAppLocale.locale}
+      messages={currentAppLocale.messages}
+    >
       <div>
         <FormValidator emitter={emitter} />
         <div className="react-form-builder-form">
@@ -556,13 +563,11 @@ const ReactFormGenerator = (props) => {
           </form>
         </div>
       </div>
-    );
-  };
-
-  return render();
+    </IntlProvider>
+  );
 };
 
-export default injectIntl(ReactFormGenerator);
+export default ReactFormGenerator;
 
 ReactFormGenerator.defaultProps = {
   validateForCorrectness: false,

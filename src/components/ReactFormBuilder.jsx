@@ -8,6 +8,8 @@ import Registry from "../stores/registry";
 import AppLocale from "../language-provider";
 
 const ReactFormBuilder = (props) => {
+  const { locale } = props;
+
   const [editMode, setEditMode] = useState(false);
   const [editElement, setEditElement] = useState(null);
 
@@ -35,8 +37,7 @@ const ReactFormBuilder = (props) => {
     items: props.toolbarItems,
   };
 
-  const language = props.locale || "en";
-  const currentAppLocale = AppLocale[language];
+  const currentAppLocale = AppLocale[locale || "en"];
 
   return (
     <DndProvider backend={HTML5Backend} context={window}>
@@ -64,10 +65,7 @@ const ReactFormBuilder = (props) => {
               renderEditForm={props.renderEditForm}
               saveAlways={props.saveAlways}
             />
-            <Toolbar
-              {...toolbarProps}
-              customItems={props.customToolbarItems}
-            />
+            <Toolbar {...toolbarProps} customItems={props.customToolbarItems} />
           </div>
         </div>
       </IntlProvider>

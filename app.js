@@ -1,30 +1,15 @@
+/// root file for the react form builder
+
 import React from "react";
 import ReactDOM from "react-dom";
 import DemoBar from "./demobar";
-// eslint-disable-next-line no-unused-vars
-import FormBuilder, { Registry } from "./src/index";
+import { ReactFormBuilder } from "./src/index";
 import * as variables from "./variables";
 
-// Add our stylesheets for the demo.
 require("./scss/application.scss");
 
 const url = "/api/formdata";
 const saveUrl = "/api/formdata";
-
-const TestComponent = () => <h2>Hello</h2>;
-
-// const MyInput = React.forwardRef((props, ref) => {
-//   const { name, defaultValue, disabled } = props;
-//   return (
-//     <>
-//       <label style={{ marginRight: '1rem' }}><b>{ props.data.label }</b></label>
-//       <input ref={ref} name={name} defaultValue={defaultValue} disabled={disabled} />;
-//     </>
-//   );
-// });
-
-// Registry.register('MyInput', MyInput);
-// Registry.register('TestComponent', TestComponent);
 
 // const items = [{
 //     key: 'Header',
@@ -97,26 +82,17 @@ const TestComponent = () => <h2>Hello</h2>;
 //   },
 // ];
 
-const App = () => (
-  <FormBuilder.ReactFormBuilder
-    variables={variables}
-    url={url}
-    saveUrl={saveUrl}
-    locale="en"
-    saveAlways={false}
-    // toolbarItems={items}
-  />
-);
-
-// ReactDOM.render(
-//   <App />,
-//   document.getElementById('form-builder'),
-// );
-
 const root = ReactDOM.createRoot(document.getElementById("form-builder"));
 root.render(
   <React.StrictMode>
-    <App />
+    <ReactFormBuilder
+      variables={variables}
+      url={url}
+      saveUrl={saveUrl}
+      locale="en"
+      saveAlways={false}
+      // toolbarItems={items}
+    />
   </React.StrictMode>
 );
 

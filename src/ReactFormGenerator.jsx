@@ -568,7 +568,3 @@ const ReactFormGenerator = (props) => {
 };
 
 export default ReactFormGenerator;
-
-ReactFormGenerator.defaultProps = {
-  validateForCorrectness: false,
-};

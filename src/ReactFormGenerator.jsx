@@ -1,21 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
-import ReactDOM from "react-dom";
-import { IntlProvider } from "react-intl";
-import { EventEmitter } from "fbemitter";
-import FormValidator from "./form-validator";
-import FormElements from "./form-elements";
-import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from "./multi-column";
-import { FieldSet } from "./fieldset";
-import CustomElement from "./form-elements/custom-element";
-import Registry from "./stores/registry";
-import AppLocale from "./language-provider";
+import React, { useState, useRef, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { IntlProvider } from 'react-intl';
+import { EventEmitter } from 'fbemitter';
+import FormValidator from './form-validator';
+import FormElements from './form-elements';
+import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from './multi-column';
+import { FieldSet } from './fieldset';
+import CustomElement from './form-elements/custom-element';
+import Registry from './stores/registry';
+import AppLocale from './language-provider';
 
 const { Image, Checkboxes, Signature, Download, Camera, FileUpload } =
   FormElements;
 
 const ReactFormGenerator = (props) => {
   const { locale } = props;
-  const currentAppLocale = AppLocale[locale || "en"];
+  const currentAppLocale = AppLocale[locale || 'en'];
 
   const form = useRef(null);
   const inputs = {};
@@ -26,7 +26,7 @@ const ReactFormGenerator = (props) => {
     if (Array.isArray(answers)) {
       const result = {};
       answers.forEach((x) => {
-        if (x.name.indexOf("tags_") > -1) {
+        if (x.name.indexOf('tags_') > -1) {
           result[x.name] = x.value.map((y) => y.value);
         } else {
           result[x.name] = x.value;
@@ -63,21 +63,21 @@ const ReactFormGenerator = (props) => {
   const _getItemValue = (item, ref, trimValue) => {
     let $item = {
       element: item.element,
-      value: "",
+      value: '',
     };
-    if (item.element === "Rating") {
+    if (item.element === 'Rating') {
       $item.value = ref.inputField.current.state.rating;
-    } else if (item.element === "Tags") {
+    } else if (item.element === 'Tags') {
       $item.value = ref.inputField.current.state.value;
-    } else if (item.element === "DatePicker") {
+    } else if (item.element === 'DatePicker') {
       $item.value = ref.state.value;
-    } else if (item.element === "Camera") {
+    } else if (item.element === 'Camera') {
       $item.value = ref.state.img;
-    } else if (item.element === "FileUpload") {
+    } else if (item.element === 'FileUpload') {
       $item.value = ref.state.fileUpload;
     } else if (ref && ref.inputField && ref.inputField.current) {
       $item = ReactDOM.findDOMNode(ref.inputField.current);
-      if (trimValue && $item && typeof $item.value === "string") {
+      if (trimValue && $item && typeof $item.value === 'string') {
         $item.value = $item.value.trim();
       }
     }
@@ -88,21 +88,21 @@ const ReactFormGenerator = (props) => {
     let incorrect = false;
     if (item.canHaveAnswer) {
       const ref = inputs[item.field_name];
-      if (item.element === "Checkboxes" || item.element === "RadioButtons") {
+      if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
         item.options.forEach((option) => {
           const $option = ReactDOM.findDOMNode(
             ref.options[`child_ref_${option.key}`]
           );
           if (
-            (option.hasOwnProperty("correct") && !$option.checked) ||
-            (!option.hasOwnProperty("correct") && $option.checked)
+            (option.hasOwnProperty('correct') && !$option.checked) ||
+            (!option.hasOwnProperty('correct') && $option.checked)
           ) {
             incorrect = true;
           }
         });
       } else {
         const $item = _getItemValue(item, ref);
-        if (item.element === "Rating") {
+        if (item.element === 'Rating') {
           if ($item.value.toString() !== item.correct) {
             incorrect = true;
           }
@@ -120,7 +120,7 @@ const ReactFormGenerator = (props) => {
     let invalid = false;
     if (item.required === true) {
       const ref = inputs[item.field_name];
-      if (item.element === "Checkboxes" || item.element === "RadioButtons") {
+      if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
         let checked_options = 0;
         item.options.forEach((option) => {
           const $option = ReactDOM.findDOMNode(
@@ -135,7 +135,7 @@ const ReactFormGenerator = (props) => {
         }
       } else {
         const $item = _getItemValue(item, ref);
-        if (item.element === "Rating") {
+        if (item.element === 'Rating') {
           if ($item.value === 0) {
             invalid = true;
           }
@@ -155,7 +155,7 @@ const ReactFormGenerator = (props) => {
     };
     if (!itemData.name) return null;
     const ref = inputs[item.field_name];
-    if (item.element === "Checkboxes" || item.element === "RadioButtons") {
+    if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
       const checked_options = [];
       item.options.forEach((option) => {
         const $option = ReactDOM.findDOMNode(
@@ -190,11 +190,11 @@ const ReactFormGenerator = (props) => {
     if ($canvas_sig) {
       const base64 = $canvas_sig
         .toDataURL()
-        .replace("data:image/png;base64,", "");
+        .replace('data:image/png;base64,', '');
       const isEmpty = $canvas_sig.isEmpty();
       const $input_sig = ReactDOM.findDOMNode(ref.inputField.current);
       if (isEmpty) {
-        $input_sig.value = "";
+        $input_sig.value = '';
       } else {
         $input_sig.value = base64;
       }
@@ -207,7 +207,7 @@ const ReactFormGenerator = (props) => {
     let errors = [];
     if (!props.skip_validations) {
       errors = validateForm();
-      emitter.emit("formValidation", errors);
+      emitter.emit('formValidation', errors);
     }
 
     if (errors.length < 1) {
@@ -248,17 +248,17 @@ const ReactFormGenerator = (props) => {
     }
 
     data_items.forEach((item) => {
-      if (item.element === "Signature") {
+      if (item.element === 'Signature') {
         _getSignatureImg(item);
       }
 
       if (_isInvalid(item)) {
         errors.push(
-          `${item.label} ${intl.formatMessage({ id: "message.is-required" })}!`
+          `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`
         );
       }
 
-      if (item.element === "EmailInput") {
+      if (item.element === 'EmailInput') {
         const ref = inputs[item.field_name];
         const emailValue = _getItemValue(item, ref).value;
         if (emailValue) {
@@ -270,14 +270,14 @@ const ReactFormGenerator = (props) => {
           if (!checkEmail) {
             errors.push(
               `${item.label} ${intl.formatMessage({
-                id: "message.invalid-email",
+                id: 'message.invalid-email',
               })}`
             );
           }
         }
       }
 
-      if (item.element === "PhoneNumber") {
+      if (item.element === 'PhoneNumber') {
         const ref = inputs[item.field_name];
         const phoneValue = _getItemValue(item, ref).value;
         if (phoneValue) {
@@ -289,7 +289,7 @@ const ReactFormGenerator = (props) => {
           if (!checkPhone) {
             errors.push(
               `${item.label} ${intl.formatMessage({
-                id: "message.invalid-phone-number",
+                id: 'message.invalid-phone-number',
               })}`
             );
           }
@@ -299,7 +299,7 @@ const ReactFormGenerator = (props) => {
       if (props.validateForCorrectness && _isIncorrect(item)) {
         errors.push(
           `${item.label} ${intl.formatMessage({
-            id: "message.was-answered-incorrectly",
+            id: 'message.was-answered-incorrectly',
           })}!`
         );
       }
@@ -353,19 +353,19 @@ const ReactFormGenerator = (props) => {
   const getCustomElement = (item) => {
     const { intl } = props;
 
-    if (!item.component || typeof item.component !== "function") {
+    if (!item.component || typeof item.component !== 'function') {
       item.component = Registry.get(item.key);
       if (!item.component) {
         console.error(
           `${item.element} ${intl.formatMessage({
-            id: "message.was-not-registered",
+            id: 'message.was-not-registered',
           })}`
         );
       }
     }
 
     const inputProps = item.forwardRef && {
-      handleChange: handleChange,
+      handleChange,
       defaultValue: _getDefaultValue(item),
       ref: (c) => (inputs[item.field_name] = c),
     };
@@ -382,7 +382,7 @@ const ReactFormGenerator = (props) => {
 
   const handleRenderSubmit = () => {
     const name = props.action_name || props.actionName;
-    const actionName = name || "Submit";
+    const actionName = name || 'Submit';
     const { submitButton = false } = props;
 
     return (
@@ -394,7 +394,7 @@ const ReactFormGenerator = (props) => {
 
   const handleRenderBack = () => {
     const name = props.back_name || props.backName;
-    const backName = name || "Cancel";
+    const backName = name || 'Cancel';
     const { backButton = false } = props;
 
     return (
@@ -431,29 +431,29 @@ const ReactFormGenerator = (props) => {
     .map((item) => {
       if (!item) return null;
       switch (item.element) {
-        case "TextInput":
-        case "EmailInput":
-        case "PhoneNumber":
-        case "NumberInput":
-        case "TextArea":
-        case "Dropdown":
-        case "DatePicker":
-        case "RadioButtons":
-        case "Rating":
-        case "Tags":
-        case "Range":
+        case 'TextInput':
+        case 'EmailInput':
+        case 'PhoneNumber':
+        case 'NumberInput':
+        case 'TextArea':
+        case 'Dropdown':
+        case 'DatePicker':
+        case 'RadioButtons':
+        case 'Rating':
+        case 'Tags':
+        case 'Range':
           return getInputElement(item);
-        case "CustomElement":
+        case 'CustomElement':
           return getCustomElement(item);
-        case "MultiColumnRow":
+        case 'MultiColumnRow':
           return getContainerElement(item, MultiColumnRow);
-        case "ThreeColumnRow":
+        case 'ThreeColumnRow':
           return getContainerElement(item, ThreeColumnRow);
-        case "TwoColumnRow":
+        case 'TwoColumnRow':
           return getContainerElement(item, TwoColumnRow);
-        case "FieldSet":
+        case 'FieldSet':
           return getContainerElement(item, FieldSet);
-        case "Signature":
+        case 'Signature':
           return (
             <Signature
               ref={(c) => (inputs[item.field_name] = c)}
@@ -464,7 +464,7 @@ const ReactFormGenerator = (props) => {
               defaultValue={_getDefaultValue(item)}
             />
           );
-        case "Checkboxes":
+        case 'Checkboxes':
           return (
             <Checkboxes
               ref={(c) => (inputs[item.field_name] = c)}
@@ -476,7 +476,7 @@ const ReactFormGenerator = (props) => {
               defaultValue={_optionsDefaultValue(item)}
             />
           );
-        case "Image":
+        case 'Image':
           return (
             <Image
               ref={(c) => (inputs[item.field_name] = c)}
@@ -487,7 +487,7 @@ const ReactFormGenerator = (props) => {
               defaultValue={_getDefaultValue(item)}
             />
           );
-        case "Download":
+        case 'Download':
           return (
             <Download
               download_path={props.download_path}
@@ -496,7 +496,7 @@ const ReactFormGenerator = (props) => {
               data={item}
             />
           );
-        case "Camera":
+        case 'Camera':
           return (
             <Camera
               ref={(c) => (inputs[item.field_name] = c)}
@@ -507,7 +507,7 @@ const ReactFormGenerator = (props) => {
               defaultValue={_getDefaultValue(item)}
             />
           );
-        case "FileUpload":
+        case 'FileUpload':
           return (
             <FileUpload
               ref={(c) => (inputs[item.field_name] = c)}
@@ -524,7 +524,7 @@ const ReactFormGenerator = (props) => {
     });
 
   const formTokenStyle = {
-    display: "none",
+    display: 'none',
   };
 
   return (

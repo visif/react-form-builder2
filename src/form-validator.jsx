@@ -1,8 +1,4 @@
-/**
-  * <FormValidator />
-  */
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import xss from 'xss';
 import IntlMessages from './language-provider/IntlMessages';
 
@@ -25,48 +21,54 @@ const myxss = new xss.FilterXSS({
   },
 });
 
-export default class FormValidator extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      errors: [],
-    };
-  }
+const FormValidator = ({ emitter }) => {
+  const [errors, setErrors] = useState([]);
 
-  componentDidMount() {
-    this.subscription = this.props.emitter.addListener('formValidation', (errors) => {
-      this.setState({ errors });
-    });
-  }
-
-  componentWillUnmount() {
-    this.subscription.remove();
-  }
-
-  dismissModal(e) {
-    e.preventDefault();
-    this.setState({ errors: [] });
-  }
-
-  render() {
-    const errors = this.state.errors.map((error, index) => <li key={`error_${index}`} dangerouslySetInnerHTML={{ __html: myxss.process(error) }} />);
-
-    return (
-      <div>
-        { this.state.errors.length > 0 &&
-          <div className="alert alert-danger validation-error">
-            <div className="clearfix">
-              <i className="fas fa-exclamation-triangle float-left"></i>
-              <ul className="float-left">
-                {errors}
-              </ul>
-            </div>
-            <div className="clearfix">
-              <a className="float-right btn btn-default btn-sm btn-danger" onClick={this.dismissModal.bind(this)}><IntlMessages id="dismiss" /></a>
-            </div>
-          </div>
-        }
-      </div>
+  useEffect(() => {
+    const subscription = emitter.addListener(
+      'formValidation',
+      (validationErrors) => {
+        setErrors(validationErrors);
+      }
     );
-  }
-}
+
+    return () => {
+      subscription.remove();
+    };
+  }, [emitter]);
+
+  const dismissModal = (e) => {
+    e.preventDefault();
+    setErrors([]);
+  };
+
+  const errorList = errors.map((error, index) => (
+    <li
+      key={`error_${index}`}
+      dangerouslySetInnerHTML={{ __html: myxss.process(error) }}
+    />
+  ));
+
+  return (
+    <div>
+      {errors.length > 0 && (
+        <div className="alert alert-danger validation-error">
+          <div className="clearfix">
+            <i className="fas fa-exclamation-triangle float-left"></i>
+            <ul className="float-left">{errorList}</ul>
+          </div>
+          <div className="clearfix">
+            <a
+              className="float-right btn btn-default btn-sm btn-danger"
+              onClick={dismissModal}
+            >
+              <IntlMessages id="dismiss" />
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FormValidator;

@@ -37,6 +37,7 @@ type BaseElement = {
   canPopulateFromApi: boolean;
   text: string;
 };
+
 export type StaticElement = {
   bold: boolean;
   content: string;
@@ -44,24 +45,29 @@ export type StaticElement = {
   italic: boolean;
   static: true;
 };
+
 export type FormBuilderInput = {
   canHaveAnswer?: true;
   field_name: string;
   label: string;
 };
+
 export type Option = {
   key: string;
   label?: string;
   text: string;
   value: string;
 };
+
 export type SelectableElement = {
   options: Option[];
 } & FormBuilderInput;
+
 export type ImageElement = {
   field_name: string;
   src: string;
 };
+
 export type DateElement = {
   dateFormat: string;
   defaultToday: boolean;
@@ -71,23 +77,28 @@ export type DateElement = {
   showTimeInput: boolean;
   timeFormat: string;
 } & FormBuilderInput;
+
 export type RangeElement = {
   max_label: string;
   max_value: number;
   min_label: string;
   min_value: number;
 } & FormBuilderInput;
+
 export type FileElement = {
   _href: string;
   file_path: string;
   field_name: string;
 } & StaticElement;
+
 export type WebsiteElement = {
   href: string;
 } & StaticElement;
+
 export type SignatureElement = {
   readOnly: boolean;
 } & FormBuilderInput;
+
 export type TaskData = BaseElement &
   (| StaticElement
     | FormBuilderInput
@@ -101,11 +112,13 @@ export type TaskData = BaseElement &
     // eslint-disable-next-line no-use-before-define
     | FormBuilderLayout
   );
+
 export type FormBuilderLayout = {
   isContainer: true;
   childItems: TaskData[];
   field_name: string;
 };
+
 export type FormBuilderPostData = {
   task_data: TaskData[];
 };

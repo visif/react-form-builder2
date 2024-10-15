@@ -18,17 +18,12 @@ const cardSource = {
   },
 };
 
-class ToolbarItem extends React.Component {
-  render() {
-    const { connectDragSource, data, onClick } = this.props;
-    if (!connectDragSource) return null;
-    return (
-      connectDragSource(
-        <li onClick={onClick}><i className={data.icon}></i>{data.name}</li>,
-      )
-    );
-  }
-}
+const ToolbarItem = ({ connectDragSource, data, onClick }) => {
+  if (!connectDragSource) return null;
+  return connectDragSource(
+    <li onClick={onClick}><i className={data.icon}></i>{data.name}</li>
+  );
+};
 
 export default DragSource(ItemTypes.CARD, cardSource, connect => ({
   connectDragSource: connect.dragSource(),

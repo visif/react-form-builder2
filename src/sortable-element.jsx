@@ -23,11 +23,7 @@ const cardSource = {
 };
 
 const cardTarget = {
-  drop(
-    props,
-    monitor,
-    component,
-  ) {
+  drop(props, monitor, component) {
     if (!component) {
       return;
     }
@@ -36,7 +32,10 @@ const cardTarget = {
     const hoverIndex = props.index;
     const dragIndex = item.index;
 
-    if ((props.data && props.data.isContainer) || item.itemType === ItemTypes.CARD) {
+    if (
+      (props.data && props.data.isContainer) ||
+      item.itemType === ItemTypes.CARD
+    ) {
       // console.log('cardTarget -  Drop', item.itemType);
       return;
     }
@@ -122,10 +121,9 @@ export default function (ComposedComponent) {
       index: PropTypes.number.isRequired,
       isDragging: PropTypes.bool,
       id: PropTypes.any.isRequired,
-      // text: PropTypes.string.isRequired,
       moveCard: PropTypes.func.isRequired,
       seq: PropTypes.number,
-    }
+    };
 
     static defaultProps = {
       seq: -1,
@@ -141,14 +139,26 @@ export default function (ComposedComponent) {
       const opacity = isDragging ? 0 : 1;
 
       return connectDragPreview(
-        connectDropTarget(<div><ComposedComponent {...this.props} style={{ ...style, opacity }}></ComposedComponent></div>),
+        connectDropTarget(
+          <div>
+            <ComposedComponent
+              {...this.props}
+              style={{ ...style, opacity }}
+            ></ComposedComponent>
+          </div>
+        )
       );
     }
   }
 
-  const x = DropTarget([ItemTypes.CARD, ItemTypes.BOX], cardTarget, connect => ({
-    connectDropTarget: connect.dropTarget(),
-  }))(Card);
+  const x = DropTarget(
+    [ItemTypes.CARD, ItemTypes.BOX],
+    cardTarget,
+    (connect) => ({
+      connectDropTarget: connect.dropTarget(),
+    })
+  )(Card);
+
   return DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
     connectDragSource: connect.dragSource(),
     connectDragPreview: connect.dragPreview(),

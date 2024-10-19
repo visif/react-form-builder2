@@ -160,117 +160,88 @@ const EmailInput = (props) => {
   );
 };
 
-class PhoneNumber extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
+const PhoneNumber = (props) => {
+  const inputField = React.useRef();
+
+  const inputProps = {
+    type: 'tel',
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const props = {};
-    props.type = 'tel';
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <input {...inputProps} />
       </div>
-    );
+    </div>
+  );
+};
+
+const NumberInput = (props) => {
+  const inputField = React.useRef();
+
+  const inputProps = {
+    type: 'number',
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
 
-class NumberInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
-  }
-
-  render() {
-    const props = {};
-    props.type = 'number';
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <input {...inputProps} />
       </div>
-    );
+    </div>
+  );
+};
+
+const TextArea = (props) => {
+  const inputField = React.useRef();
+
+  const inputProps = {
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
 
-class TextArea extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
-  }
-
-  render() {
-    const props = {};
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <textarea {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <textarea {...inputProps} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 class Dropdown extends React.Component {
   constructor(props) {

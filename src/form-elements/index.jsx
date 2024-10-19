@@ -104,79 +104,61 @@ const LineBreak = (props) => {
   );
 };
 
-class TextInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
+const TextInput = (props) => {
+  const inputField = React.useRef();
+
+  const inputProps = {
+    type: 'text',
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const props = {};
-    props.type = 'text';
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <input {...inputProps} />
       </div>
-    );
+    </div>
+  );
+};
+
+const EmailInput = (props) => {
+  const inputField = React.useRef();
+
+  const inputProps = {
+    type: 'text',
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
 
-class EmailInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
-  }
-
-  render() {
-    const props = {};
-    props.type = 'text';
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <input {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <input {...inputProps} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 class PhoneNumber extends React.Component {
   constructor(props) {

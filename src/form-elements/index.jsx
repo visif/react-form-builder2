@@ -279,77 +279,66 @@ const Dropdown = (props) => {
   );
 };
 
-class Signature extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      defaultValue: props.defaultValue,
-    };
-    this.inputField = React.createRef();
-    this.canvas = React.createRef();
-  }
+const Signature = (props) => {
+  const [defaultValue, setDefaultValue] = React.useState(props.defaultValue);
+  const inputField = React.useRef();
+  const canvas = React.useRef();
 
-  clear = () => {
-    if (this.state.defaultValue) {
-      this.setState({ defaultValue: '' });
-    } else if (this.canvas.current) {
-      this.canvas.current.clear();
+  const clear = () => {
+    if (defaultValue) {
+      setDefaultValue('');
+    } else if (canvas.current) {
+      canvas.current.clear();
     }
   };
 
-  render() {
-    const { defaultValue } = this.state;
-    let canClear = !!defaultValue;
-    const props = {};
-    props.type = 'hidden';
-    props.name = this.props.data.field_name;
+  let canClear = !!defaultValue;
+  const inputProps = {
+    type: 'hidden',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+  };
 
-    if (this.props.mutable) {
-      props.defaultValue = defaultValue;
-      props.ref = this.inputField;
-    }
-    const pad_props = {};
-    // umd requires canvasProps={{ width: 400, height: 150 }}
-    if (this.props.mutable) {
-      pad_props.defaultValue = defaultValue;
-      pad_props.ref = this.canvas;
-      canClear = !this.props.read_only;
-    }
-    pad_props.clearOnResize = false;
+  const padProps = {
+    clearOnResize: false,
+    defaultValue: props.mutable ? defaultValue : undefined,
+    ref: props.mutable ? canvas : undefined,
+  };
+  canClear = !props.read_only;
 
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    let sourceDataURL;
-    if (defaultValue && defaultValue.length > 0) {
-      sourceDataURL = `data:image/png;base64,${defaultValue}`;
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          {this.props.read_only === true || !!sourceDataURL ? (
-            <img src={sourceDataURL} />
-          ) : (
-            <SignaturePad {...pad_props} />
-          )}
-          {canClear && (
-            <i
-              className="fas fa-times clear-signature"
-              onClick={this.clear}
-              title="Clear Signature"
-            ></i>
-          )}
-          <input {...props} />
-        </div>
-      </div>
-    );
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
+
+  let sourceDataURL;
+  if (defaultValue && defaultValue.length > 0) {
+    sourceDataURL = `data:image/png;base64,${defaultValue}`;
+  }
+
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        {props.read_only === true || !!sourceDataURL ? (
+          <img src={sourceDataURL} />
+        ) : (
+          <SignaturePad {...padProps} />
+        )}
+        {canClear && (
+          <i
+            className="fas fa-times clear-signature"
+            onClick={clear}
+            title="Clear Signature"
+          ></i>
+        )}
+        <input {...inputProps} />
+      </div>
+    </div>
+  );
+};
 
 class Tags extends React.Component {
   constructor(props) {

@@ -665,31 +665,29 @@ class Rating extends React.Component {
   }
 }
 
-class HyperLink extends React.Component {
-  render() {
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <label className={'form-label'}>
-            <a
-              target="_blank"
-              href={this.props.data.href}
-              dangerouslySetInnerHTML={{
-                __html: myxss.process(this.props.data.content),
-              }}
-            />
-          </label>
-        </div>
-      </div>
-    );
+const HyperLink = (props) => {
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
+
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <label className={'form-label'}>
+          <a
+            target="_blank"
+            href={props.data.href}
+            dangerouslySetInnerHTML={{
+              __html: myxss.process(props.data.content),
+            }}
+          />
+        </label>
+      </div>
+    </div>
+  );
+};
 
 const Download = (props) => {
   let baseClasses = 'SortableItem rfb-item';
@@ -729,7 +727,8 @@ const Camera = (props) => {
   const getImageSizeProps = ({ width, height }) => {
     const imgProps = { width: '100%' };
     if (width) {
-      imgProps.width = width < window.innerWidth ? width : 0.9 * window.innerWidth;
+      imgProps.width =
+        width < window.innerWidth ? width : 0.9 * window.innerWidth;
     }
     if (height) {
       imgProps.height = height;
@@ -750,7 +749,11 @@ const Camera = (props) => {
   }
 
   let sourceDataURL;
-  if (props.read_only === true && props.defaultValue && props.defaultValue.length > 0) {
+  if (
+    props.read_only === true &&
+    props.defaultValue &&
+    props.defaultValue.length > 0
+  ) {
     if (props.defaultValue.indexOf(name > -1)) {
       sourceDataURL = props.defaultValue;
     } else {
@@ -763,7 +766,9 @@ const Camera = (props) => {
       <ComponentHeader {...props} />
       <div className="form-group">
         <ComponentLabel {...props} />
-        {props.read_only === true && props.defaultValue && props.defaultValue.length > 0 ? (
+        {props.read_only === true &&
+        props.defaultValue &&
+        props.defaultValue.length > 0 ? (
           <div>
             <img
               style={imageStyle}
@@ -865,7 +870,9 @@ const FileUpload = (props) => {
       <ComponentHeader {...props} />
       <div className="form-group">
         <ComponentLabel {...props} />
-        {props.read_only === true && props.defaultValue && props.defaultValue.length > 0 ? (
+        {props.read_only === true &&
+        props.defaultValue &&
+        props.defaultValue.length > 0 ? (
           <div>
             <button className="btn btn-default" onClick={saveFile}>
               <i className="fas fa-download"></i> Download File
@@ -897,12 +904,17 @@ const FileUpload = (props) => {
                   </div>
                   <div style={{ display: 'inline-block', marginLeft: '5px' }}>
                     {fileUpload.size.length > 6
-                      ? `Size:  ${Math.ceil(fileUpload.size / (1024 * 1024))} mb`
+                      ? `Size:  ${Math.ceil(
+                          fileUpload.size / (1024 * 1024)
+                        )} mb`
                       : `Size:  ${Math.ceil(fileUpload.size / 1024)} kb`}
                   </div>
                 </div>
                 <br />
-                <div className="btn btn-file-upload-clear" onClick={clearFileUpload}>
+                <div
+                  className="btn btn-file-upload-clear"
+                  onClick={clearFileUpload}
+                >
                   <i className="fas fa-times"></i> Clear File
                 </div>
               </div>

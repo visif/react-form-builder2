@@ -627,43 +627,38 @@ class Image extends React.Component {
   }
 }
 
-class Rating extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
+const Rating = (props) => {
+  const inputField = React.createRef();
+
+  const ratingProps = {
+    name: props.data.field_name,
+    ratingAmount: 5,
+    rating: (() => {
+      if (props.mutable) {
+        return props.defaultValue !== undefined ? parseFloat(props.defaultValue, 10) : 0;
+      }
+      return undefined;
+    })(),
+    editing: props.mutable,
+    disabled: props.read_only,
+    ref: props.mutable ? inputField : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const props = {};
-    props.name = this.props.data.field_name;
-    props.ratingAmount = 5;
-
-    if (this.props.mutable) {
-      props.rating =
-        this.props.defaultValue !== undefined
-          ? parseFloat(this.props.defaultValue, 10)
-          : 0;
-      props.editing = true;
-      props.disabled = this.props.read_only;
-      props.ref = this.inputField;
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <StarRating {...props} />
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <StarRating {...ratingProps} />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 const HyperLink = (props) => {
   let baseClasses = 'SortableItem rfb-item';

@@ -1,5 +1,6 @@
 // eslint-disable-next-line max-classes-per-file
 import fetch from 'isomorphic-fetch';
+import { Blob } from 'buffer';
 import { saveAs } from 'file-saver';
 import React from 'react';
 import Select from 'react-select';
@@ -831,35 +832,26 @@ class Camera extends React.Component {
   }
 }
 
-class FileUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { fileUpload: null };
-  }
+const FileUpload = (props) => {
+  const [fileUpload, setFileUpload] = React.useState(null);
 
-  displayFileUpload = (e) => {
-    const self = this;
+  const displayFileUpload = (e) => {
     const target = e.target;
     let file;
 
     if (target.files && target.files.length > 0) {
       file = target.files[0];
-
-      self.setState({
-        fileUpload: file,
-      });
+      setFileUpload(file);
     }
   };
 
-  clearFileUpload = () => {
-    this.setState({
-      fileUpload: null,
-    });
+  const clearFileUpload = () => {
+    setFileUpload(null);
   };
 
-  saveFile = async (e) => {
+  const saveFile = async (e) => {
     e.preventDefault();
-    const sourceUrl = this.props.defaultValue;
+    const sourceUrl = props.defaultValue;
     const response = await fetch(sourceUrl, {
       method: 'GET',
       headers: {
@@ -870,9 +862,8 @@ class FileUpload extends React.Component {
     });
     const dispositionHeader = response.headers.get('Content-Disposition');
     const resBlob = await response.blob();
-    // eslint-disable-next-line no-undef
     const blob = new Blob([resBlob], {
-      type: this.props.data.fileType || response.headers.get('Content-Type'),
+      type: props.data.fileType || response.headers.get('Content-Type'),
     });
     if (dispositionHeader && dispositionHeader.indexOf(';filename=') > -1) {
       const fileName = dispositionHeader.split(';filename=')[1];
@@ -883,78 +874,66 @@ class FileUpload extends React.Component {
     }
   };
 
-  render() {
-    let baseClasses = 'SortableItem rfb-item';
-    const name = this.props.data.field_name;
-    const fileInputStyle = this.state.fileUpload ? { display: 'none' } : null;
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          {this.props.read_only === true &&
-          this.props.defaultValue &&
-          this.props.defaultValue.length > 0 ? (
-            <div>
-              <button className="btn btn-default" onClick={this.saveFile}>
-                <i className="fas fa-download"></i> Download File
-              </button>
+  let baseClasses = 'SortableItem rfb-item';
+  const name = props.data.field_name;
+  const fileInputStyle = fileUpload ? { display: 'none' } : null;
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
+  }
+
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        {props.read_only === true && props.defaultValue && props.defaultValue.length > 0 ? (
+          <div>
+            <button className="btn btn-default" onClick={saveFile}>
+              <i className="fas fa-download"></i> Download File
+            </button>
+          </div>
+        ) : (
+          <div className="image-upload-container">
+            <div style={fileInputStyle}>
+              <input
+                name={name}
+                type="file"
+                accept={props.data.fileType || '*'}
+                className="image-upload"
+                onChange={displayFileUpload}
+              />
+              <div className="image-upload-control">
+                <div className="btn btn-default">
+                  <i className="fas fa-file"></i> Upload File
+                </div>
+                <p>Select a file from your computer or device.</p>
+              </div>
             </div>
-          ) : (
-            <div className="image-upload-container">
-              <div style={fileInputStyle}>
-                <input
-                  name={name}
-                  type="file"
-                  accept={this.props.data.fileType || '*'}
-                  className="image-upload"
-                  onChange={this.displayFileUpload}
-                />
-                <div className="image-upload-control">
-                  <div className="btn btn-default">
-                    <i className="fas fa-file"></i> Upload File
+
+            {fileUpload && (
+              <div>
+                <div className="file-upload-preview">
+                  <div style={{ display: 'inline-block', marginRight: '5px' }}>
+                    {`Name: ${fileUpload.name}`}
                   </div>
-                  <p>Select a file from your computer or device.</p>
+                  <div style={{ display: 'inline-block', marginLeft: '5px' }}>
+                    {fileUpload.size.length > 6
+                      ? `Size:  ${Math.ceil(fileUpload.size / (1024 * 1024))} mb`
+                      : `Size:  ${Math.ceil(fileUpload.size / 1024)} kb`}
+                  </div>
+                </div>
+                <br />
+                <div className="btn btn-file-upload-clear" onClick={clearFileUpload}>
+                  <i className="fas fa-times"></i> Clear File
                 </div>
               </div>
-
-              {this.state.fileUpload && (
-                <div>
-                  <div className="file-upload-preview">
-                    <div
-                      style={{ display: 'inline-block', marginRight: '5px' }}
-                    >
-                      {`Name: ${this.state.fileUpload.name}`}
-                    </div>
-                    <div style={{ display: 'inline-block', marginLeft: '5px' }}>
-                      {this.state.fileUpload.size.length > 6
-                        ? `Size:  ${Math.ceil(
-                            this.state.fileUpload.size / (1024 * 1024)
-                          )} mb`
-                        : `Size:  ${Math.ceil(
-                            this.state.fileUpload.size / 1024
-                          )} kb`}
-                    </div>
-                  </div>
-                  <br />
-                  <div
-                    className="btn btn-file-upload-clear"
-                    onClick={this.clearFileUpload}
-                  >
-                    <i className="fas fa-times"></i> Clear File
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 const Range = (props) => {
   const inputField = React.createRef();

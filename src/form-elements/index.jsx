@@ -713,124 +713,107 @@ class Download extends React.Component {
   }
 }
 
-class Camera extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { img: null, previewImg: null };
-  }
+const Camera = (props) => {
+  const [img, setImg] = React.useState(null);
+  const [previewImg, setPreviewImg] = React.useState(null);
 
-  displayImage = (e) => {
-    const self = this;
+  const displayImage = (e) => {
     const target = e.target;
     if (target.files && target.files.length) {
-      self.setState({
-        img: target.files[0],
-        previewImg: URL.createObjectURL(target.files[0]),
-      });
+      setImg(target.files[0]);
+      setPreviewImg(URL.createObjectURL(target.files[0]));
     }
   };
 
-  clearImage = () => {
-    this.setState({
-      img: null,
-      previewImg: null,
-    });
+  const clearImage = () => {
+    setImg(null);
+    setPreviewImg(null);
   };
 
-  getImageSizeProps({ width, height }) {
+  const getImageSizeProps = ({ width, height }) => {
     const imgProps = { width: '100%' };
     if (width) {
-      imgProps.width =
-        width < window.innerWidth ? width : 0.9 * window.innerWidth;
+      imgProps.width = width < window.innerWidth ? width : 0.9 * window.innerWidth;
     }
     if (height) {
       imgProps.height = height;
     }
     return imgProps;
+  };
+
+  const imageStyle = {
+    objectFit: 'scale-down',
+    objectPosition: props.data.center ? 'center' : 'left',
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  const name = props.data.field_name;
+  const fileInputStyle = img ? { display: 'none' } : null;
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const imageStyle = {
-      objectFit: 'scale-down',
-      objectPosition: this.props.data.center ? 'center' : 'left',
-    };
-    let baseClasses = 'SortableItem rfb-item';
-    const name = this.props.data.field_name;
-    const fileInputStyle = this.state.img ? { display: 'none' } : null;
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
+  let sourceDataURL;
+  if (props.read_only === true && props.defaultValue && props.defaultValue.length > 0) {
+    if (props.defaultValue.indexOf(name > -1)) {
+      sourceDataURL = props.defaultValue;
+    } else {
+      sourceDataURL = `data:image/png;base64,${props.defaultValue}`;
     }
-    let sourceDataURL;
-    if (
-      this.props.read_only === true &&
-      this.props.defaultValue &&
-      this.props.defaultValue.length > 0
-    ) {
-      if (this.props.defaultValue.indexOf(name > -1)) {
-        sourceDataURL = this.props.defaultValue;
-      } else {
-        sourceDataURL = `data:image/png;base64,${this.props.defaultValue}`;
-      }
-    }
+  }
 
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          {this.props.read_only === true &&
-          this.props.defaultValue &&
-          this.props.defaultValue.length > 0 ? (
-            <div>
-              <img
-                style={imageStyle}
-                src={sourceDataURL}
-                {...this.getImageSizeProps(this.props.data)}
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        {props.read_only === true && props.defaultValue && props.defaultValue.length > 0 ? (
+          <div>
+            <img
+              style={imageStyle}
+              src={sourceDataURL}
+              {...getImageSizeProps(props.data)}
+            />
+          </div>
+        ) : (
+          <div className="image-upload-container">
+            <div style={fileInputStyle}>
+              <input
+                name={name}
+                type="file"
+                accept="image/*"
+                capture="camera"
+                className="image-upload"
+                onChange={displayImage}
               />
+              <div className="image-upload-control">
+                <div className="btn btn-default">
+                  <i className="fas fa-camera"></i> Upload Photo
+                </div>
+                <p>Select an image from your computer or device.</p>
+              </div>
             </div>
-          ) : (
-            <div className="image-upload-container">
-              <div style={fileInputStyle}>
-                <input
-                  name={name}
-                  type="file"
-                  accept="image/*"
-                  capture="camera"
-                  className="image-upload"
-                  onChange={this.displayImage}
+
+            {img && (
+              <div>
+                <img
+                  onLoad={() => URL.revokeObjectURL(previewImg)}
+                  src={previewImg}
+                  height="100"
+                  className="image-upload-preview"
                 />
-                <div className="image-upload-control">
-                  <div className="btn btn-default">
-                    <i className="fas fa-camera"></i> Upload Photo
-                  </div>
-                  <p>Select an image from your computer or device.</p>
+                <br />
+                <div className="btn btn-image-clear" onClick={clearImage}>
+                  <i className="fas fa-times"></i> Clear Photo
                 </div>
               </div>
-
-              {this.state.img && (
-                <div>
-                  <img
-                    onLoad={() => URL.revokeObjectURL(this.state.previewImg)}
-                    src={this.state.previewImg}
-                    height="100"
-                    className="image-upload-preview"
-                  />
-                  <br />
-                  <div
-                    className="btn btn-image-clear"
-                    onClick={this.clearImage}
-                  >
-                    <i className="fas fa-times"></i> Clear Photo
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 const FileUpload = (props) => {
   const [fileUpload, setFileUpload] = React.useState(null);

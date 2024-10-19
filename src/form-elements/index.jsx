@@ -243,51 +243,41 @@ const TextArea = (props) => {
   );
 };
 
-class Dropdown extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
+const Dropdown = (props) => {
+  const inputField = React.useRef();
+
+  const selectProps = {
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: props.mutable ? inputField : undefined,
+    disabled: props.read_only ? 'disabled' : undefined,
+  };
+
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const props = {};
-    props.className = 'form-control';
-    props.name = this.props.data.field_name;
-
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
-      props.ref = this.inputField;
-    }
-
-    if (this.props.read_only) {
-      props.disabled = 'disabled';
-    }
-
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <select {...props}>
-            {this.props.data.options.map((option) => {
-              const this_key = `preview_${option.key}`;
-              return (
-                <option value={option.value} key={this_key}>
-                  {option.text}
-                </option>
-              );
-            })}
-          </select>
-        </div>
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <select {...selectProps}>
+          {props.data.options.map((option) => {
+            const thisKey = `preview_${option.key}`;
+            return (
+              <option value={option.value} key={thisKey}>
+                {option.text}
+              </option>
+            );
+          })}
+        </select>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 class Signature extends React.Component {
   constructor(props) {
@@ -587,7 +577,9 @@ const Rating = (props) => {
     ratingAmount: 5,
     rating: (() => {
       if (props.mutable) {
-        return props.defaultValue !== undefined ? parseFloat(props.defaultValue, 10) : 0;
+        return props.defaultValue !== undefined
+          ? parseFloat(props.defaultValue, 10)
+          : 0;
       }
       return undefined;
     })(),

@@ -691,27 +691,23 @@ class HyperLink extends React.Component {
   }
 }
 
-class Download extends React.Component {
-  render() {
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <a
-            href={`${this.props.download_path}?id=${this.props.data.file_path}`}
-          >
-            {this.props.data.content}
-          </a>
-        </div>
-      </div>
-    );
+const Download = (props) => {
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
+
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <a href={`${props.download_path}?id=${props.data.file_path}`}>
+          {props.data.content}
+        </a>
+      </div>
+    </div>
+  );
+};
 
 const Camera = (props) => {
   const [img, setImg] = React.useState(null);

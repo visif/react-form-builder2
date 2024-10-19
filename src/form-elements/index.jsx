@@ -602,30 +602,29 @@ class RadioButtons extends React.Component {
   }
 }
 
-class Image extends React.Component {
-  render() {
-    const style = this.props.data.center ? { textAlign: 'center' } : null;
+const Image = (props) => {
+  const style = props.data.center ? { textAlign: 'center' } : null;
 
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style, ...style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        {this.props.data.src && (
-          <img
-            src={this.props.data.src}
-            width={this.props.data.width}
-            height={this.props.data.height}
-          />
-        )}
-        {!this.props.data.src && <div className="no-image">No Image</div>}
-      </div>
-    );
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
+
+  return (
+    <div style={{ ...props.style, ...style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      {props.data.src ? (
+        <img
+          src={props.data.src}
+          width={props.data.width}
+          height={props.data.height}
+        />
+      ) : (
+        <div className="no-image">No Image</div>
+      )}
+    </div>
+  );
+};
 
 const Rating = (props) => {
   const inputField = React.createRef();

@@ -340,15 +340,10 @@ const Signature = (props) => {
   );
 };
 
-class Tags extends React.Component {
-  constructor(props) {
-    super(props);
-    this.inputField = React.createRef();
-    const { defaultValue, data } = props;
-    this.state = { value: this.getDefaultValue(defaultValue, data.options) };
-  }
+const Tags = (props) => {
+  const { defaultValue, data } = props;
 
-  getDefaultValue(defaultValue, options) {
+  function getDefaultValue(initialValue, options) {
     if (defaultValue) {
       if (typeof defaultValue === 'string') {
         const vals = defaultValue.split(',').map((x) => x.trim());
@@ -359,48 +354,45 @@ class Tags extends React.Component {
     return [];
   }
 
-  // state = { value: this.props.defaultValue !== undefined ? this.props.defaultValue.split(',') : [] };
+  const inputField = React.useRef();
+  const [value, setValue] = React.useState(
+    getDefaultValue(defaultValue, data.options)
+  );
 
-  handleChange = (e) => {
-    this.setState({ value: e || [] });
+  const handleChange = (e) => {
+    setValue(e || []);
   };
 
-  render() {
-    const options = this.props.data.options.map((option) => {
-      option.label = option.text;
-      return option;
-    });
-    const props = {};
-    props.isMulti = true;
-    props.name = this.props.data.field_name;
-    props.onChange = this.handleChange;
+  const options = props.data.options.map((option) => {
+    option.label = option.text;
+    return option;
+  });
 
-    props.options = options;
-    if (!this.props.mutable) {
-      props.value = options[0].text;
-    } // to show a sample of what tags looks like
-    if (this.props.mutable) {
-      props.isDisabled = this.props.read_only;
-      props.value = this.state.value;
-      props.ref = this.inputField;
-    }
+  const selectProps = {
+    isMulti: true,
+    name: props.data.field_name,
+    onChange: handleChange,
+    options,
+    value: props.mutable ? value : options[0].text,
+    isDisabled: props.mutable ? props.read_only : undefined,
+    ref: props.mutable ? inputField : undefined,
+  };
 
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <Select {...props} />
-        </div>
-      </div>
-    );
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
-}
+
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <Select {...selectProps} />
+      </div>
+    </div>
+  );
+};
 
 class Checkboxes extends React.Component {
   constructor(props) {

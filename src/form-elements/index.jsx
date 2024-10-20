@@ -394,137 +394,114 @@ const Tags = (props) => {
   );
 };
 
-class Checkboxes extends React.Component {
-  constructor(props) {
-    super(props);
-    this.options = {};
+const Checkboxes = (props) => {
+  const options = React.useRef({});
+
+  let classNames = 'custom-control custom-checkbox';
+  if (props.data.inline) {
+    classNames += ' option-inline';
   }
 
-  render() {
-    const self = this;
-    let classNames = 'custom-control custom-checkbox';
-    if (this.props.data.inline) {
-      classNames += ' option-inline';
-    }
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
+  }
 
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        {props.data.options.map((option) => {
+          const this_key = `preview_${option.key}`;
+          const inputProps = {
+            name: `option_${option.key}`,
+            type: 'checkbox',
+            value: option.value,
+            defaultChecked:
+              props.mutable &&
+              props.defaultValue !== undefined &&
+              props.defaultValue.indexOf(option.key) > -1,
+            disabled: props.read_only ? 'disabled' : undefined,
+          };
 
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          {this.props.data.options.map((option) => {
-            const this_key = `preview_${option.key}`;
-            const props = {};
-            props.name = `option_${option.key}`;
-
-            props.type = 'checkbox';
-            props.value = option.value;
-            if (self.props.mutable) {
-              props.defaultChecked =
-                self.props.defaultValue !== undefined &&
-                self.props.defaultValue.indexOf(option.key) > -1;
-            }
-            if (this.props.read_only) {
-              props.disabled = 'disabled';
-            }
-            return (
-              <div className={classNames} key={this_key}>
-                <input
-                  id={`fid_${this_key}`}
-                  className="custom-control-input"
-                  ref={(c) => {
-                    if (c && self.props.mutable) {
-                      self.options[`child_ref_${option.key}`] = c;
-                    }
-                  }}
-                  {...props}
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor={`fid_${this_key}`}
-                >
-                  {option.text}
-                </label>
-              </div>
-            );
-          })}
-        </div>
+          return (
+            <div className={classNames} key={this_key}>
+              <input
+                id={`fid_${this_key}`}
+                className="custom-control-input"
+                ref={(c) => {
+                  if (c && props.mutable) {
+                    options.current[`child_ref_${option.key}`] = c;
+                  }
+                }}
+                {...inputProps}
+              />
+              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
+                {option.text}
+              </label>
+            </div>
+          );
+        })}
       </div>
-    );
+    </div>
+  );
+};
+
+const RadioButtons = (props) => {
+  const options = React.useRef({});
+
+  let classNames = 'custom-control custom-radio';
+  if (props.data.inline) {
+    classNames += ' option-inline';
   }
-}
 
-class RadioButtons extends React.Component {
-  constructor(props) {
-    super(props);
-    this.options = {};
+  let baseClasses = 'SortableItem rfb-item';
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak';
   }
 
-  render() {
-    const self = this;
-    let classNames = 'custom-control custom-radio';
-    if (this.props.data.inline) {
-      classNames += ' option-inline';
-    }
+  return (
+    <div style={{ ...props.style }} className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        {props.data.options.map((option) => {
+          const this_key = `preview_${option.key}`;
+          const inputProps = {
+            name: props.data.field_name,
+            type: 'radio',
+            value: option.value,
+            defaultChecked:
+              props.mutable &&
+              props.defaultValue !== undefined &&
+              (props.defaultValue.indexOf(option.key) > -1 ||
+                props.defaultValue.indexOf(option.value) > -1),
+            disabled: props.read_only ? 'disabled' : undefined,
+          };
 
-    let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak';
-    }
-
-    return (
-      <div style={{ ...this.props.style }} className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          {this.props.data.options.map((option) => {
-            const this_key = `preview_${option.key}`;
-            const props = {};
-            props.name = self.props.data.field_name;
-
-            props.type = 'radio';
-            props.value = option.value;
-            if (self.props.mutable) {
-              props.defaultChecked =
-                self.props.defaultValue !== undefined &&
-                (self.props.defaultValue.indexOf(option.key) > -1 ||
-                  self.props.defaultValue.indexOf(option.value) > -1);
-            }
-            if (this.props.read_only) {
-              props.disabled = 'disabled';
-            }
-
-            return (
-              <div className={classNames} key={this_key}>
-                <input
-                  id={`fid_${this_key}`}
-                  className="custom-control-input"
-                  ref={(c) => {
-                    if (c && self.props.mutable) {
-                      self.options[`child_ref_${option.key}`] = c;
-                    }
-                  }}
-                  {...props}
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor={`fid_${this_key}`}
-                >
-                  {option.text}
-                </label>
-              </div>
-            );
-          })}
-        </div>
+          return (
+            <div className={classNames} key={this_key}>
+              <input
+                id={`fid_${this_key}`}
+                className="custom-control-input"
+                ref={(c) => {
+                  if (c && props.mutable) {
+                    options.current[`child_ref_${option.key}`] = c;
+                  }
+                }}
+                {...inputProps}
+              />
+              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
+                {option.text}
+              </label>
+            </div>
+          );
+        })}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 const Image = (props) => {
   const style = props.data.center ? { textAlign: 'center' } : null;

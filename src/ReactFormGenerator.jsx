@@ -287,7 +287,7 @@ const FormContent = (props) => {
           const checkEmail = validateEmail(emailValue);
           if (!checkEmail) {
             errors.push(
-              `${item.label} ${intl.formatMessage({
+              `${item.label} ${intl?.formatMessage({
                 id: 'message.invalid-email',
               })}`
             );
@@ -306,7 +306,7 @@ const FormContent = (props) => {
           const checkPhone = validatePhone(phoneValue);
           if (!checkPhone) {
             errors.push(
-              `${item.label} ${intl.formatMessage({
+              `${item.label} ${intl?.formatMessage({
                 id: 'message.invalid-phone-number',
               })}`
             );
@@ -316,7 +316,7 @@ const FormContent = (props) => {
 
       if (props.validateForCorrectness && _isIncorrect(item)) {
         errors.push(
-          `${item.label} ${intl.formatMessage({
+          `${item.label} ${intl?.formatMessage({
             id: 'message.was-answered-incorrectly',
           })}!`
         );

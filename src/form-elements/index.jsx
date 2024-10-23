@@ -131,14 +131,11 @@ const TextInput = (props) => {
 };
 
 const EmailInput = (props) => {
-  const inputField = React.useRef();
-
   const inputProps = {
     type: 'text',
     className: 'form-control',
     name: props.data.field_name,
     defaultValue: props.mutable ? props.defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
   };
@@ -160,15 +157,13 @@ const EmailInput = (props) => {
 };
 
 const PhoneNumber = (props) => {
-  const inputField = React.useRef();
-
   const inputProps = {
     type: 'tel',
     className: 'form-control',
     name: props.data.field_name,
     defaultValue: props.mutable ? props.defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
+    onChange: props.handleChange,
   };
 
   let baseClasses = 'SortableItem rfb-item';

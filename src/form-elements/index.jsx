@@ -183,15 +183,13 @@ const PhoneNumber = (props) => {
 };
 
 const NumberInput = (props) => {
-  const inputField = React.useRef();
-
   const inputProps = {
     type: 'number',
     className: 'form-control',
     name: props.data.field_name,
     defaultValue: props.mutable ? props.defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
+    onChange: props.handleChange,
   };
 
   let baseClasses = 'SortableItem rfb-item';
@@ -211,14 +209,12 @@ const NumberInput = (props) => {
 };
 
 const TextArea = (props) => {
-  const inputField = React.useRef();
-
   const inputProps = {
     className: 'form-control',
     name: props.data.field_name,
     defaultValue: props.mutable ? props.defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
+    onChange: props.handleChange,
   };
 
   let baseClasses = 'SortableItem rfb-item';

@@ -8,14 +8,14 @@ const HeaderBar = (props) => (
       {props.data.element !== 'LineBreak' && (
         <div
           className="btn is-isolated"
-          onClick={props.editModeOn.bind(props.parent, props.data)}
+          onClick={props.editModeOn?.bind(props.parent, props.data)}
         >
           <i className="is-isolated fas fa-edit"></i>
         </div>
       )}
       <div
         className="btn is-isolated"
-        onClick={props.onDestroy.bind(props, props.data)}
+        onClick={props.onDestroy?.bind(props, props.data)}
       >
         <i className="is-isolated fas fa-trash"></i>
       </div>

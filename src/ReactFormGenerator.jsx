@@ -9,40 +9,43 @@ import { FieldSet } from './fieldset';
 import CustomElement from './form-elements/custom-element';
 import Registry from './stores/registry';
 import AppLocale from './language-provider';
+import { FormProvider, useFormStore } from './providers/FormProvider';
 
 const { Image, Checkboxes, Signature, Download, Camera, FileUpload } =
   FormElements;
 
-const ReactFormGenerator = (props) => {
-  const { locale } = props;
-  const currentAppLocale = AppLocale[locale || 'en'];
+const convert = (answers) => {
+  if (Array.isArray(answers)) {
+    const result = {};
+    answers.forEach((x) => {
+      if (x.name.indexOf('tags_') > -1) {
+        result[x.name] = x.value.map((y) => y.value);
+      } else {
+        result[x.name] = x.value;
+      }
+    });
+    return result;
+  }
+  return answers || {};
+};
 
-  const form = useRef(null);
+const FormContent = (props) => {
   const inputs = {};
-  const [answerData, setAnswerData] = useState({});
+  const [answerData] = useState({});
+
+  const { values, setFieldValue, setMultipleValues } = useFormStore();
+  const form = useRef(null);
   const emitter = new EventEmitter();
 
-  const convert = (answers) => {
-    if (Array.isArray(answers)) {
-      const result = {};
-      answers.forEach((x) => {
-        if (x.name.indexOf('tags_') > -1) {
-          result[x.name] = x.value.map((y) => y.value);
-        } else {
-          result[x.name] = x.value;
-        }
-      });
-      return result;
-    }
-    return answers || {};
-  };
-
   useEffect(() => {
-    setAnswerData(convert(props.answer_data));
-  }, [props.answer_data]);
+    if (props.answer_data) {
+      const convertedData = convert(props.answer_data);
+      setMultipleValues(convertedData);
+    }
+  }, [props.answer_data, setMultipleValues]);
 
   const _getDefaultValue = (item) => {
-    return answerData[item.field_name];
+    return values[item.field_name];
   };
 
   const _optionsDefaultValue = (item) => {
@@ -60,29 +63,35 @@ const ReactFormGenerator = (props) => {
     return defaultChecked;
   };
 
-  const _getItemValue = (item, ref, trimValue) => {
-    let $item = {
+  const _getItemValue = (item) => {
+    return {
       element: item.element,
-      value: '',
+      value: values[item.field_name] || '',
     };
-    if (item.element === 'Rating') {
-      $item.value = ref.inputField.current.state.rating;
-    } else if (item.element === 'Tags') {
-      $item.value = ref.inputField.current.state.value;
-    } else if (item.element === 'DatePicker') {
-      $item.value = ref.state.value;
-    } else if (item.element === 'Camera') {
-      $item.value = ref.state.img;
-    } else if (item.element === 'FileUpload') {
-      $item.value = ref.state.fileUpload;
-    } else if (ref && ref.inputField && ref.inputField.current) {
-      $item = ReactDOM.findDOMNode(ref.inputField.current);
-      if (trimValue && $item && typeof $item.value === 'string') {
-        $item.value = $item.value.trim();
-      }
-    }
-    return $item;
   };
+  // const _getItemValue = (item, ref, trimValue) => {
+  //   let $item = {
+  //     element: item.element,
+  //     value: '',
+  //   };
+  //   if (item.element === 'Rating') {
+  //     $item.value = ref.inputField.current.state.rating;
+  //   } else if (item.element === 'Tags') {
+  //     $item.value = ref.inputField.current.state.value;
+  //   } else if (item.element === 'DatePicker') {
+  //     $item.value = ref.state.value;
+  //   } else if (item.element === 'Camera') {
+  //     $item.value = ref.state.img;
+  //   } else if (item.element === 'FileUpload') {
+  //     $item.value = ref.state.fileUpload;
+  //   } else if (ref && ref.inputField && ref.inputField.current) {
+  //     $item = ReactDOM.findDOMNode(ref.inputField.current);
+  //     if (trimValue && $item && typeof $item.value === 'string') {
+  //       $item.value = $item.value.trim();
+  //     }
+  //   }
+  //   return $item;
+  // };
 
   const _isIncorrect = (item) => {
     let incorrect = false;
@@ -153,23 +162,25 @@ const ReactFormGenerator = (props) => {
       name: item.field_name,
       custom_name: item.custom_name || item.field_name,
     };
+
     if (!itemData.name) return null;
-    const ref = inputs[item.field_name];
-    if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
-      const checked_options = [];
-      item.options.forEach((option) => {
-        const $option = ReactDOM.findDOMNode(
-          ref.options[`child_ref_${option.key}`]
-        );
-        if ($option.checked) {
-          checked_options.push(option.value);
-        }
-      });
-      itemData.value = checked_options;
-    } else {
-      if (!ref) return null;
-      itemData.value = _getItemValue(item, ref, trimValue).value;
-    }
+
+    // const ref = inputs[item.field_name];
+    // if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
+    //   const checked_options = [];
+    //   item.options.forEach((option) => {
+    //     const $option = ReactDOM.findDOMNode(
+    //       ref.options[`child_ref_${option.key}`]
+    //     );
+    //     if ($option.checked) {
+    //       checked_options.push(option.value);
+    //     }
+    //   });
+    //   itemData.value = checked_options;
+    // } else {
+    //   if (!ref) return null;
+    itemData.value = _getItemValue(item).value;
+    // }
     return itemData;
   };
 
@@ -230,13 +241,20 @@ const ReactFormGenerator = (props) => {
     }
   };
 
-  const handleChange = (event) => {
+  const handleChange = (fieldName, value) => {
+    setFieldValue(fieldName, value);
     if (props.onChange) {
-      const { onChange } = props;
       const data = _collectFormData(props.data, false);
-      onChange(data);
+      props.onChange(data);
     }
   };
+  // const handleChange = (event) => {
+  //   if (props.onChange) {
+  //     const { onChange } = props;
+  //     const data = _collectFormData(props.data, false);
+  //     onChange(data);
+  //   }
+  // };
 
   const validateForm = () => {
     const errors = [];
@@ -313,43 +331,6 @@ const ReactFormGenerator = (props) => {
     return data.find((x) => x.id === id);
   };
 
-  const getInputElement = (item) => {
-    if (item.custom) {
-      return getCustomElement(item);
-    }
-    const Input = FormElements[item.element];
-    return (
-      <Input
-        handleChange={handleChange}
-        ref={(c) => (inputs[item.field_name] = c)}
-        mutable={true}
-        key={`form_${item.id}`}
-        data={item}
-        read_only={props.read_only}
-        defaultValue={_getDefaultValue(item)}
-      />
-    );
-  };
-
-  const getContainerElement = (item, Element) => {
-    const controls = item.childItems.map((x) =>
-      x ? getInputElement(getDataById(x)) : <div>&nbsp;</div>
-    );
-    return (
-      <Element
-        mutable={true}
-        key={`form_${item.id}`}
-        data={item}
-        controls={controls}
-      />
-    );
-  };
-
-  const getSimpleElement = (item) => {
-    const Element = FormElements[item.element];
-    return <Element mutable={true} key={`form_${item.id}`} data={item} />;
-  };
-
   const getCustomElement = (item) => {
     const { intl } = props;
 
@@ -378,6 +359,64 @@ const ReactFormGenerator = (props) => {
         {...inputProps}
       />
     );
+  };
+
+  const getInputElement = (item) => {
+    if (item.custom) {
+      return getCustomElement(item);
+    }
+
+    const Input = FormElements[item.element];
+
+    return (
+      <Input
+        handleChange={(event) => {
+          handleChange(item.field_name, event.target.value);
+        }}
+        mutable={true}
+        key={`form_${item.id}`}
+        data={item}
+        read_only={props.read_only}
+        defaultValue={_getDefaultValue(item)}
+        value={values[item.field_name]}
+      />
+    );
+  };
+  // const getInputElement = (item) => {
+  //   if (item.custom) {
+  //     return getCustomElement(item);
+  //   }
+  //   const Input = FormElements[item.element];
+  //   return (
+  //     <Input
+  //       handleChange={handleChange}
+  //       ref={(c) => (inputs[item.field_name] = c)}
+  //       mutable={true}
+  //       key={`form_${item.id}`}
+  //       data={item}
+  //       read_only={props.read_only}
+  //       defaultValue={_getDefaultValue(item)}
+  //     />
+  //   );
+  // };
+
+  const getContainerElement = (item, Element) => {
+    const controls = item.childItems.map((x) =>
+      x ? getInputElement(getDataById(x)) : <div>&nbsp;</div>
+    );
+    return (
+      <Element
+        mutable={true}
+        key={`form_${item.id}`}
+        data={item}
+        controls={controls}
+      />
+    );
+  };
+
+  const getSimpleElement = (item) => {
+    const Element = FormElements[item.element];
+    return <Element mutable={true} key={`form_${item.id}`} data={item} />;
   };
 
   const handleRenderSubmit = () => {
@@ -528,41 +567,54 @@ const ReactFormGenerator = (props) => {
   };
 
   return (
+    <div>
+      <FormValidator emitter={emitter} />
+      <div className="react-form-builder-form">
+        <form
+          encType="multipart/form-data"
+          ref={form}
+          action={props.form_action}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          method={props.form_method}
+        >
+          {props.authenticity_token && (
+            <div style={formTokenStyle}>
+              <input name="utf8" type="hidden" value="&#x2713;" />
+              <input
+                name="authenticity_token"
+                type="hidden"
+                value={props.authenticity_token}
+              />
+              <input name="task_id" type="hidden" value={props.task_id} />
+            </div>
+          )}
+          {items}
+          <div className="btn-toolbar">
+            {!props.hide_actions && handleRenderSubmit()}
+            {!props.hide_actions && props.back_action && handleRenderBack()}
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const ReactFormGenerator = (props) => {
+  const { locale } = props;
+  const currentAppLocale = AppLocale[locale || 'en'];
+
+  return (
     <IntlProvider
       locale={currentAppLocale.locale}
       messages={currentAppLocale.messages}
     >
-      <div>
-        <FormValidator emitter={emitter} />
-        <div className="react-form-builder-form">
-          <form
-            encType="multipart/form-data"
-            ref={form}
-            action={props.form_action}
-            onBlur={handleBlur}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            method={props.form_method}
-          >
-            {props.authenticity_token && (
-              <div style={formTokenStyle}>
-                <input name="utf8" type="hidden" value="&#x2713;" />
-                <input
-                  name="authenticity_token"
-                  type="hidden"
-                  value={props.authenticity_token}
-                />
-                <input name="task_id" type="hidden" value={props.task_id} />
-              </div>
-            )}
-            {items}
-            <div className="btn-toolbar">
-              {!props.hide_actions && handleRenderSubmit()}
-              {!props.hide_actions && props.back_action && handleRenderBack()}
-            </div>
-          </form>
-        </div>
-      </div>
+      <FormProvider
+        initialValues={props.answer_data ? convert(props.answer_data) : {}}
+      >
+        <FormContent {...props} />
+      </FormProvider>
     </IntlProvider>
   );
 };

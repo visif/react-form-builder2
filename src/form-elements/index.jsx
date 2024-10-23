@@ -105,15 +105,13 @@ const LineBreak = (props) => {
 };
 
 const TextInput = (props) => {
-  const inputField = React.useRef();
-
   const inputProps = {
     type: 'text',
     className: 'form-control',
     name: props.data.field_name,
     defaultValue: props.mutable ? props.defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
+    onChange: props.handleChange,
   };
 
   let baseClasses = 'SortableItem rfb-item';
@@ -142,6 +140,7 @@ const EmailInput = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     ref: props.mutable ? inputField : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
+    onChange: props.handleChange,
   };
 
   let baseClasses = 'SortableItem rfb-item';
@@ -437,7 +436,10 @@ const Checkboxes = (props) => {
                 }}
                 {...inputProps}
               />
-              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
+              <label
+                className="custom-control-label"
+                htmlFor={`fid_${this_key}`}
+              >
                 {option.text}
               </label>
             </div>
@@ -492,7 +494,10 @@ const RadioButtons = (props) => {
                 }}
                 {...inputProps}
               />
-              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
+              <label
+                className="custom-control-label"
+                htmlFor={`fid_${this_key}`}
+              >
                 {option.text}
               </label>
             </div>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { format, parse, parseISO } from 'date-fns';
 import ReactDatePicker from 'react-datepicker';
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 
 const DatePicker = (props) => {
-  const inputField = useRef(null);
+  const { handleChange: onChangeHandler } = props;
 
   const updateFormat = (data, oldFormatMask) => {
     const { showTimeSelect, showTimeSelectOnly, showTimeInput } = data.data;
@@ -80,6 +80,7 @@ const DatePicker = (props) => {
         internalValue: formattedDate,
         placeholder,
       });
+      onChangeHandler({ target: { value: formattedDate } });
     } else {
       setState({
         ...state,
@@ -87,6 +88,7 @@ const DatePicker = (props) => {
         internalValue: dt,
         placeholder,
       });
+      onChangeHandler({ target: { value: dt ? format(dt, formatMask) : '' } });
     }
   };
 
@@ -102,7 +104,6 @@ const DatePicker = (props) => {
 
   if (props.mutable) {
     inputProps.defaultValue = props.defaultValue;
-    inputProps.ref = inputField;
   }
 
   let baseClasses = 'SortableItem rfb-item';
@@ -120,7 +121,6 @@ const DatePicker = (props) => {
             <input
               type="text"
               name={inputProps.name}
-              ref={inputProps.ref}
               readOnly={readOnly}
               placeholder={state.placeholder}
               value={state.value}
@@ -131,7 +131,6 @@ const DatePicker = (props) => {
             <input
               type="date"
               name={inputProps.name}
-              ref={inputProps.ref}
               onChange={handleChange}
               dateFormat="MM/DD/YYYY"
               value={state.value}
@@ -141,7 +140,6 @@ const DatePicker = (props) => {
           {!iOS && !readOnly && (
             <ReactDatePicker
               name={inputProps.name}
-              ref={inputProps.ref}
               onChange={handleChange}
               selected={state.internalValue}
               todayButton={'Today'}

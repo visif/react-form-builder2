@@ -329,7 +329,7 @@ const Signature = (props) => {
 };
 
 const Tags = (props) => {
-  const { defaultValue, data } = props;
+  const { defaultValue, data, handleChange: onHandleChange } = props;
 
   function getDefaultValue(initialValue, options) {
     if (defaultValue) {
@@ -342,12 +342,12 @@ const Tags = (props) => {
     return [];
   }
 
-  const inputField = React.useRef();
   const [value, setValue] = React.useState(
     getDefaultValue(defaultValue, data.options)
   );
 
   const handleChange = (e) => {
+    onHandleChange({ target: { value: e } });
     setValue(e || []);
   };
 
@@ -363,7 +363,6 @@ const Tags = (props) => {
     options,
     value: props.mutable ? value : options[0].text,
     isDisabled: props.mutable ? props.read_only : undefined,
-    ref: props.mutable ? inputField : undefined,
   };
 
   let baseClasses = 'SortableItem rfb-item';

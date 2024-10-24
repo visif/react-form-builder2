@@ -138,25 +138,6 @@ const StarRating = ({
     .filter(Boolean)
     .join(' ');
 
-  // const RatingContainer = () => (
-  //   <div
-  //     ref={containerRef}
-  //     className={containerClass}
-  //     data-content={state.glyph}
-  //     {...(state.editing && {
-  //       onMouseMove: handleMouseMove,
-  //       onMouseLeave: handleMouseLeave,
-  //       onClick: handleClick,
-  //     })}
-  //   >
-  //     <div
-  //       className="rating-stars"
-  //       data-content={state.glyph}
-  //       style={{ width: state.pos }}
-  //     />
-  //   </div>
-  // );
-
   return (
     <div className="star-rating-wrapper">
       <style>

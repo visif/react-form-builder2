@@ -522,8 +522,6 @@ const Image = (props) => {
 };
 
 const Rating = (props) => {
-  const inputField = React.createRef();
-
   const ratingProps = {
     name: props.data.field_name,
     ratingAmount: 5,
@@ -537,7 +535,9 @@ const Rating = (props) => {
     })(),
     editing: props.mutable,
     disabled: props.read_only,
-    ref: props.mutable ? inputField : undefined,
+    onRatingClick: (event, rating) => {
+      props.handleChange({ target: { value: rating.rating } });
+    },
   };
 
   let baseClasses = 'SortableItem rfb-item';

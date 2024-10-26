@@ -817,7 +817,7 @@ const FileUpload = (props) => {
 };
 
 const Range = (props) => {
-  const inputField = React.createRef();
+  const { handleChange } = props;
   const [value, setValue] = React.useState(
     props.defaultValue !== undefined
       ? parseInt(props.defaultValue, 10)
@@ -827,6 +827,7 @@ const Range = (props) => {
   const changeValue = (e) => {
     const { target } = e;
     setValue(target.value);
+    handleChange(e);
   };
 
   const name = props.data.field_name;
@@ -838,12 +839,8 @@ const Range = (props) => {
     max: props.data.max_value,
     step: props.data.step,
     value,
-    onChange: changeValue,
+    change: changeValue,
   };
-
-  if (props.mutable) {
-    rangeProps.ref = inputField;
-  }
 
   const datalist = [];
   for (

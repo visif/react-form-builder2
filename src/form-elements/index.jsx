@@ -406,7 +406,7 @@ const Checkboxes = (props) => {
               props.defaultValue !== undefined &&
               props.defaultValue.indexOf(option.key) > -1,
             disabled: props.read_only ? 'disabled' : undefined,
-            handleChange: props.handleChange,
+            onChange: props.handleChange,
           };
 
           return (

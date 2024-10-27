@@ -1,310 +1,152 @@
-import React, { useState, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect, useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import { EventEmitter } from 'fbemitter';
-import FormValidator from './form-validator';
-import FormElements from './form-elements';
+import { FormProvider, useFormStore } from './providers/FormProvider';
 import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from './multi-column';
 import { FieldSet } from './fieldset';
 import CustomElement from './form-elements/custom-element';
 import Registry from './stores/registry';
 import AppLocale from './language-provider';
-import { FormProvider, useFormStore } from './providers/FormProvider';
+import FormValidator from './form-validator';
+import FormElements from './form-elements';
 
-const { Image, Checkboxes, Signature, Download, Camera, FileUpload } =
-  FormElements;
+// Constants
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX =
+  /^[+]?(1\-|1\s|1|\d{3}\-|\d{3}\s|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/g;
 
-const convert = (answers) => {
-  if (Array.isArray(answers)) {
-    const result = {};
-    answers.forEach((x) => {
-      if (x.name.indexOf('tags_') > -1) {
-        result[x.name] = x.value.map((y) => y.value);
-      } else {
-        result[x.name] = x.value;
-      }
-    });
-    return result;
-  }
-  return answers || {};
+// Utility functions
+const convertAnswers = (answers) => {
+  if (!Array.isArray(answers)) return answers || {};
+
+  return answers.reduce(
+    (result, x) => ({
+      ...result,
+      [x.name]:
+        x.name.indexOf('tags_') > -1 ? x.value.map((y) => y.value) : x.value,
+    }),
+    {}
+  );
 };
 
-const FormContent = (props) => {
-  const inputs = {};
-  const [answerData] = useState({});
+const validateCorrectness = (item, value) => {
+  if (item.element === 'Rating') {
+    return value.toString() === item.correct;
+  }
+  return value.toLowerCase() === item.correct.trim().toLowerCase();
+};
 
-  const { values, setFieldValue, setMultipleValues } = useFormStore();
-  const form = useRef(null);
-  const emitter = new EventEmitter();
+// Custom hooks
+const useFormValidation = (props, emitter) => {
+  const validateEmail = (email) => EMAIL_REGEX.test(email);
+  const validatePhone = (phone) => PHONE_REGEX.test(phone);
 
-  useEffect(() => {
-    if (props.answer_data) {
-      const convertedData = convert(props.answer_data);
-      setMultipleValues(convertedData);
-    }
-  }, [props.answer_data, setMultipleValues]);
-
-  const _getDefaultValue = (item) => {
-    return values[item.field_name];
-  };
-
-  const _optionsDefaultValue = (item) => {
-    const defaultValue = _getDefaultValue(item);
-    if (defaultValue) {
-      return defaultValue;
-    }
-
-    const defaultChecked = [];
-    item.options.forEach((option) => {
-      if (answerData[`option_${option.key}`]) {
-        defaultChecked.push(option.key);
-      }
-    });
-    return defaultChecked;
-  };
-
-  const _getItemValue = (item) => ({
-    element: item.element,
-    value: values[item.field_name] || '',
-  });
-  // const _getItemValue = (item, ref, trimValue) => {
-  //   let $item = {
-  //     element: item.element,
-  //     value: '',
-  //   };
-  //   if (item.element === 'Rating') {
-  //     $item.value = ref.inputField.current.state.rating;
-  //   } else if (item.element === 'Tags') {
-  //     $item.value = ref.inputField.current.state.value;
-  //   } else if (item.element === 'DatePicker') {
-  //     $item.value = ref.state.value;
-  //   } else if (item.element === 'Camera') {
-  //     $item.value = ref.state.img;
-  //   } else if (item.element === 'FileUpload') {
-  //     $item.value = ref.state.fileUpload;
-  //   } else if (ref && ref.inputField && ref.inputField.current) {
-  //     $item = ReactDOM.findDOMNode(ref.inputField.current);
-  //     if (trimValue && $item && typeof $item.value === 'string') {
-  //       $item.value = $item.value.trim();
-  //     }
-  //   }
-  //   return $item;
-  // };
-
-  const _isIncorrect = (item) => {
-    let incorrect = false;
-    if (item.canHaveAnswer) {
-      const ref = inputs[item.field_name];
-      if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
-        item.options.forEach((option) => {
-          const $option = ReactDOM.findDOMNode(
-            ref.options[`child_ref_${option.key}`]
-          );
-          if (
-            (option.hasOwnProperty('correct') && !$option.checked) ||
-            (!option.hasOwnProperty('correct') && $option.checked)
-          ) {
-            incorrect = true;
-          }
-        });
-      } else {
-        const $item = _getItemValue(item);
-        if (item.element === 'Rating') {
-          if ($item.value.toString() !== item.correct) {
-            incorrect = true;
-          }
-        } else if (
-          $item.value.toLowerCase() !== item.correct.trim().toLowerCase()
-        ) {
-          incorrect = true;
-        }
-      }
-    }
-    return incorrect;
-  };
-
-  const _isInvalid = (item) => {
-    let invalid = false;
-    if (item.required === true) {
-      const ref = inputs[item.field_name];
-      if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
-        let checked_options = 0;
-        item.options.forEach((option) => {
-          const $option = ReactDOM.findDOMNode(
-            ref.options[`child_ref_${option.key}`]
-          );
-          if ($option.checked) {
-            checked_options += 1;
-          }
-        });
-        if (checked_options < 1) {
-          invalid = true;
-        }
-      } else {
-        const $item = _getItemValue(item);
-        if (item.element === 'Rating') {
-          if ($item.value === 0) {
-            invalid = true;
-          }
-        } else if ($item.value === undefined || $item.value.length < 1) {
-          invalid = true;
-        }
-      }
-    }
-    return invalid;
-  };
-
-  const _collect = (item) => {
-    const itemData = {
-      id: item.id,
-      name: item.field_name,
-      custom_name: item.custom_name || item.field_name,
-    };
-
-    if (!itemData.name) return null;
-
-    // if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
-    //   const checked_options = [];
-    //   item.options.forEach((option) => {
-    //     const $option = ReactDOM.findDOMNode(
-    //       ref.options[`child_ref_${option.key}`]
-    //     );
-    //     if ($option.checked) {
-    //       checked_options.push(option.value);
-    //     }
-    //   });
-    //   itemData.value = checked_options;
-    // } else {
-    //   if (!ref) return null;
-    itemData.value = _getItemValue(item).value;
-    // }
-    return itemData;
-  };
-
-  const _collectFormData = (data, trimValue) => {
-    const formData = [];
-    data.forEach((item) => {
-      const item_data = _collect(item, trimValue);
-      if (item_data) {
-        formData.push(item_data);
-      }
-    });
-    return formData;
-  };
-
-  const validateForm = () => {
+  return (data_items, values) => {
     const errors = [];
-    let data_items = props.data;
-    const { intl } = props;
-
-    if (props.display_short) {
-      data_items = props.data.filter((i) => i.alternateForm === true);
-    }
+    const { intl, validateForCorrectness } = props;
 
     data_items.forEach((item) => {
-      if (item.element === 'Signature') {
-        _getSignatureImg(item);
-      }
-
-      if (_isInvalid(item)) {
+      // Required field validation
+      if (item.required && !values[item.field_name]) {
         errors.push(
           `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`
         );
       }
 
-      if (item.element === 'EmailInput') {
-        const emailValue = _getItemValue(item).value;
-        if (emailValue) {
-          const validateEmail = (email) =>
-            email.match(
-              /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-          const checkEmail = validateEmail(emailValue);
-          if (!checkEmail) {
-            errors.push(
-              `${item.label} ${intl?.formatMessage({
-                id: 'message.invalid-email',
-              })}`
-            );
-          }
-        }
-      }
-
-      if (item.element === 'PhoneNumber') {
-        const phoneValue = _getItemValue(item).value;
-        if (phoneValue) {
-          const validatePhone = (phone) =>
-            phone.match(
-              /^[+]?(1\-|1\s|1|\d{3}\-|\d{3}\s|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/g
-            );
-          const checkPhone = validatePhone(phoneValue);
-          if (!checkPhone) {
-            errors.push(
-              `${item.label} ${intl?.formatMessage({
-                id: 'message.invalid-phone-number',
-              })}`
-            );
-          }
-        }
-      }
-
-      if (props.validateForCorrectness && _isIncorrect(item)) {
+      // Email validation
+      if (
+        item.element === 'EmailInput' &&
+        values[item.field_name] &&
+        !validateEmail(values[item.field_name])
+      ) {
         errors.push(
           `${item.label} ${intl?.formatMessage({
-            id: 'message.was-answered-incorrectly',
-          })}!`
+            id: 'message.invalid-email',
+          })}`
         );
+      }
+
+      // Phone validation
+      if (
+        item.element === 'PhoneNumber' &&
+        values[item.field_name] &&
+        !validatePhone(values[item.field_name])
+      ) {
+        errors.push(
+          `${item.label} ${intl?.formatMessage({
+            id: 'message.invalid-phone-number',
+          })}`
+        );
+      }
+
+      // Correctness validation
+      if (validateForCorrectness && item.canHaveAnswer) {
+        const isCorrect = validateCorrectness(item, values[item.field_name]);
+        if (!isCorrect) {
+          errors.push(
+            `${item.label} ${intl?.formatMessage({
+              id: 'message.was-answered-incorrectly',
+            })}!`
+          );
+        }
       }
     });
 
+    emitter.emit('formValidation', errors);
     return errors;
   };
+};
 
-  const _getSignatureImg = (item) => {
-    const ref = inputs[item.field_name];
-    const $canvas_sig = ref?.canvas?.current;
-    if ($canvas_sig) {
-      const base64 = $canvas_sig
-        .toDataURL()
-        .replace('data:image/png;base64,', '');
-      const isEmpty = $canvas_sig.isEmpty();
-      const $input_sig = ReactDOM.findDOMNode(ref.inputField.current);
-      if (isEmpty) {
-        $input_sig.value = '';
-      } else {
-        $input_sig.value = base64;
-      }
+const FormContent = (props) => {
+  const { values, setFieldValue, setMultipleValues } = useFormStore();
+  const emitter = useMemo(() => new EventEmitter(), []);
+  const validateForm = useFormValidation(props, emitter);
+
+  useEffect(() => {
+    if (props.answer_data) {
+      const convertedData = convertAnswers(props.answer_data);
+      setMultipleValues(convertedData);
     }
+  }, [props.answer_data, setMultipleValues]);
+
+  const getItemValue = (item) => ({
+    element: item.element,
+    value: values[item.field_name] || '',
+  });
+
+  const collectFormData = (data) => {
+    const formData = [];
+    data.forEach((item) => {
+      if (item.field_name) {
+        const itemData = {
+          id: item.id,
+          name: item.field_name,
+          custom_name: item.custom_name || item.field_name,
+          value: getItemValue(item).value,
+        };
+        formData.push(itemData);
+      }
+    });
+    return formData;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let errors = [];
+    const dataItems = props.display_short
+      ? props.data.filter((i) => i.alternateForm === true)
+      : props.data;
+
     if (!props.skip_validations) {
-      errors = validateForm();
-      emitter.emit('formValidation', errors);
+      const errors = validateForm(dataItems, values);
+      if (errors.length > 0) return;
     }
 
-    if (errors.length < 1) {
-      const { onSubmit } = props;
-      if (onSubmit) {
-        const data = _collectFormData(props.data, true);
-        onSubmit(data);
-      } else {
-        const $form = ReactDOM.findDOMNode(form.current);
-        $form.submit();
-      }
+    if (props.onSubmit) {
+      const formData = collectFormData(props.data);
+      props.onSubmit(formData);
     }
   };
-
-  // const handleBlur = (event) => {
-  //   if (props.onBlur) {
-  //     const { onBlur } = props;
-  //     const data = _collectFormData(props.data, true);
-  //     onBlur(data);
-  //   }
-  // };
 
   const handleChange = (fieldName, value, element) => {
     if (element === 'Checkboxes' || element === 'RadioButtons') {
@@ -312,75 +154,35 @@ const FormContent = (props) => {
     } else {
       setFieldValue(fieldName, value);
     }
+
     if (props.onChange) {
-      const data = _collectFormData(props.data, false);
-      props.onChange(data);
+      const formData = collectFormData(props.data);
+      props.onChange(formData);
     }
   };
 
-  const getDataById = (id) => {
-    const { data } = props;
-    return data.find((x) => x.id === id);
-  };
-
-  const getCustomElement = (item) => {
-    const { intl } = props;
-
+  const renderCustomElement = (item) => {
     if (!item.component || typeof item.component !== 'function') {
       item.component = Registry.get(item.key);
       if (!item.component) {
-        console.error(
-          `${item.element} ${intl.formatMessage({
-            id: 'message.was-not-registered',
-          })}`
-        );
+        console.error(`${item.element} was not registered`);
+        return null;
       }
     }
 
-    const inputProps = item.forwardRef && {
-      handleChange,
-      defaultValue: _getDefaultValue(item),
-      ref: (c) => (inputs[item.field_name] = c),
-    };
-    return (
-      <CustomElement
-        mutable={true}
-        read_only={props.read_only}
-        key={`form_${item.id}`}
-        data={item}
-        {...inputProps}
-      />
-    );
+    return <CustomElement {...item} />;
   };
 
-  const getInputElement = (item) => {
-    if (item.custom) {
-      return getCustomElement(item);
-    }
-
-    const Input = FormElements[item.element];
-
-    return (
-      <Input
-        handleChange={(event) => {
-          handleChange(item.field_name, event.target.value);
-        }}
-        mutable={true}
-        key={`form_${item.id}`}
-        data={item}
-        read_only={props.read_only}
-        defaultValue={_getDefaultValue(item)}
-        value={values[item.field_name]}
-      />
-    );
-  };
-
-  const getContainerElement = (item, Element) => {
+  const renderContainer = (item, Container) => {
     const controls = item.childItems.map((x) =>
-      x ? getInputElement(getDataById(x)) : <div>&nbsp;</div>
+      x ? (
+        renderFormElement(props.data.find((d) => d.id === x))
+      ) : (
+        <div>&nbsp;</div>
+      )
     );
     return (
-      <Element
+      <Container
         mutable={true}
         key={`form_${item.id}`}
         data={item}
@@ -389,156 +191,47 @@ const FormContent = (props) => {
     );
   };
 
-  const getSimpleElement = (item) => {
-    const Element = FormElements[item.element];
-    return <Element mutable={true} key={`form_${item.id}`} data={item} />;
-  };
+  const renderFormElement = (item) => {
+    if (!item) return null;
 
-  const handleRenderSubmit = () => {
-    const name = props.action_name || props.actionName;
-    const actionName = name || 'Submit';
-    const { submitButton = false } = props;
+    const commonProps = {
+      mutable: true,
+      key: `form_${item.id}`,
+      data: item,
+      read_only: props.read_only || item.readOnly,
+      defaultValue: values[item.field_name],
+      handleChange: (event) =>
+        handleChange(item.field_name, event.target.value, item.element),
+    };
+
+    const renderDefaultElement = (item, commonProps) => {
+      const Input = FormElements[item.element];
+      return Input ? <Input {...commonProps} /> : null;
+    };
+
+    const elementMap = {
+      CustomElement: () => renderCustomElement(item),
+      MultiColumnRow: () => renderContainer(item, MultiColumnRow),
+      ThreeColumnRow: () => renderContainer(item, ThreeColumnRow),
+      TwoColumnRow: () => renderContainer(item, TwoColumnRow),
+      FieldSet: () => renderContainer(item, FieldSet),
+      // Download: () => (
+      // <Download {...commonProps} download_path={props.download_path} />
+      // ),
+    };
 
     return (
-      submitButton || (
-        <input type="submit" className="btn btn-big" value={actionName} />
-      )
+      elementMap[item.element]?.() || renderDefaultElement(item, commonProps)
     );
   };
 
-  const handleRenderBack = () => {
-    const name = props.back_name || props.backName;
-    const backName = name || 'Cancel';
-    const { backButton = false } = props;
+  const formElements = useMemo(() => {
+    const data_items = props.display_short
+      ? props.data.filter((i) => i.alternateForm === true)
+      : props.data;
 
-    return (
-      backButton || (
-        <a
-          href={props.back_action}
-          className="btn btn-default btn-cancel btn-big"
-        >
-          {backName}
-        </a>
-      )
-    );
-  };
-
-  let data_items = props.data;
-
-  if (props.display_short) {
-    data_items = props.data.filter((i) => i.alternateForm === true);
-  }
-
-  data_items.forEach((item) => {
-    if (
-      item &&
-      item.readOnly &&
-      item.variableKey &&
-      props.variables[item.variableKey]
-    ) {
-      answerData[item.field_name] = props.variables[item.variableKey];
-    }
-  });
-
-  const items = data_items
-    .filter((x) => !x.parentId)
-    .map((item) => {
-      if (!item) return null;
-      switch (item.element) {
-        case 'TextInput':
-        case 'EmailInput':
-        case 'PhoneNumber':
-        case 'NumberInput':
-        case 'TextArea':
-        case 'Dropdown':
-        case 'DatePicker':
-        case 'RadioButtons':
-        case 'Rating':
-        case 'Tags':
-        case 'Range':
-          return getInputElement(item);
-        case 'CustomElement':
-          return getCustomElement(item);
-        case 'MultiColumnRow':
-          return getContainerElement(item, MultiColumnRow);
-        case 'ThreeColumnRow':
-          return getContainerElement(item, ThreeColumnRow);
-        case 'TwoColumnRow':
-          return getContainerElement(item, TwoColumnRow);
-        case 'FieldSet':
-          return getContainerElement(item, FieldSet);
-        case 'Signature':
-          return (
-            <Signature
-              ref={(c) => (inputs[item.field_name] = c)}
-              read_only={props.read_only || item.readOnly}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-              defaultValue={_getDefaultValue(item)}
-            />
-          );
-        case 'Checkboxes':
-          return (
-            <Checkboxes
-              read_only={props.read_only}
-              handleChange={(event) => {
-                handleChange(item.field_name, event.target.value, item.element);
-              }}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-              defaultValue={_optionsDefaultValue(item)}
-            />
-          );
-        case 'Image':
-          return (
-            <Image
-              handleChange={handleChange}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-              defaultValue={_getDefaultValue(item)}
-            />
-          );
-        case 'Download':
-          return (
-            <Download
-              download_path={props.download_path}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-            />
-          );
-        case 'Camera':
-          return (
-            <Camera
-              read_only={props.read_only || item.readOnly}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-              defaultValue={_getDefaultValue(item)}
-            />
-          );
-        case 'FileUpload':
-          return (
-            <FileUpload
-              ref={(c) => (inputs[item.field_name] = c)}
-              read_only={props.read_only || item.readOnly}
-              mutable={true}
-              key={`form_${item.id}`}
-              data={item}
-              defaultValue={_getDefaultValue(item)}
-            />
-          );
-        default:
-          return getSimpleElement(item);
-      }
-    });
-
-  const formTokenStyle = {
-    display: 'none',
-  };
+    return data_items.filter((x) => !x.parentId).map(renderFormElement);
+  }, [props.data, props.display_short, values]);
 
   return (
     <div>
@@ -546,15 +239,12 @@ const FormContent = (props) => {
       <div className="react-form-builder-form">
         <form
           encType="multipart/form-data"
-          ref={form}
           action={props.form_action}
-          // onBlur={handleBlur}
-          // onChange={handleChange}
           onSubmit={handleSubmit}
           method={props.form_method}
         >
           {props.authenticity_token && (
-            <div style={formTokenStyle}>
+            <div style={{ display: 'none' }}>
               <input name="utf8" type="hidden" value="&#x2713;" />
               <input
                 name="authenticity_token"
@@ -564,29 +254,39 @@ const FormContent = (props) => {
               <input name="task_id" type="hidden" value={props.task_id} />
             </div>
           )}
-          {items}
-          <div className="btn-toolbar">
-            {!props.hide_actions && handleRenderSubmit()}
-            {!props.hide_actions && props.back_action && handleRenderBack()}
-          </div>
+          {formElements}
+          {!props.hide_actions && (
+            <div className="btn-toolbar">
+              <input
+                type="submit"
+                className="btn btn-big"
+                value={props.action_name || props.actionName || 'Submit'}
+              />
+              {props.back_action && (
+                <a
+                  href={props.back_action}
+                  className="btn btn-default btn-cancel btn-big"
+                >
+                  {props.back_name || props.backName || 'Cancel'}
+                </a>
+              )}
+            </div>
+          )}
         </form>
       </div>
     </div>
   );
 };
 
-const ReactFormGenerator = (props) => {
-  const { locale } = props;
-  const currentAppLocale = AppLocale[locale || 'en'];
+const ReactFormGenerator = ({ locale = 'en', answer_data, ...props }) => {
+  const currentAppLocale = AppLocale[locale];
 
   return (
     <IntlProvider
       locale={currentAppLocale.locale}
       messages={currentAppLocale.messages}
     >
-      <FormProvider
-        initialValues={props.answer_data ? convert(props.answer_data) : {}}
-      >
+      <FormProvider initialValues={convertAnswers(answer_data) || {}}>
         <FormContent {...props} />
       </FormProvider>
     </IntlProvider>

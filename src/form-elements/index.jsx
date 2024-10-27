@@ -431,8 +431,6 @@ const Checkboxes = (props) => {
 };
 
 const RadioButtons = (props) => {
-  const options = React.useRef({});
-
   let classNames = 'custom-control custom-radio';
   if (props.data.inline) {
     classNames += ' option-inline';
@@ -460,6 +458,7 @@ const RadioButtons = (props) => {
               (props.defaultValue.indexOf(option.key) > -1 ||
                 props.defaultValue.indexOf(option.value) > -1),
             disabled: props.read_only ? 'disabled' : undefined,
+            onChange: props.handleChange,
           };
 
           return (
@@ -467,11 +466,6 @@ const RadioButtons = (props) => {
               <input
                 id={`fid_${this_key}`}
                 className="custom-control-input"
-                ref={(c) => {
-                  if (c && props.mutable) {
-                    options.current[`child_ref_${option.key}`] = c;
-                  }
-                }}
                 {...inputProps}
               />
               <label

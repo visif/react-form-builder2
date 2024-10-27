@@ -269,7 +269,6 @@ const Dropdown = (props) => {
 
 const Signature = (props) => {
   const [defaultValue, setDefaultValue] = React.useState(props.defaultValue);
-  const inputField = React.useRef();
   const canvas = React.useRef();
 
   const clear = () => {
@@ -285,7 +284,6 @@ const Signature = (props) => {
     type: 'hidden',
     name: props.data.field_name,
     defaultValue: props.mutable ? defaultValue : undefined,
-    ref: props.mutable ? inputField : undefined,
   };
 
   const padProps = {

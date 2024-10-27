@@ -197,7 +197,7 @@ const FormContent = (props) => {
 
   const _getSignatureImg = (item) => {
     const ref = inputs[item.field_name];
-    const $canvas_sig = ref.canvas.current;
+    const $canvas_sig = ref?.canvas?.current;
     if ($canvas_sig) {
       const base64 = $canvas_sig
         .toDataURL()

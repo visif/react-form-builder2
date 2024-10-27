@@ -380,8 +380,6 @@ const Tags = (props) => {
 };
 
 const Checkboxes = (props) => {
-  const options = React.useRef({});
-
   let classNames = 'custom-control custom-checkbox';
   if (props.data.inline) {
     classNames += ' option-inline';
@@ -408,6 +406,7 @@ const Checkboxes = (props) => {
               props.defaultValue !== undefined &&
               props.defaultValue.indexOf(option.key) > -1,
             disabled: props.read_only ? 'disabled' : undefined,
+            handleChange: props.handleChange,
           };
 
           return (
@@ -415,11 +414,6 @@ const Checkboxes = (props) => {
               <input
                 id={`fid_${this_key}`}
                 className="custom-control-input"
-                ref={(c) => {
-                  if (c && props.mutable) {
-                    options.current[`child_ref_${option.key}`] = c;
-                  }
-                }}
                 {...inputProps}
               />
               <label

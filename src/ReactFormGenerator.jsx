@@ -63,12 +63,10 @@ const FormContent = (props) => {
     return defaultChecked;
   };
 
-  const _getItemValue = (item) => {
-    return {
-      element: item.element,
-      value: values[item.field_name] || '',
-    };
-  };
+  const _getItemValue = (item) => ({
+    element: item.element,
+    value: values[item.field_name] || '',
+  });
   // const _getItemValue = (item, ref, trimValue) => {
   //   let $item = {
   //     element: item.element,
@@ -110,7 +108,7 @@ const FormContent = (props) => {
           }
         });
       } else {
-        const $item = _getItemValue(item, ref);
+        const $item = _getItemValue(item);
         if (item.element === 'Rating') {
           if ($item.value.toString() !== item.correct) {
             incorrect = true;
@@ -143,7 +141,7 @@ const FormContent = (props) => {
           invalid = true;
         }
       } else {
-        const $item = _getItemValue(item, ref);
+        const $item = _getItemValue(item);
         if (item.element === 'Rating') {
           if ($item.value === 0) {
             invalid = true;
@@ -156,7 +154,7 @@ const FormContent = (props) => {
     return invalid;
   };
 
-  const _collect = (item, trimValue) => {
+  const _collect = (item) => {
     const itemData = {
       id: item.id,
       name: item.field_name,
@@ -165,7 +163,6 @@ const FormContent = (props) => {
 
     if (!itemData.name) return null;
 
-    // const ref = inputs[item.field_name];
     // if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
     //   const checked_options = [];
     //   item.options.forEach((option) => {
@@ -193,6 +190,74 @@ const FormContent = (props) => {
       }
     });
     return formData;
+  };
+
+  const validateForm = () => {
+    const errors = [];
+    let data_items = props.data;
+    const { intl } = props;
+
+    if (props.display_short) {
+      data_items = props.data.filter((i) => i.alternateForm === true);
+    }
+
+    data_items.forEach((item) => {
+      if (item.element === 'Signature') {
+        _getSignatureImg(item);
+      }
+
+      if (_isInvalid(item)) {
+        errors.push(
+          `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`
+        );
+      }
+
+      if (item.element === 'EmailInput') {
+        const emailValue = _getItemValue(item).value;
+        if (emailValue) {
+          const validateEmail = (email) =>
+            email.match(
+              /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+          const checkEmail = validateEmail(emailValue);
+          if (!checkEmail) {
+            errors.push(
+              `${item.label} ${intl?.formatMessage({
+                id: 'message.invalid-email',
+              })}`
+            );
+          }
+        }
+      }
+
+      if (item.element === 'PhoneNumber') {
+        const phoneValue = _getItemValue(item).value;
+        if (phoneValue) {
+          const validatePhone = (phone) =>
+            phone.match(
+              /^[+]?(1\-|1\s|1|\d{3}\-|\d{3}\s|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/g
+            );
+          const checkPhone = validatePhone(phoneValue);
+          if (!checkPhone) {
+            errors.push(
+              `${item.label} ${intl?.formatMessage({
+                id: 'message.invalid-phone-number',
+              })}`
+            );
+          }
+        }
+      }
+
+      if (props.validateForCorrectness && _isIncorrect(item)) {
+        errors.push(
+          `${item.label} ${intl?.formatMessage({
+            id: 'message.was-answered-incorrectly',
+          })}!`
+        );
+      }
+    });
+
+    return errors;
   };
 
   const _getSignatureImg = (item) => {
@@ -233,97 +298,24 @@ const FormContent = (props) => {
     }
   };
 
-  const handleBlur = (event) => {
-    if (props.onBlur) {
-      const { onBlur } = props;
-      const data = _collectFormData(props.data, true);
-      onBlur(data);
-    }
-  };
+  // const handleBlur = (event) => {
+  //   if (props.onBlur) {
+  //     const { onBlur } = props;
+  //     const data = _collectFormData(props.data, true);
+  //     onBlur(data);
+  //   }
+  // };
 
-  const handleChange = (fieldName, value) => {
-    setFieldValue(fieldName, value);
+  const handleChange = (fieldName, value, element) => {
+    if (element === 'Checkboxes' || element === 'RadioButtons') {
+      setMultipleValues({ [fieldName]: value });
+    } else {
+      setFieldValue(fieldName, value);
+    }
     if (props.onChange) {
       const data = _collectFormData(props.data, false);
       props.onChange(data);
     }
-  };
-  // const handleChange = (event) => {
-  //   if (props.onChange) {
-  //     const { onChange } = props;
-  //     const data = _collectFormData(props.data, false);
-  //     onChange(data);
-  //   }
-  // };
-
-  const validateForm = () => {
-    const errors = [];
-    let data_items = props.data;
-    const { intl } = props;
-
-    if (props.display_short) {
-      data_items = props.data.filter((i) => i.alternateForm === true);
-    }
-
-    data_items.forEach((item) => {
-      if (item.element === 'Signature') {
-        _getSignatureImg(item);
-      }
-
-      if (_isInvalid(item)) {
-        errors.push(
-          `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`
-        );
-      }
-
-      if (item.element === 'EmailInput') {
-        const ref = inputs[item.field_name];
-        const emailValue = _getItemValue(item, ref).value;
-        if (emailValue) {
-          const validateEmail = (email) =>
-            email.match(
-              /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
-          const checkEmail = validateEmail(emailValue);
-          if (!checkEmail) {
-            errors.push(
-              `${item.label} ${intl?.formatMessage({
-                id: 'message.invalid-email',
-              })}`
-            );
-          }
-        }
-      }
-
-      if (item.element === 'PhoneNumber') {
-        const ref = inputs[item.field_name];
-        const phoneValue = _getItemValue(item, ref).value;
-        if (phoneValue) {
-          const validatePhone = (phone) =>
-            phone.match(
-              /^[+]?(1\-|1\s|1|\d{3}\-|\d{3}\s|)?((\(\d{3}\))|\d{3})(\-|\s)?(\d{3})(\-|\s)?(\d{4})$/g
-            );
-          const checkPhone = validatePhone(phoneValue);
-          if (!checkPhone) {
-            errors.push(
-              `${item.label} ${intl?.formatMessage({
-                id: 'message.invalid-phone-number',
-              })}`
-            );
-          }
-        }
-      }
-
-      if (props.validateForCorrectness && _isIncorrect(item)) {
-        errors.push(
-          `${item.label} ${intl?.formatMessage({
-            id: 'message.was-answered-incorrectly',
-          })}!`
-        );
-      }
-    });
-
-    return errors;
   };
 
   const getDataById = (id) => {
@@ -382,23 +374,6 @@ const FormContent = (props) => {
       />
     );
   };
-  // const getInputElement = (item) => {
-  //   if (item.custom) {
-  //     return getCustomElement(item);
-  //   }
-  //   const Input = FormElements[item.element];
-  //   return (
-  //     <Input
-  //       handleChange={handleChange}
-  //       ref={(c) => (inputs[item.field_name] = c)}
-  //       mutable={true}
-  //       key={`form_${item.id}`}
-  //       data={item}
-  //       read_only={props.read_only}
-  //       defaultValue={_getDefaultValue(item)}
-  //     />
-  //   );
-  // };
 
   const getContainerElement = (item, Element) => {
     const controls = item.childItems.map((x) =>
@@ -506,9 +481,10 @@ const FormContent = (props) => {
         case 'Checkboxes':
           return (
             <Checkboxes
-              ref={(c) => (inputs[item.field_name] = c)}
               read_only={props.read_only}
-              handleChange={handleChange}
+              handleChange={(event) => {
+                handleChange(item.field_name, event.target.value, item.element);
+              }}
               mutable={true}
               key={`form_${item.id}`}
               data={item}
@@ -518,7 +494,6 @@ const FormContent = (props) => {
         case 'Image':
           return (
             <Image
-              ref={(c) => (inputs[item.field_name] = c)}
               handleChange={handleChange}
               mutable={true}
               key={`form_${item.id}`}
@@ -538,7 +513,6 @@ const FormContent = (props) => {
         case 'Camera':
           return (
             <Camera
-              ref={(c) => (inputs[item.field_name] = c)}
               read_only={props.read_only || item.readOnly}
               mutable={true}
               key={`form_${item.id}`}
@@ -574,8 +548,8 @@ const FormContent = (props) => {
           encType="multipart/form-data"
           ref={form}
           action={props.form_action}
-          onBlur={handleBlur}
-          onChange={handleChange}
+          // onBlur={handleBlur}
+          // onChange={handleChange}
           onSubmit={handleSubmit}
           method={props.form_method}
         >

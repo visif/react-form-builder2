@@ -98,7 +98,8 @@ const useFormValidation = (props, emitter) => {
 };
 
 const FormContent = (props) => {
-  const { values, setFieldValue, setMultipleValues } = useFormStore();
+  const { values, setFieldValue, setMultipleValues, toggleCheckbox } =
+    useFormStore();
   const emitter = useMemo(() => new EventEmitter(), []);
   const validateForm = useFormValidation(props, emitter);
 
@@ -149,8 +150,8 @@ const FormContent = (props) => {
   };
 
   const handleChange = (fieldName, value, element) => {
-    if (element === 'Checkboxes' || element === 'RadioButtons') {
-      setMultipleValues({ [fieldName]: value });
+    if (element === 'Checkboxes') {
+      toggleCheckbox(fieldName, value);
     } else {
       setFieldValue(fieldName, value);
     }

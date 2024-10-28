@@ -159,7 +159,7 @@ const defaultItems = (intl) => [
     name: intl.formatMessage({ id: 'fieldset' }),
     label: intl.formatMessage({ id: 'fieldset' }),
     icon: 'fas fa-bars',
-    field_name: 'fieldset-element',
+    // field_name: 'fieldset-element',
   },
   {
     key: 'TwoColumnRow',

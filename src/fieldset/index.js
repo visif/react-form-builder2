@@ -1,3 +1,3 @@
 import FieldSet from './FieldSet';
 
-export { FieldSet };
+export default FieldSet;

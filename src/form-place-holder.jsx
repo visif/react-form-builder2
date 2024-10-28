@@ -27,9 +27,4 @@ PlaceHolder.propTypes = {
   intl: PropTypes.object.isRequired,
 };
 
-PlaceHolder.defaultProps = {
-  text: 'Dropzone',
-  show: false,
-};
-
 export default injectIntl(PlaceHolder);

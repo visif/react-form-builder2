@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl';
 import { EventEmitter } from 'fbemitter';
 import { FormProvider, useFormStore } from './providers/FormProvider';
 import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from './multi-column';
-import { FieldSet } from './fieldset';
+import FieldSet from './fieldset';
 import CustomElement from './form-elements/custom-element';
 import Registry from './stores/registry';
 import AppLocale from './language-provider';
@@ -41,11 +41,11 @@ const useFormValidation = (props, emitter) => {
   const validateEmail = (email) => EMAIL_REGEX.test(email);
   const validatePhone = (phone) => PHONE_REGEX.test(phone);
 
-  return (data_items, values) => {
+  return (dataItems, values) => {
     const errors = [];
     const { intl, validateForCorrectness } = props;
 
-    data_items.forEach((item) => {
+    dataItems.forEach((item) => {
       // Required field validation
       if (item.required && !values[item.field_name]) {
         errors.push(
@@ -174,24 +174,6 @@ const FormContent = (props) => {
     return <CustomElement {...item} />;
   };
 
-  const renderContainer = (item, Container) => {
-    const controls = item.childItems.map((x) =>
-      x ? (
-        renderFormElement(props.data.find((d) => d.id === x))
-      ) : (
-        <div>&nbsp;</div>
-      )
-    );
-    return (
-      <Container
-        mutable={true}
-        key={`form_${item.id}`}
-        data={item}
-        controls={controls}
-      />
-    );
-  };
-
   const renderFormElement = (item) => {
     if (!item) return null;
 
@@ -201,13 +183,30 @@ const FormContent = (props) => {
       data: item,
       read_only: props.read_only || item.readOnly,
       defaultValue: values[item.field_name],
-      handleChange: (event) =>
-        handleChange(item.field_name, event.target.value, item.element),
+      handleChange: (event) => {
+        handleChange(item.field_name, event.target.value, item.element);
+      },
     };
 
-    const renderDefaultElement = (item, commonProps) => {
-      const Input = FormElements[item.element];
-      return Input ? <Input {...commonProps} /> : null;
+    const renderContainer = (activeItem, Container) => {
+      const controls = activeItem.childItems.map((childId) => {
+        const childItem = props.data.find((d) => d.id === childId);
+        return childItem ? renderFormElement(childItem) : <div>&nbsp;</div>;
+      });
+
+      return (
+        <Container
+          mutable={true}
+          key={`form_${activeItem.id}`}
+          data={activeItem}
+          controls={controls}
+        />
+      );
+    };
+
+    const renderDefaultElement = (activeItem, activeCommonProps) => {
+      const Input = FormElements[activeItem.element];
+      return Input ? <Input {...activeCommonProps} /> : null;
     };
 
     const elementMap = {
@@ -227,11 +226,11 @@ const FormContent = (props) => {
   };
 
   const formElements = useMemo(() => {
-    const data_items = props.display_short
+    const dataItems = props.display_short
       ? props.data.filter((i) => i.alternateForm === true)
       : props.data;
 
-    return data_items.filter((x) => !x.parentId).map(renderFormElement);
+    return dataItems.filter((x) => !x.parentId).map(renderFormElement);
   }, [props.data, props.display_short, values]);
 
   return (
@@ -279,7 +278,7 @@ const FormContent = (props) => {
   );
 };
 
-const ReactFormGenerator = ({ locale = 'en', answer_data, ...props }) => {
+const ReactFormGenerator = ({ locale = 'en', answerData, ...props }) => {
   const currentAppLocale = AppLocale[locale];
 
   return (
@@ -287,7 +286,7 @@ const ReactFormGenerator = ({ locale = 'en', answer_data, ...props }) => {
       locale={currentAppLocale.locale}
       messages={currentAppLocale.messages}
     >
-      <FormProvider initialValues={convertAnswers(answer_data) || {}}>
+      <FormProvider initialValues={convertAnswers(answerData) || {}}>
         <FormContent {...props} />
       </FormProvider>
     </IntlProvider>

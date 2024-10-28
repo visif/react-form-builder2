@@ -2,12 +2,32 @@ import SortableElement from './sortable-element';
 import PlaceHolder from './form-place-holder';
 import BaseFormElements from './form-elements';
 import { TwoColumnRow, ThreeColumnRow, MultiColumnRow } from './multi-column';
-import { FieldSet } from './fieldset';
+import FieldSet from './fieldset';
 import CustomElement from './form-elements/custom-element';
 
 const {
-  Header, Paragraph, Label, LineBreak, TextInput, EmailInput, PhoneNumber, NumberInput, TextArea, Dropdown, Checkboxes,
-  DatePicker, RadioButtons, Image, Rating, Tags, Signature, HyperLink, Download, Camera, Range, FileUpload,
+  Header,
+  Paragraph,
+  Label,
+  LineBreak,
+  TextInput,
+  EmailInput,
+  PhoneNumber,
+  NumberInput,
+  TextArea,
+  Dropdown,
+  Checkboxes,
+  DatePicker,
+  RadioButtons,
+  Image,
+  Rating,
+  Tags,
+  Signature,
+  HyperLink,
+  Download,
+  Camera,
+  Range,
+  FileUpload,
 } = BaseFormElements;
 
 const FormElements = {};

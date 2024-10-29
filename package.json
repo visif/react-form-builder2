@@ -35,9 +35,11 @@
     }
   ],
   "dependencies": {
+    "antd": "^5.21.6",
     "beedle": "^0.8.1",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
+    "dayjs": "^1.11.13",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.8.4",
     "es6-promise": "^4.2.8",

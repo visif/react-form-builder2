@@ -1,159 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { format, parse, parseISO } from 'date-fns';
-import ReactDatePicker from 'react-datepicker';
+import React from 'react';
+import { DatePicker as AntDatePicker } from 'antd';
+import dayjs from 'dayjs';
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 
 const DatePicker = (props) => {
-  const { handleChange: onChangeHandler } = props;
+  const {
+    handleChange: onChangeHandler,
+    data,
+    defaultValue,
+    style,
+    read_only: readOnly,
+  } = props;
 
-  const updateFormat = (data, oldFormatMask) => {
-    const { showTimeSelect, showTimeSelectOnly, showTimeInput } = data.data;
-    const dateFormat =
-      showTimeSelect && showTimeSelectOnly ? '' : data.data.dateFormat;
-    const timeFormat =
-      showTimeSelect || showTimeInput ? data.data.timeFormat : '';
-    const formatMask = `${dateFormat} ${timeFormat}`.trim();
-    const updated = formatMask !== oldFormatMask;
+  const {
+    showTimeSelect,
+    showTimeSelectOnly,
+    dateFormat = 'DD/MM/YYYY',
+    timeFormat = 'HH:mm:ss',
+    defaultToday,
+    field_name: fieldName,
+  } = data;
 
-    return { updated, formatMask };
+  // Determine the format based on time selection options
+  const format = (() => {
+    if (showTimeSelectOnly) return timeFormat;
+    if (showTimeSelect) return `${dateFormat} ${timeFormat}`;
+    return dateFormat;
+  })();
+
+  // Convert defaultValue to dayjs if exists
+  const initialValue = (() => {
+    if (defaultValue) return dayjs(defaultValue, format);
+    if (defaultToday) return dayjs();
+    return undefined;
+  })();
+
+  const handleChange = (date, dateString) => {
+    onChangeHandler({
+      target: {
+        value: dateString,
+      },
+    });
   };
-
-  const updateDateTime = (data, state, formatMask) => {
-    let value;
-    let internalValue;
-    const { defaultToday } = data.data;
-    if (
-      defaultToday &&
-      (data.defaultValue === '' || data.defaultValue === undefined)
-    ) {
-      value = format(new Date(), formatMask);
-      internalValue = new Date();
-    } else {
-      value = data.defaultValue;
-
-      if (value === '' || value === undefined) {
-        internalValue = undefined;
-      } else {
-        internalValue = parse(value, state.formatMask, new Date());
-      }
-    }
-    return {
-      value,
-      internalValue,
-      placeholder: formatMask.toLowerCase(),
-      defaultToday,
-      formatMask: state.formatMask,
-    };
-  };
-
-  const { formatMask } = updateFormat(props, null);
-  const initialState = updateDateTime(props, { formatMask }, formatMask);
-
-  const [state, setState] = useState(initialState);
-
-  useEffect(() => {
-    const { updated, formatMask: newFormatMask } = updateFormat(
-      props,
-      state.formatMask
-    );
-    if (props.data.defaultToday !== state.defaultToday || updated) {
-      const newState = updateDateTime(props, state, newFormatMask);
-      setState(newState);
-    }
-  }, [props]);
-
-  const handleChange = (dt) => {
-    let placeholder;
-    const { formatMask: stateFormatMask } = state;
-    if (dt && dt.target) {
-      placeholder =
-        dt && dt.target && dt.target.value === ''
-          ? stateFormatMask.toLowerCase()
-          : '';
-      const formattedDate = dt.target.value
-        ? format(parseISO(dt.target.value), stateFormatMask)
-        : '';
-      setState({
-        ...state,
-        value: formattedDate,
-        internalValue: formattedDate,
-        placeholder,
-      });
-      onChangeHandler({ target: { value: formattedDate } });
-    } else {
-      setState({
-        ...state,
-        value: dt ? format(dt, formatMask) : '',
-        internalValue: dt,
-        placeholder,
-      });
-      onChangeHandler({ target: { value: dt ? format(dt, formatMask) : '' } });
-    }
-  };
-
-  const { showTimeSelect, showTimeSelectOnly, showTimeInput } = props.data;
-  const inputProps = {
-    type: 'date',
-    className: 'form-control',
-    name: props.data.field_name,
-  };
-  const readOnly = props.data.readOnly || props.read_only;
-  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const placeholderText = state.formatMask.toLowerCase();
-
-  if (props.mutable) {
-    inputProps.defaultValue = props.defaultValue;
-  }
 
   let baseClasses = 'SortableItem rfb-item';
-  if (props.data.pageBreakBefore) {
+  if (data.pageBreakBefore) {
     baseClasses += ' alwaysbreak';
   }
 
   return (
-    <div className={baseClasses} style={{ ...props.style }}>
+    <div className={baseClasses} style={style}>
       <ComponentHeader {...props} />
       <div className="form-group">
         <ComponentLabel {...props} />
         <div>
-          {readOnly && (
-            <input
-              type="text"
-              name={inputProps.name}
-              readOnly={readOnly}
-              placeholder={state.placeholder}
-              value={state.value}
-              className="form-control"
-            />
-          )}
-          {iOS && !readOnly && (
-            <input
-              type="date"
-              name={inputProps.name}
-              onChange={handleChange}
-              dateFormat="MM/DD/YYYY"
-              value={state.value}
-              className="form-control"
-            />
-          )}
-          {!iOS && !readOnly && (
-            <ReactDatePicker
-              name={inputProps.name}
-              onChange={handleChange}
-              selected={state.internalValue}
-              todayButton={'Today'}
-              className="form-control"
-              isClearable={true}
-              showTimeSelect={showTimeSelect}
-              showTimeSelectOnly={showTimeSelectOnly}
-              showTimeInput={showTimeInput}
-              dateFormat={state.formatMask}
-              portalId="root-portal"
-              autoComplete="off"
-              placeholderText={placeholderText}
-            />
-          )}
+          <AntDatePicker
+            name={fieldName}
+            onChange={handleChange}
+            value={initialValue}
+            format={format}
+            showTime={showTimeSelect}
+            disabled={readOnly}
+            allowClear={true}
+            placeholder={format.toLowerCase()}
+            className="form-control"
+            style={{ width: '100%' }}
+            inputReadOnly={true} // Prevents keyboard input but allows picker interaction
+            picker={showTimeSelectOnly ? 'time' : 'date'}
+          />
         </div>
       </div>
     </div>

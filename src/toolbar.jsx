@@ -517,7 +517,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
   }, []);
 
   return (
-    <div className="col-md-3 react-form-builder-toolbar float-right">
+    <div className="col-md-6 react-form-builder-toolbar float-right">
       <h4>{intl.formatMessage({ id: 'toolbox' })}</h4>
       <ul>
         {groupedItems.map(renderItem)}

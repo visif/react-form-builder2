@@ -4,17 +4,19 @@ import store from './stores/store';
 import FormElementsEdit from './form-dynamic-edit';
 import SortableFormElements from './sortable-form-elements';
 import CustomDragLayer from './form-elements/component-drag-layer';
+import useUndoRedo, { ACTION } from './functions/useUndoRedo';
 
 const { PlaceHolder } = SortableFormElements;
 
 const Preview = (props) => {
+  const { onLoad, onPost } = props;
+
   const [data, setData] = useState(props.data || []);
   const [, setAnswerData] = useState({});
   const editForm = useRef(null);
   let seq = 0;
 
-  const { onLoad, onPost } = props;
-  store.setExternalHandler(onLoad, onPost);
+  const { updateState } = useUndoRedo();
 
   const updateElement = (element) => {
     let found = false;
@@ -51,7 +53,12 @@ const Preview = (props) => {
     [props.editElement]
   );
 
-  const _onChange = (newData) => {
+  const onChange = (payload) => {
+    const { data: newData, action } = payload || {
+      data: [],
+      action: ACTION.UPDATE,
+    };
+
     const newAnswerData = {};
 
     newData.forEach((item) => {
@@ -62,19 +69,29 @@ const Preview = (props) => {
 
     setData(newData);
     setAnswerData(newAnswerData);
+
+    if (action !== ACTION.UNDO && action !== ACTION.REDO) {
+      updateState(newData);
+    }
   };
 
   useEffect(() => {
-    const { url, saveUrl, saveAlways } = props;
-    store.subscribe((state) => _onChange(state.data));
+    const { url, saveUrl, saveAlways, data: propData } = props;
+
+    store.setExternalHandler(onLoad, onPost);
+
+    setData(propData || []);
+    setAnswerData({});
+
+    store.subscribe((state) => onChange(state.payload));
     store.dispatch('load', {
       loadUrl: url,
       saveUrl,
-      data: props.data || [],
+      data: propData || [],
       saveAlways,
     });
-    document.addEventListener('mousedown', editModeOff);
 
+    document.addEventListener('mousedown', editModeOff);
     return () => {
       document.removeEventListener('mousedown', editModeOff);
     };
@@ -82,7 +99,7 @@ const Preview = (props) => {
 
   const getDataById = (id) => data.find((x) => x && x.id === id);
 
-  const _onDestroy = (item) => {
+  const onDestroy = (item) => {
     if (item.childItems) {
       item.childItems.forEach((x) => {
         const child = getDataById(x);
@@ -233,7 +250,7 @@ const Preview = (props) => {
         getDataById={getDataById}
         setAsChild={setAsChild}
         removeChild={removeChild}
-        _onDestroy={_onDestroy}
+        _onDestroy={onDestroy}
       />
     );
   };
@@ -261,7 +278,44 @@ const Preview = (props) => {
   const items = filteredData.map((item, index) => getElement(item, index));
 
   return (
-    <div className={classes}>
+    <div className={classes} style={{ height: '100%', scrollbarWidth: 'none' }}>
+      <div className="preview-toolbar">
+        <span
+          style={{
+            border: '1px solid #ddd',
+            padding: 8,
+            marginRight: '4px',
+            backgroundColor: '#ffffff',
+          }}
+          onClick={() => {
+            const event = new window.KeyboardEvent('keydown', {
+              key: 'z',
+              ctrlKey: true,
+            });
+            document.dispatchEvent(event);
+          }}
+        >
+          <i class="fas fa-history" style={{ marginRight: 8 }} />
+          Undo
+        </span>
+        <span
+          style={{
+            border: '1px solid #ddd',
+            padding: 8,
+            backgroundColor: '#ffffff',
+          }}
+          onClick={() => {
+            const event = new window.KeyboardEvent('keydown', {
+              key: 'y',
+              ctrlKey: true,
+            });
+            document.dispatchEvent(event);
+          }}
+        >
+          <i className="fas fa-redo" style={{ marginRight: 8 }} />
+          Redo
+        </span>
+      </div>
       <div className="edit-form" ref={editForm}>
         {props.editElement !== null && showEditForm()}
       </div>
@@ -283,7 +337,7 @@ Preview.defaultProps = {
   files: [],
   editMode: false,
   editElement: null,
-  className: 'col-md-9 react-form-builder-preview float-left',
+  className: 'col-md-6 react-form-builder-preview float-left',
   renderEditForm: (props) => <FormElementsEdit {...props} />,
 };
 

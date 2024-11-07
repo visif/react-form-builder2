@@ -9,6 +9,8 @@ import ReactBootstrapSlider from 'react-bootstrap-slider';
 
 import StarRating from './star-rating';
 import DatePicker from './date-picker';
+import DataSource from './datasource';
+
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
@@ -895,6 +897,7 @@ FormElements.EmailInput = EmailInput;
 FormElements.PhoneNumber = PhoneNumber;
 FormElements.NumberInput = NumberInput;
 FormElements.TextArea = TextArea;
+FormElements.DataSource = DataSource;
 FormElements.Dropdown = Dropdown;
 FormElements.Signature = Signature;
 FormElements.Checkboxes = Checkboxes;

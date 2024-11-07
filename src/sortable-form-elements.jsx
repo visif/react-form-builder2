@@ -28,6 +28,7 @@ const {
   Camera,
   Range,
   FileUpload,
+  DataSource,
 } = BaseFormElements;
 
 const FormElements = {};
@@ -60,5 +61,6 @@ FormElements.TwoColumnRow = SortableElement(TwoColumnRow);
 FormElements.ThreeColumnRow = SortableElement(ThreeColumnRow);
 FormElements.MultiColumnRow = SortableElement(MultiColumnRow);
 FormElements.CustomElement = SortableElement(CustomElement);
+FormElements.DataSource = SortableElement(DataSource);
 
 export default FormElements;

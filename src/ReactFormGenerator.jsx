@@ -186,6 +186,7 @@ const FormContent = (props) => {
       handleChange: (event) => {
         handleChange(item.field_name, event.target.value, item.element);
       },
+      getDataSource: props.getDataSource,
     };
 
     const renderContainer = (activeItem, Container) => {
@@ -226,9 +227,10 @@ const FormContent = (props) => {
   };
 
   const formElements = useMemo(() => {
-    const dataItems = props.display_short
-      ? props.data.filter((i) => i.alternateForm === true)
-      : props.data;
+    const dataItems =
+      (props.display_short
+        ? props.data.filter((i) => i.alternateForm === true)
+        : props.data) || [];
 
     return dataItems.filter((x) => !x.parentId).map(renderFormElement);
   }, [props.data, props.display_short, values]);

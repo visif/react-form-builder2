@@ -251,6 +251,33 @@ const Preview = (props) => {
         setAsChild={setAsChild}
         removeChild={removeChild}
         _onDestroy={onDestroy}
+        getDataSource={(params) => {
+          if (params?.sourceType === 'name') {
+            return [
+              { id: 1, name: 'NameA lastNameA' },
+              { id: 2, name: 'NameB lastNameB' },
+            ];
+          }
+          if (params?.sourceType === 'department') {
+            return [
+              { id: 1, name: 'departmentA' },
+              { id: 2, name: 'departmentB' },
+            ];
+          }
+          if (params?.sourceType === 'role') {
+            return [
+              { id: 1, name: 'roleA' },
+              { id: 2, name: 'roleB' },
+            ];
+          }
+          if (params?.sourceType === 'form') {
+            return [
+              { id: 1, name: 'formA' },
+              { id: 2, name: 'formB' },
+            ];
+          }
+          return [];
+        }}
       />
     );
   };

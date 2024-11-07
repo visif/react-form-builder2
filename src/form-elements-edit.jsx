@@ -24,6 +24,7 @@ const toolbar = {
 const FormElementsEdit = (props) => {
   const [element, setElement] = useState(props.element);
   const [dirty, setDirty] = useState(false);
+  const [formDataSource, setFormDataSource] = useState([]);
 
   useEffect(() => {
     setElement(props.element);
@@ -313,6 +314,109 @@ const FormElementsEdit = (props) => {
           element={props.element}
           key={props.element.options.length}
         />
+      )}
+      {Object.prototype.hasOwnProperty.call(props.element, 'sourceType') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="sourceType">
+            Source Type
+          </label>
+          <select
+            className="form-control"
+            id="sourceType"
+            defaultValue={props.element.sourceType}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('sourceType', 'value', e)}
+          >
+            <option value="name" key="name">
+              Name
+            </option>
+            <option value="department" key="department">
+              Department
+            </option>
+            <option value="role" key="role">
+              Role
+            </option>
+            <option value="form" key="form">
+              Form
+            </option>
+          </select>
+        </div>
+      )}
+      {props.element.sourceType === 'form' && (
+        <div>
+          {Object.prototype.hasOwnProperty.call(
+            props.element,
+            'formSource'
+          ) && (
+            <div className="form-group">
+              <label className="control-label" htmlFor="formSource">
+                Form Source
+              </label>
+              <select
+                className="form-control"
+                id="formSource"
+                value={this.props.element.formSource}
+                defaultValue={this.props.element.formSource}
+                onBlur={() => updateElement()}
+                onChange={(e) => editElementProp('formSource', 'value', e)}
+              >
+                <option value={-1} key={-1}>
+                  " Please select "
+                </option>
+                {formDataSource &&
+                  formDataSource.map((item) => {
+                    return (
+                      <option value={item.id} key={item.id}>
+                        {item.name}
+                      </option>
+                    );
+                  })}
+              </select>
+            </div>
+          )}
+          {this.props.element.sourceType === 'form' && (
+            <div className="form-group">
+              <label className="control-label" htmlFor="formSource">
+                Select Fields
+              </label>
+              {this.state.activeForm &&
+                this.state.activeForm.columns &&
+                this.state.activeForm.columns.map((item) => {
+                  return (
+                    <div className="custom-control custom-checkbox">
+                      <input
+                        id={item.field_name}
+                        className="custom-control-input"
+                        type="checkbox"
+                        checked={
+                          Object.prototype.hasOwnProperty.call(
+                            props.element,
+                            `formField${item.field_name}`
+                          )
+                            ? props.element[`formField${item.field_name}`]
+                            : false
+                        }
+                        value={item.field_name}
+                        onChange={(e) =>
+                          editElementProp(
+                            `formField${item.field_name}`,
+                            'checked',
+                            e
+                          )
+                        }
+                      />
+                      <label
+                        className="custom-control-label"
+                        htmlFor={item.field_name}
+                      >
+                        {item.label || item.text || ''}
+                      </label>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

@@ -154,6 +154,17 @@ const defaultItems = (intl) => [
     field_name: 'text_area_',
   },
   {
+    key: 'DataSource',
+    name: 'DataSource',
+    icon: 'fa fa-database',
+    field_name: 'data_source_',
+    sourceType: 'name',
+    formSource: '',
+    formField: {},
+    canHaveAnswer: true,
+    label: 'Placeholder Label',
+  },
+  {
     key: 'FieldSet',
     canHaveAnswer: false,
     name: intl.formatMessage({ id: 'fieldset' }),
@@ -468,6 +479,12 @@ const Toolbar = ({ intl, items: propsItems }) => {
 
     if (item.element === 'MultiColumnRow') {
       elementOptions.col_count = item.col_count;
+    }
+
+    if (item.key === 'DataSource') {
+      elementOptions.sourceType = item.sourceType;
+      elementOptions.formSource = item.formSource;
+      elementOptions.formField = item.formField || {};
     }
 
     if (item.defaultValue) {

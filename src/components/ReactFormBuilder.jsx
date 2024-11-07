@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import { IntlProvider } from "react-intl";
-import Preview from "../preview";
-import Toolbar from "../toolbar";
-import Registry from "../stores/registry";
-import AppLocale from "../language-provider";
+import React, { useState } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { IntlProvider } from 'react-intl';
+import Preview from '../preview';
+import Toolbar from '../toolbar';
+import Registry from '../stores/registry';
+import AppLocale from '../language-provider';
 
 const ReactFormBuilder = (props) => {
   const { locale } = props;
@@ -37,7 +37,7 @@ const ReactFormBuilder = (props) => {
     items: props.toolbarItems,
   };
 
-  const currentAppLocale = AppLocale[locale || "en"];
+  const currentAppLocale = AppLocale[locale || 'en'];
 
   return (
     <DndProvider backend={HTML5Backend} context={window}>
@@ -64,6 +64,7 @@ const ReactFormBuilder = (props) => {
               editElement={editElement}
               renderEditForm={props.renderEditForm}
               saveAlways={props.saveAlways}
+              getDataSource={props.getDataSource}
             />
             <Toolbar {...toolbarProps} customItems={props.customToolbarItems} />
           </div>

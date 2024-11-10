@@ -29,6 +29,7 @@ const {
   Range,
   FileUpload,
   DataSource,
+  Table,
 } = BaseFormElements;
 
 const FormElements = {};
@@ -62,5 +63,6 @@ FormElements.ThreeColumnRow = SortableElement(ThreeColumnRow);
 FormElements.MultiColumnRow = SortableElement(MultiColumnRow);
 FormElements.CustomElement = SortableElement(CustomElement);
 FormElements.DataSource = SortableElement(DataSource);
+FormElements.Table = SortableElement(Table);
 
 export default FormElements;

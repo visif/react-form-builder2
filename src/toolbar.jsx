@@ -12,11 +12,11 @@ function buildItems(items, defaultItems) {
   }
   return items.map((x) => {
     let found = defaultItems.find(
-      (y) => x.element === y.element && y.key === x.key
+      (y) => x.element === y.element && y.key === x.key,
     );
     if (!found) {
       found = defaultItems.find(
-        (y) => (x.element || x.key) === (y.element || y.key)
+        (y) => (x.element || x.key) === (y.element || y.key),
       );
     }
     if (found) {
@@ -163,6 +163,15 @@ const defaultItems = (intl) => [
     formField: {},
     canHaveAnswer: true,
     label: 'Placeholder Label',
+  },
+  {
+    key: 'Table',
+    name: 'Table',
+    icon: 'fas fa-table',
+    field_name: 'tables_',
+    columns: [],
+    rowLabels: [],
+    rows: 3,
   },
   {
     key: 'FieldSet',
@@ -390,7 +399,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
 
   const addCustomOptions = (item, elementOptions) => {
     if (item.type === 'custom') {
-      const customOptions = Object.assign({}, item, elementOptions);
+      const customOptions = { ...item, ...elementOptions };
       customOptions.custom = true;
       customOptions.component = item.component || null;
       customOptions.custom_options = item.custom_options || [];
@@ -506,6 +515,25 @@ const Toolbar = ({ intl, items: propsItems }) => {
       } else {
         elementOptions.options = _defaultItemOptions(elementOptions.element);
       }
+    }
+
+    if (item.key === 'Table') {
+      if (item.columns.length > 0) {
+        elementOptions.columns = item.columns;
+      } else {
+        elementOptions.columns = [
+          { text: 'Column1', key: `table_column_${ID.uuid()}`, width: 1 },
+          { text: 'Column2', key: `table_column_${ID.uuid()}`, width: 1 },
+          { text: 'Column3', key: `table_column_${ID.uuid()}`, width: 1 },
+        ];
+      }
+
+      if (item.rowLabels?.length > 0) {
+        elementOptions.rowLabels = item.rowLabels;
+      } else {
+        elementOptions.rowLabels = [];
+      }
+      elementOptions.rows = item.rows || 3;
     }
 
     return elementOptions;

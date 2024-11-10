@@ -10,6 +10,7 @@ import ReactBootstrapSlider from 'react-bootstrap-slider';
 import StarRating from './star-rating';
 import DatePicker from './date-picker';
 import DataSource from './datasource';
+import Table from './table';
 
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
@@ -343,7 +344,7 @@ const Tags = (props) => {
   }
 
   const [value, setValue] = React.useState(
-    getDefaultValue(defaultValue, data.options)
+    getDefaultValue(defaultValue, data.options),
   );
 
   const handleChange = (e) => {
@@ -590,7 +591,7 @@ const Camera = (props) => {
   const [previewImg, setPreviewImg] = React.useState(null);
 
   const displayImage = (e) => {
-    const target = e.target;
+    const { target } = e;
     if (target.files && target.files.length) {
       setImg(target.files[0]);
       setPreviewImg(URL.createObjectURL(target.files[0]));
@@ -698,7 +699,7 @@ const FileUpload = (props) => {
   const [fileUpload, setFileUpload] = React.useState(null);
 
   const displayFileUpload = (e) => {
-    const target = e.target;
+    const { target } = e;
     let file;
 
     if (target.files && target.files.length > 0) {
@@ -783,7 +784,7 @@ const FileUpload = (props) => {
                   <div style={{ display: 'inline-block', marginLeft: '5px' }}>
                     {fileUpload.size.length > 6
                       ? `Size:  ${Math.ceil(
-                          fileUpload.size / (1024 * 1024)
+                          fileUpload.size / (1024 * 1024),
                         )} mb`
                       : `Size:  ${Math.ceil(fileUpload.size / 1024)} kb`}
                   </div>
@@ -809,7 +810,7 @@ const Range = (props) => {
   const [value, setValue] = React.useState(
     props.defaultValue !== undefined
       ? parseInt(props.defaultValue, 10)
-      : parseInt(props.data.default_value, 10)
+      : parseInt(props.data.default_value, 10),
   );
 
   const changeValue = (e) => {
@@ -898,6 +899,7 @@ FormElements.PhoneNumber = PhoneNumber;
 FormElements.NumberInput = NumberInput;
 FormElements.TextArea = TextArea;
 FormElements.DataSource = DataSource;
+FormElements.Table = Table;
 FormElements.Dropdown = Dropdown;
 FormElements.Signature = Signature;
 FormElements.Checkboxes = Checkboxes;

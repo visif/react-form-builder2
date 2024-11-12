@@ -1,15 +1,15 @@
 /// root file for the react form builder
 
-import React from "react";
-import ReactDOM from "react-dom";
-import DemoBar from "./demobar";
-import { ReactFormBuilder } from "./src/index";
-import * as variables from "./variables";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import DemoBar from './demobar';
+import { ReactFormBuilder } from './src/index';
+import * as variables from './variables';
 
-require("./scss/application.scss");
+require('./scss/application.scss');
 
-const url = "/api/formdata";
-const saveUrl = "/api/formdata";
+const url = '/api/formdata';
+const saveUrl = '/api/formdata';
 
 // const items = [{
 //     key: 'Header',
@@ -82,7 +82,7 @@ const saveUrl = "/api/formdata";
 //   },
 // ];
 
-const root = ReactDOM.createRoot(document.getElementById("form-builder"));
+const root = ReactDOM.createRoot(document.getElementById('form-builder'));
 root.render(
   <React.StrictMode>
     <ReactFormBuilder
@@ -91,14 +91,18 @@ root.render(
       saveUrl={saveUrl}
       locale="en"
       saveAlways={false}
+      onImageUpload={() =>
+        // return Math.random(1000).toString()
+         'http://www.isocafe.com:8080/VisiforgeDC//temp/formimage/C27E1F69-7C67-4306-8A08-5A783F27F9F3.jpeg'
+      }
       // toolbarItems={items}
     />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
-const root2 = ReactDOM.createRoot(document.getElementById("demo-bar"));
+const root2 = ReactDOM.createRoot(document.getElementById('demo-bar'));
 root2.render(
   <React.StrictMode>
     <DemoBar variables={variables} />,
-  </React.StrictMode>
+  </React.StrictMode>,
 );

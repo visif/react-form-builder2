@@ -1,40 +1,32 @@
-{
-  "parser": "babel-eslint",
-  "extends": ["airbnb-base"],
-  "plugins": [
-    "react"
+{ 
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
-  "globals": {
-    "window": true,
-    "document": true,
-    "navigator": true
-  },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
   "rules": {
-    "quotes": ["error", "single"],
-    "max-len": [1, 180, 2, {"ignoreComments": true}],
-    "semi": [2, "always"],
-    "comma-dangle": "warn",
-    "camelcase": "warn",
-    "prefer-destructuring": "warn",
-    "no-param-reassign": "warn",
-    "linebreak-style": 0,
-    "operator-linebreak": "off",
-    "no-underscore-dangle": "off",
-    "class-methods-use-this": "off",
-    "arrow-parens": "off",
-    "indent": "off",
-    "no-plusplus": "off",
-    "no-return-assign": "off",
-    "object-curly-newline": "off",
-    "no-prototype-builtins": "warn",
-    "react/jsx-uses-vars": [2],
-    "react/jsx-uses-react": 1
-  },
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx"]
+    "require-jsdoc": "off",
+    "new-cap": [
+      "error",
+      {
+        "newIsCap": true,
+        "capIsNew": false,
+        "properties": true
       }
-    }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "no-console": ["error", { "allow": ["error", "info", "warn"]}],
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/explicit-function-return-type": "off"
   }
 }

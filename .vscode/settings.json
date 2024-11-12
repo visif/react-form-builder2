@@ -27,7 +27,6 @@
     "**/*.code-search": true,
     "**/dist": true,
     "**/build": true,
-    "**/.next": true
   },
 
   "[typescript]": {

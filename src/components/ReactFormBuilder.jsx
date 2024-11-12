@@ -65,6 +65,7 @@ const ReactFormBuilder = (props) => {
               renderEditForm={props.renderEditForm}
               saveAlways={props.saveAlways}
               getDataSource={props.getDataSource}
+              getActiveUserProperties={props.getActiveUserProperties}
             />
             <Toolbar {...toolbarProps} customItems={props.customToolbarItems} />
           </div>

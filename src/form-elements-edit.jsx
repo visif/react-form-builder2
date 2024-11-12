@@ -197,7 +197,7 @@ const FormElementsEdit = (props) => {
           )}
           {Object.prototype.hasOwnProperty.call(
             props.element,
-            'defaultToday'
+            'defaultToday',
           ) && (
             <div className="custom-control custom-checkbox">
               <input
@@ -218,7 +218,7 @@ const FormElementsEdit = (props) => {
           )}
           {Object.prototype.hasOwnProperty.call(
             props.element,
-            'showTimeSelect'
+            'showTimeSelect',
           ) && (
             <div className="custom-control custom-checkbox">
               <input
@@ -242,7 +242,7 @@ const FormElementsEdit = (props) => {
           {props.element.showTimeSelect &&
             Object.prototype.hasOwnProperty.call(
               props.element,
-              'showTimeSelectOnly'
+              'showTimeSelectOnly',
             ) && (
               <div className="custom-control custom-checkbox">
                 <input
@@ -265,7 +265,7 @@ const FormElementsEdit = (props) => {
             )}
           {Object.prototype.hasOwnProperty.call(
             props.element,
-            'showTimeInput'
+            'showTimeInput',
           ) && (
             <div className="custom-control custom-checkbox">
               <input
@@ -301,6 +301,42 @@ const FormElementsEdit = (props) => {
                 </label>
               </div>
             )}
+        </div>
+      )}
+      {Object.prototype.hasOwnProperty.call(props.element, 'position') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="position">
+            Role / Position
+          </label>
+          <input
+            id="position"
+            type="text"
+            className="form-control"
+            defaultValue={props.element.position}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('position', 'value', e)}
+          />
+        </div>
+      )}
+      {Object.prototype.hasOwnProperty.call(props.element, 'specificRole') && (
+        <div className="form-group">
+          <label className="control-label">
+            Pre Defined User / Role {Boolean(props.element.specificRole)}
+          </label>
+          <select
+            className="form-control"
+            id="specificRole"
+            defaultValue={props.element.specificRole}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('specificRole', 'value', e)}
+          >
+            <option value="specific" key="specific">
+              Specific
+            </option>
+            <option value="notSpecific" key="notSpecific">
+              Not specific
+            </option>
+          </select>
         </div>
       )}
       {Object.prototype.hasOwnProperty.call(props.element, 'options') && (
@@ -346,7 +382,7 @@ const FormElementsEdit = (props) => {
         <div>
           {Object.prototype.hasOwnProperty.call(
             props.element,
-            'formSource'
+            'formSource',
           ) && (
             <div className="form-group">
               <label className="control-label" htmlFor="formSource">
@@ -364,13 +400,11 @@ const FormElementsEdit = (props) => {
                   " Please select "
                 </option>
                 {formDataSource &&
-                  formDataSource.map((item) => {
-                    return (
+                  formDataSource.map((item) => (
                       <option value={item.id} key={item.id}>
                         {item.name}
                       </option>
-                    );
-                  })}
+                    ))}
               </select>
             </div>
           )}
@@ -381,8 +415,7 @@ const FormElementsEdit = (props) => {
               </label>
               {this.state.activeForm &&
                 this.state.activeForm.columns &&
-                this.state.activeForm.columns.map((item) => {
-                  return (
+                this.state.activeForm.columns.map((item) => (
                     <div className="custom-control custom-checkbox">
                       <input
                         id={item.field_name}
@@ -391,7 +424,7 @@ const FormElementsEdit = (props) => {
                         checked={
                           Object.prototype.hasOwnProperty.call(
                             props.element,
-                            `formField${item.field_name}`
+                            `formField${item.field_name}`,
                           )
                             ? props.element[`formField${item.field_name}`]
                             : false
@@ -401,7 +434,7 @@ const FormElementsEdit = (props) => {
                           editElementProp(
                             `formField${item.field_name}`,
                             'checked',
-                            e
+                            e,
                           )
                         }
                       />
@@ -412,12 +445,12 @@ const FormElementsEdit = (props) => {
                         {item.label || item.text || ''}
                       </label>
                     </div>
-                  );
-                })}
+                  ))}
             </div>
           )}
         </div>
       )}
+
     </div>
   );
 };

@@ -99,6 +99,11 @@ export default class Demobar extends React.Component {
     return [];
   }
 
+  getActiveUserProperties = () => ({
+    name: 'test',
+    userId: 'id001',
+  })
+
   render() {
     let modalClass = 'modal';
     if (this.state.previewVisible) {
@@ -164,6 +169,7 @@ export default class Demobar extends React.Component {
                   data={this.state.data}
                   locale="en"
                   getDataSource={this.getDataSource}
+                  getActiveUserProperties={this.getActiveUserProperties}
                 />
                 <div className="modal-footer">
                   <button
@@ -198,6 +204,7 @@ export default class Demobar extends React.Component {
                   data={this.state.data}
                   locale="en"
                   getDataSource={this.getDataSource}
+                  getActiveUserProperties={this.getActiveUserProperties}
                 />
                 <div className="modal-footer">
                   <button
@@ -230,6 +237,7 @@ export default class Demobar extends React.Component {
                   hide_actions={false}
                   locale="en"
                   getDataSource={this.getDataSource}
+                  getActiveUserProperties={this.getActiveUserProperties}
                 />
                 <div className="modal-footer">
                   <button

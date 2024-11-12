@@ -25,7 +25,7 @@ const convertAnswers = (answers) => {
       [x.name]:
         x.name.indexOf('tags_') > -1 ? x.value.map((y) => y.value) : x.value,
     }),
-    {}
+    {},
   );
 };
 
@@ -49,7 +49,7 @@ const useFormValidation = (props, emitter) => {
       // Required field validation
       if (item.required && !values[item.field_name]) {
         errors.push(
-          `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`
+          `${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`,
         );
       }
 
@@ -62,7 +62,7 @@ const useFormValidation = (props, emitter) => {
         errors.push(
           `${item.label} ${intl?.formatMessage({
             id: 'message.invalid-email',
-          })}`
+          })}`,
         );
       }
 
@@ -75,7 +75,7 @@ const useFormValidation = (props, emitter) => {
         errors.push(
           `${item.label} ${intl?.formatMessage({
             id: 'message.invalid-phone-number',
-          })}`
+          })}`,
         );
       }
 
@@ -86,7 +86,7 @@ const useFormValidation = (props, emitter) => {
           errors.push(
             `${item.label} ${intl?.formatMessage({
               id: 'message.was-answered-incorrectly',
-            })}!`
+            })}!`,
           );
         }
       }
@@ -187,6 +187,7 @@ const FormContent = (props) => {
         handleChange(item.field_name, event.target.value, item.element);
       },
       getDataSource: props.getDataSource,
+      getActiveUserProperties: props.getActiveUserProperties,
     };
 
     const renderContainer = (activeItem, Container) => {

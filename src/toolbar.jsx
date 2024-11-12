@@ -269,6 +269,14 @@ const defaultItems = (intl) => [
     field_name: 'signature_',
   },
   {
+    key: 'Signature2',
+    name: 'Signature',
+    icon: 'fas fa-signature',
+    field_name: 'signature2_',
+    position: 'Placeholder Text',
+    specificRole: 'specific',
+  },
+  {
     key: 'HyperLink',
     name: intl.formatMessage({ id: 'website' }),
     icon: 'fas fa-link',
@@ -494,6 +502,11 @@ const Toolbar = ({ intl, items: propsItems }) => {
       elementOptions.sourceType = item.sourceType;
       elementOptions.formSource = item.formSource;
       elementOptions.formField = item.formField || {};
+    }
+
+    if (item.key === 'Signature2') {
+      elementOptions.position = 'Placeholder Text';
+      elementOptions.specificRole = 'specific';
     }
 
     if (item.defaultValue) {

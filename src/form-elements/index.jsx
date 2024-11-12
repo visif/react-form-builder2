@@ -11,6 +11,7 @@ import StarRating from './star-rating';
 import DatePicker from './date-picker';
 import DataSource from './datasource';
 import Table from './table';
+import Signature2 from './signature2';
 
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
@@ -913,5 +914,6 @@ FormElements.Download = Download;
 FormElements.Camera = Camera;
 FormElements.FileUpload = FileUpload;
 FormElements.Range = Range;
+FormElements.Signature2 = Signature2;
 
 export default FormElements;

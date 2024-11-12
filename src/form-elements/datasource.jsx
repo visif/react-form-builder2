@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import ComponentHeader from './component-header';
-import ComponentLabel from './component-label';
+import React, { useEffect, useState } from 'react'
+import ComponentHeader from './component-header'
+import ComponentLabel from './component-label'
 
 const DataSource = (props) => {
-  const { defaultValue = {}, getDataSource, handleChange } = props || {};
+  const { defaultValue = {}, getDataSource, handleChange } = props || {}
 
-  const [sourceList, setSourceList] = useState([]);
-  const [matchedList, setMatchedList] = useState([]);
-  const [searchText, setSearchText] = useState(defaultValue.value);
-  const [selectedItem, setSelectedItem] = useState(defaultValue.selectedItem);
+  const [sourceList, setSourceList] = useState([])
+  const [matchedList, setMatchedList] = useState([])
+  const [searchText, setSearchText] = useState(defaultValue.value)
+  const [selectedItem, setSelectedItem] = useState(defaultValue.selectedItem)
   const [defaultSelectedItem, setDefaultSelectedItem] = useState(
     defaultValue.selectedItem
-  );
-  const [isShowingList, setIsShowingList] = useState(false);
-  const [sourceType] = useState(props.data.sourceType);
+  )
+  const [isShowingList, setIsShowingList] = useState(false)
+  const [sourceType] = useState(props.data.sourceType)
 
   useEffect(() => {
     const fetchData = async () => {
       if (typeof getDataSource === 'function') {
-        const data = await getDataSource(props.data);
-        setSourceList(data);
-        setMatchedList(data);
+        const data = await getDataSource(props.data)
+        setSourceList(data)
+        setMatchedList(data)
       }
-    };
-    fetchData();
-  }, [getDataSource, props.data]);
+    }
+    fetchData()
+  }, [getDataSource, props.data])
 
   useEffect(() => {
     if (
@@ -32,47 +32,44 @@ const DataSource = (props) => {
       JSON.stringify(props.defaultValue.selectedItem) !==
         JSON.stringify(defaultSelectedItem)
     ) {
-      const _defaultValue = props.defaultValue || {};
-      setSearchText(_defaultValue.value);
-      setSelectedItem(_defaultValue.selectedItem);
-      setDefaultSelectedItem(_defaultValue.selectedItem);
+      const _defaultValue = props.defaultValue || {}
+      setSearchText(_defaultValue.value)
+      setSelectedItem(_defaultValue.selectedItem)
+      setDefaultSelectedItem(_defaultValue.selectedItem)
     }
-  }, [props.defaultValue, defaultSelectedItem]);
+  }, [props.defaultValue, defaultSelectedItem])
 
   const handleInputFocus = () => {
-    setIsShowingList(true);
-  };
+    setIsShowingList(true)
+  }
 
   const handleInputBlur = () => {
     setTimeout(() => {
-      setIsShowingList(false);
-    }, 200);
-  };
+      setIsShowingList(false)
+    }, 200)
+  }
 
   const debounceOnChange = (value) => {
     const matchData = sourceList.filter((item) => {
-      return `${item.name}`
-        .toLocaleLowerCase()
-        .includes(`${value}`.toLocaleLowerCase());
-    });
-    setSearchText(value);
-    setMatchedList(matchData);
-  };
+      return `${item.name}`.toLocaleLowerCase().includes(`${value}`.toLocaleLowerCase())
+    })
+    setSearchText(value)
+    setMatchedList(matchData)
+  }
 
   const handleOnChange = (event) => {
     if (event.key === 'Enter') {
-      return;
+      return
     }
-    debounceOnChange(event.target.value);
-  };
+    debounceOnChange(event.target.value)
+  }
 
-  const userProperties =
-    props.getActiveUserProperties && props.getActiveUserProperties();
+  const userProperties = props.getActiveUserProperties && props.getActiveUserProperties()
 
-  const savedEditor = props.editor;
-  let isSameEditor = true;
+  const savedEditor = props.editor
+  let isSameEditor = true
   if (savedEditor && savedEditor.userId && !!userProperties) {
-    isSameEditor = userProperties.userId === savedEditor.userId;
+    isSameEditor = userProperties.userId === savedEditor.userId
   }
 
   const inputProps = {
@@ -84,15 +81,15 @@ const DataSource = (props) => {
     onFocus: handleInputFocus,
     onBlur: handleInputBlur,
     onChange: handleOnChange,
-  };
-
-  if (props.mutable) {
-    inputProps.defaultValue = props.defaultValue;
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  if (props.mutable) {
+    inputProps.defaultValue = props.defaultValue
+  }
+
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -134,8 +131,8 @@ const DataSource = (props) => {
                   border: '1px solid rgba(0, 0, 0, 0.125)',
                 }}
                 onClick={() => {
-                  setSelectedItem(item);
-                  setSearchText(item.name);
+                  setSelectedItem(item)
+                  setSearchText(item.name)
                   handleChange({
                     target: {
                       value: {
@@ -143,7 +140,7 @@ const DataSource = (props) => {
                         searchText: item.name,
                       },
                     },
-                  });
+                  })
                 }}
               >
                 {item.name}
@@ -153,7 +150,7 @@ const DataSource = (props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DataSource;
+export default DataSource

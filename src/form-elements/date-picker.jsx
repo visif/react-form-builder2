@@ -1,8 +1,8 @@
-import React from 'react';
-import { DatePicker as AntDatePicker } from 'antd';
-import dayjs from 'dayjs';
-import ComponentHeader from './component-header';
-import ComponentLabel from './component-label';
+import React from 'react'
+import { DatePicker as AntDatePicker } from 'antd'
+import dayjs from 'dayjs'
+import ComponentHeader from './component-header'
+import ComponentLabel from './component-label'
 
 const DatePicker = (props) => {
   const {
@@ -11,7 +11,7 @@ const DatePicker = (props) => {
     defaultValue,
     style,
     read_only: readOnly,
-  } = props;
+  } = props
 
   const {
     showTimeSelect,
@@ -20,33 +20,33 @@ const DatePicker = (props) => {
     timeFormat = 'HH:mm:ss',
     defaultToday,
     field_name: fieldName,
-  } = data;
+  } = data
 
   // Determine the format based on time selection options
   const format = (() => {
-    if (showTimeSelectOnly) return timeFormat;
-    if (showTimeSelect) return `${dateFormat} ${timeFormat}`;
-    return dateFormat;
-  })();
+    if (showTimeSelectOnly) return timeFormat
+    if (showTimeSelect) return `${dateFormat} ${timeFormat}`
+    return dateFormat
+  })()
 
   // Convert defaultValue to dayjs if exists
   const initialValue = (() => {
-    if (defaultValue) return dayjs(defaultValue, format);
-    if (defaultToday) return dayjs();
-    return undefined;
-  })();
+    if (defaultValue) return dayjs(defaultValue, format)
+    if (defaultToday) return dayjs()
+    return undefined
+  })()
 
   const handleChange = (date, dateString) => {
     onChangeHandler({
       target: {
         value: dateString,
       },
-    });
-  };
+    })
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -72,7 +72,7 @@ const DatePicker = (props) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DatePicker;
+export default DatePicker

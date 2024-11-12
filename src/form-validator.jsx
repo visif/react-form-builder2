@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import xss from 'xss';
-import IntlMessages from './language-provider/IntlMessages';
+import React, { useEffect, useState } from 'react'
+import xss from 'xss'
+import IntlMessages from './language-provider/IntlMessages'
 
 const myxss = new xss.FilterXSS({
   whiteList: {
@@ -19,35 +19,32 @@ const myxss = new xss.FilterXSS({
     strong: [],
     span: ['style'],
   },
-});
+})
 
 const FormValidator = ({ emitter }) => {
-  const [errors, setErrors] = useState([]);
+  const [errors, setErrors] = useState([])
 
   useEffect(() => {
-    const subscription = emitter.addListener(
-      'formValidation',
-      (validationErrors) => {
-        setErrors(validationErrors);
-      }
-    );
+    const subscription = emitter.addListener('formValidation', (validationErrors) => {
+      setErrors(validationErrors)
+    })
 
     return () => {
-      subscription.remove();
-    };
-  }, [emitter]);
+      subscription.remove()
+    }
+  }, [emitter])
 
   const dismissModal = (e) => {
-    e.preventDefault();
-    setErrors([]);
-  };
+    e.preventDefault()
+    setErrors([])
+  }
 
   const errorList = errors.map((error, index) => (
     <li
       key={`error_${index}`}
       dangerouslySetInnerHTML={{ __html: myxss.process(error) }}
     />
-  ));
+  ))
 
   return (
     <div>
@@ -68,7 +65,7 @@ const FormValidator = ({ emitter }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default FormValidator;
+export default FormValidator

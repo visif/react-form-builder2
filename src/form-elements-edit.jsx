@@ -1,16 +1,11 @@
 /* eslint-disable implicit-arrow-linebreak */
-import React, { useState, useEffect } from 'react';
-import TextAreaAutosize from 'react-textarea-autosize';
-import {
-  ContentState,
-  EditorState,
-  convertFromHTML,
-  convertToRaw,
-} from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import { Editor } from 'react-draft-wysiwyg';
-import DynamicOptionList from './dynamic-option-list';
-import IntlMessages from './language-provider/IntlMessages';
+import React, { useEffect, useState } from 'react'
+import { Editor } from 'react-draft-wysiwyg'
+import TextAreaAutosize from 'react-textarea-autosize'
+import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js'
+import draftToHtml from 'draftjs-to-html'
+import DynamicOptionList from './dynamic-option-list'
+import IntlMessages from './language-provider/IntlMessages'
 
 const toolbar = {
   options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
@@ -19,75 +14,72 @@ const toolbar = {
     className: undefined,
     options: ['bold', 'italic', 'underline', 'superscript', 'subscript'],
   },
-};
+}
 
 const FormElementsEdit = (props) => {
-  const [element, setElement] = useState(props.element);
-  const [dirty, setDirty] = useState(false);
-  const [formDataSource, setFormDataSource] = useState([]);
+  const [element, setElement] = useState(props.element)
+  const [dirty, setDirty] = useState(false)
+  const [formDataSource, setFormDataSource] = useState([])
 
   useEffect(() => {
-    setElement(props.element);
-  }, [props.element]);
+    setElement(props.element)
+  }, [props.element])
 
   const updateElement = (updatedElement = element) => {
     if (dirty) {
-      props.updateElement.call(props.preview, updatedElement);
-      setDirty(false);
+      props.updateElement.call(props.preview, updatedElement)
+      setDirty(false)
     }
-  };
+  }
 
   const editElementProp = (elemProperty, targProperty, e) => {
     const updatedElement = {
       ...element,
       [elemProperty]: e.target[targProperty],
-    };
-    setElement(updatedElement);
-    setDirty(true);
+    }
+    setElement(updatedElement)
+    setDirty(true)
 
     if (targProperty === 'checked') {
-      updateElement(updatedElement);
+      updateElement(updatedElement)
     }
-  };
+  }
 
   const onEditorStateChange = (index, property, editorContent) => {
     const html = draftToHtml(convertToRaw(editorContent.getCurrentContent()))
       .replace(/<p>/g, '')
       .replace(/<\/p>/g, '')
       .replace(/&nbsp;/g, ' ')
-      .replace(/(?:\r\n|\r|\n)/g, ' ');
+      .replace(/(?:\r\n|\r|\n)/g, ' ')
 
-    const updatedElement = { ...element, [property]: html };
-    setElement(updatedElement);
-    setDirty(true);
-  };
+    const updatedElement = { ...element, [property]: html }
+    setElement(updatedElement)
+    setDirty(true)
+  }
 
   const convertFromHTMLContent = (content) => {
-    const newContent = convertFromHTML(content);
+    const newContent = convertFromHTML(content)
     if (!newContent.contentBlocks || !newContent.contentBlocks.length) {
-      return EditorState.createEmpty();
+      return EditorState.createEmpty()
     }
-    const contentState = ContentState.createFromBlockArray(newContent);
-    return EditorState.createWithContent(contentState);
-  };
+    const contentState = ContentState.createFromBlockArray(newContent)
+    return EditorState.createWithContent(contentState)
+  }
 
   const { canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue } =
-    props.element;
+    props.element
 
-  const thisFiles = props.files.length ? props.files : [];
-  if (
-    thisFiles.length < 1 ||
-    (thisFiles.length > 0 && thisFiles[0].id !== '')
-  ) {
-    thisFiles.unshift({ id: '', file_name: '' });
+  const thisFiles = props.files.length ? props.files : []
+  if (thisFiles.length < 1 || (thisFiles.length > 0 && thisFiles[0].id !== '')) {
+    thisFiles.unshift({ id: '', file_name: '' })
   }
 
-  let editorState;
+  let editorState
   if (Object.prototype.hasOwnProperty.call(props.element, 'content')) {
-    editorState = convertFromHTMLContent(props.element.content);
+    editorState = convertFromHTMLContent(props.element.content)
   }
   if (Object.prototype.hasOwnProperty.call(props.element, 'label')) {
-    editorState = convertFromHTMLContent(props.element.label);
+    editorState = convertFromHTMLContent(props.element.label)
   }
 
   return (
@@ -130,12 +122,12 @@ const FormElementsEdit = (props) => {
             onChange={(e) => editElementProp('file_path', 'value', e)}
           >
             {thisFiles.map((file) => {
-              const thisKey = `file_${file.id}`;
+              const thisKey = `file_${file.id}`
               return (
                 <option value={file.id} key={thisKey}>
                   {file.file_name}
                 </option>
-              );
+              )
             })}
           </select>
         </div>
@@ -195,10 +187,7 @@ const FormElementsEdit = (props) => {
               </label>
             </div>
           )}
-          {Object.prototype.hasOwnProperty.call(
-            props.element,
-            'defaultToday',
-          ) && (
+          {Object.prototype.hasOwnProperty.call(props.element, 'defaultToday') && (
             <div className="custom-control custom-checkbox">
               <input
                 id="is-default-to-today"
@@ -208,18 +197,12 @@ const FormElementsEdit = (props) => {
                 value={true}
                 onChange={(e) => editElementProp('defaultToday', 'checked', e)}
               />
-              <label
-                className="custom-control-label"
-                htmlFor="is-default-to-today"
-              >
+              <label className="custom-control-label" htmlFor="is-default-to-today">
                 <IntlMessages id="default-to-today" />?
               </label>
             </div>
           )}
-          {Object.prototype.hasOwnProperty.call(
-            props.element,
-            'showTimeSelect',
-          ) && (
+          {Object.prototype.hasOwnProperty.call(props.element, 'showTimeSelect') && (
             <div className="custom-control custom-checkbox">
               <input
                 id="show-time-select"
@@ -227,23 +210,15 @@ const FormElementsEdit = (props) => {
                 type="checkbox"
                 checked={props.element.showTimeSelect || false}
                 value={true}
-                onChange={(e) =>
-                  editElementProp('showTimeSelect', 'checked', e)
-                }
+                onChange={(e) => editElementProp('showTimeSelect', 'checked', e)}
               />
-              <label
-                className="custom-control-label"
-                htmlFor="show-time-select"
-              >
+              <label className="custom-control-label" htmlFor="show-time-select">
                 <IntlMessages id="show-time-select" />?
               </label>
             </div>
           )}
           {props.element.showTimeSelect &&
-            Object.prototype.hasOwnProperty.call(
-              props.element,
-              'showTimeSelectOnly',
-            ) && (
+            Object.prototype.hasOwnProperty.call(props.element, 'showTimeSelectOnly') && (
               <div className="custom-control custom-checkbox">
                 <input
                   id="show-time-select-only"
@@ -251,22 +226,14 @@ const FormElementsEdit = (props) => {
                   type="checkbox"
                   checked={props.element.showTimeSelectOnly || false}
                   value={true}
-                  onChange={(e) =>
-                    editElementProp('showTimeSelectOnly', 'checked', e)
-                  }
+                  onChange={(e) => editElementProp('showTimeSelectOnly', 'checked', e)}
                 />
-                <label
-                  className="custom-control-label"
-                  htmlFor="show-time-select-only"
-                >
+                <label className="custom-control-label" htmlFor="show-time-select-only">
                   <IntlMessages id="show-time-select-only" />?
                 </label>
               </div>
             )}
-          {Object.prototype.hasOwnProperty.call(
-            props.element,
-            'showTimeInput',
-          ) && (
+          {Object.prototype.hasOwnProperty.call(props.element, 'showTimeInput') && (
             <div className="custom-control custom-checkbox">
               <input
                 id="show-time-input"
@@ -281,8 +248,7 @@ const FormElementsEdit = (props) => {
               </label>
             </div>
           )}
-          {(element.element === 'RadioButtons' ||
-            element.element === 'Checkboxes') &&
+          {(element.element === 'RadioButtons' || element.element === 'Checkboxes') &&
             canHaveDisplayHorizontal && (
               <div className="custom-control custom-checkbox">
                 <input
@@ -293,10 +259,7 @@ const FormElementsEdit = (props) => {
                   value={true}
                   onChange={(e) => editElementProp('inline', 'checked', e)}
                 />
-                <label
-                  className="custom-control-label"
-                  htmlFor="display-horizontal"
-                >
+                <label className="custom-control-label" htmlFor="display-horizontal">
                   <IntlMessages id="display-horizontal" />
                 </label>
               </div>
@@ -380,10 +343,7 @@ const FormElementsEdit = (props) => {
       )}
       {props.element.sourceType === 'form' && (
         <div>
-          {Object.prototype.hasOwnProperty.call(
-            props.element,
-            'formSource',
-          ) && (
+          {Object.prototype.hasOwnProperty.call(props.element, 'formSource') && (
             <div className="form-group">
               <label className="control-label" htmlFor="formSource">
                 Form Source
@@ -401,10 +361,10 @@ const FormElementsEdit = (props) => {
                 </option>
                 {formDataSource &&
                   formDataSource.map((item) => (
-                      <option value={item.id} key={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
+                    <option value={item.id} key={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
               </select>
             </div>
           )}
@@ -416,45 +376,37 @@ const FormElementsEdit = (props) => {
               {this.state.activeForm &&
                 this.state.activeForm.columns &&
                 this.state.activeForm.columns.map((item) => (
-                    <div className="custom-control custom-checkbox">
-                      <input
-                        id={item.field_name}
-                        className="custom-control-input"
-                        type="checkbox"
-                        checked={
-                          Object.prototype.hasOwnProperty.call(
-                            props.element,
-                            `formField${item.field_name}`,
-                          )
-                            ? props.element[`formField${item.field_name}`]
-                            : false
-                        }
-                        value={item.field_name}
-                        onChange={(e) =>
-                          editElementProp(
-                            `formField${item.field_name}`,
-                            'checked',
-                            e,
-                          )
-                        }
-                      />
-                      <label
-                        className="custom-control-label"
-                        htmlFor={item.field_name}
-                      >
-                        {item.label || item.text || ''}
-                      </label>
-                    </div>
-                  ))}
+                  <div className="custom-control custom-checkbox">
+                    <input
+                      id={item.field_name}
+                      className="custom-control-input"
+                      type="checkbox"
+                      checked={
+                        Object.prototype.hasOwnProperty.call(
+                          props.element,
+                          `formField${item.field_name}`
+                        )
+                          ? props.element[`formField${item.field_name}`]
+                          : false
+                      }
+                      value={item.field_name}
+                      onChange={(e) =>
+                        editElementProp(`formField${item.field_name}`, 'checked', e)
+                      }
+                    />
+                    <label className="custom-control-label" htmlFor={item.field_name}>
+                      {item.label || item.text || ''}
+                    </label>
+                  </div>
+                ))}
             </div>
           )}
         </div>
       )}
-
     </div>
-  );
-};
+  )
+}
 
-FormElementsEdit.defaultProps = { className: 'edit-element-fields' };
+FormElementsEdit.defaultProps = { className: 'edit-element-fields' }
 
-export default FormElementsEdit;
+export default FormElementsEdit

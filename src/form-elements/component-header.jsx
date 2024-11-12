@@ -1,16 +1,14 @@
-import React from 'react';
-import HeaderBar from './header-bar';
+import React from 'react'
+import HeaderBar from './header-bar'
 
 const ComponentHeader = (props) => {
   if (props.mutable) {
-    return null;
+    return null
   }
 
   return (
     <div>
-      {props.data.pageBreakBefore && (
-        <div className="preview-page-break">Page Break</div>
-      )}
+      {props.data.pageBreakBefore && <div className="preview-page-break">Page Break</div>}
       <HeaderBar
         isFieldSet={props.isFieldSet}
         parent={props.parent}
@@ -24,7 +22,7 @@ const ComponentHeader = (props) => {
         required={props.data.required}
       />
     </div>
-  );
-};
+  )
+}
 
-export default ComponentHeader;
+export default ComponentHeader

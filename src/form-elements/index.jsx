@@ -1,36 +1,34 @@
 // eslint-disable-next-line max-classes-per-file
-import fetch from 'isomorphic-fetch';
-import { Blob } from 'buffer';
-import { saveAs } from 'file-saver';
-import React from 'react';
-import Select from 'react-select';
-import SignaturePad from 'react-signature-canvas';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
+import React from 'react'
+import ReactBootstrapSlider from 'react-bootstrap-slider'
+import Select from 'react-select'
+import SignaturePad from 'react-signature-canvas'
+import { Blob } from 'buffer'
+import { saveAs } from 'file-saver'
+import fetch from 'isomorphic-fetch'
+import ComponentHeader from './component-header'
+import ComponentLabel from './component-label'
+import DataSource from './datasource'
+import DatePicker from './date-picker'
+import myxss from './myxss'
+import Signature2 from './signature2'
+import StarRating from './star-rating'
+import Table from './table'
 
-import StarRating from './star-rating';
-import DatePicker from './date-picker';
-import DataSource from './datasource';
-import Table from './table';
-import Signature2 from './signature2';
-
-import ComponentHeader from './component-header';
-import ComponentLabel from './component-label';
-import myxss from './myxss';
-
-const FormElements = {};
+const FormElements = {}
 
 const Header = (props) => {
-  let classNames = 'static';
+  let classNames = 'static'
   if (props.data.bold) {
-    classNames += ' bold';
+    classNames += ' bold'
   }
   if (props.data.italic) {
-    classNames += ' italic';
+    classNames += ' italic'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -41,21 +39,21 @@ const Header = (props) => {
         dangerouslySetInnerHTML={{ __html: myxss.process(props.data.content) }}
       />
     </div>
-  );
-};
+  )
+}
 
 const Paragraph = (props) => {
-  let classNames = 'static';
+  let classNames = 'static'
   if (props.data.bold) {
-    classNames += ' bold';
+    classNames += ' bold'
   }
   if (props.data.italic) {
-    classNames += ' italic';
+    classNames += ' italic'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -66,21 +64,21 @@ const Paragraph = (props) => {
         dangerouslySetInnerHTML={{ __html: myxss.process(props.data.content) }}
       />
     </div>
-  );
-};
+  )
+}
 
 const Label = (props) => {
-  let classNames = 'static';
+  let classNames = 'static'
   if (props.data.bold) {
-    classNames += ' bold';
+    classNames += ' bold'
   }
   if (props.data.italic) {
-    classNames += ' italic';
+    classNames += ' italic'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -91,13 +89,13 @@ const Label = (props) => {
         dangerouslySetInnerHTML={{ __html: myxss.process(props.data.content) }}
       />
     </div>
-  );
-};
+  )
+}
 
 const LineBreak = (props) => {
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -105,8 +103,8 @@ const LineBreak = (props) => {
       <ComponentHeader {...props} />
       <hr />
     </div>
-  );
-};
+  )
+}
 
 const TextInput = (props) => {
   const inputProps = {
@@ -116,11 +114,11 @@ const TextInput = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -131,8 +129,8 @@ const TextInput = (props) => {
         <input {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const EmailInput = (props) => {
   const inputProps = {
@@ -142,11 +140,11 @@ const EmailInput = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -157,8 +155,8 @@ const EmailInput = (props) => {
         <input {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const PhoneNumber = (props) => {
   const inputProps = {
@@ -168,11 +166,11 @@ const PhoneNumber = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -183,8 +181,8 @@ const PhoneNumber = (props) => {
         <input {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const NumberInput = (props) => {
   const inputProps = {
@@ -194,11 +192,11 @@ const NumberInput = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -209,8 +207,8 @@ const NumberInput = (props) => {
         <input {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const TextArea = (props) => {
   const inputProps = {
@@ -219,11 +217,11 @@ const TextArea = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -234,8 +232,8 @@ const TextArea = (props) => {
         <textarea {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Dropdown = (props) => {
   const selectProps = {
@@ -244,11 +242,11 @@ const Dropdown = (props) => {
     defaultValue: props.mutable ? props.defaultValue : undefined,
     disabled: props.read_only ? 'disabled' : undefined,
     onChange: props.handleChange,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -258,53 +256,53 @@ const Dropdown = (props) => {
         <ComponentLabel {...props} />
         <select {...selectProps}>
           {props.data.options.map((option) => {
-            const thisKey = `preview_${option.key}`;
+            const thisKey = `preview_${option.key}`
             return (
               <option value={option.value} key={thisKey}>
                 {option.text}
               </option>
-            );
+            )
           })}
         </select>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Signature = (props) => {
-  const [defaultValue, setDefaultValue] = React.useState(props.defaultValue);
-  const canvas = React.useRef();
+  const [defaultValue, setDefaultValue] = React.useState(props.defaultValue)
+  const canvas = React.useRef()
 
   const clear = () => {
     if (defaultValue) {
-      setDefaultValue('');
+      setDefaultValue('')
     } else if (canvas.current) {
-      canvas.current.clear();
+      canvas.current.clear()
     }
-  };
+  }
 
-  let canClear = !!defaultValue;
+  let canClear = !!defaultValue
   const inputProps = {
     type: 'hidden',
     name: props.data.field_name,
     defaultValue: props.mutable ? defaultValue : undefined,
-  };
+  }
 
   const padProps = {
     clearOnResize: false,
     defaultValue: props.mutable ? defaultValue : undefined,
     ref: props.mutable ? canvas : undefined,
-  };
-  canClear = !props.read_only;
+  }
+  canClear = !props.read_only
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
-  let sourceDataURL;
+  let sourceDataURL
   if (defaultValue && defaultValue.length > 0) {
-    sourceDataURL = `data:image/png;base64,${defaultValue}`;
+    sourceDataURL = `data:image/png;base64,${defaultValue}`
   }
 
   return (
@@ -327,36 +325,34 @@ const Signature = (props) => {
         <input {...inputProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Tags = (props) => {
-  const { defaultValue, data, handleChange: onHandleChange } = props;
+  const { defaultValue, data, handleChange: onHandleChange } = props
 
   function getDefaultValue(initialValue, options) {
     if (defaultValue) {
       if (typeof defaultValue === 'string') {
-        const vals = defaultValue.split(',').map((x) => x.trim());
-        return options.filter((x) => vals.indexOf(x.value) > -1);
+        const vals = defaultValue.split(',').map((x) => x.trim())
+        return options.filter((x) => vals.indexOf(x.value) > -1)
       }
-      return options.filter((x) => defaultValue.indexOf(x.value) > -1);
+      return options.filter((x) => defaultValue.indexOf(x.value) > -1)
     }
-    return [];
+    return []
   }
 
-  const [value, setValue] = React.useState(
-    getDefaultValue(defaultValue, data.options),
-  );
+  const [value, setValue] = React.useState(getDefaultValue(defaultValue, data.options))
 
   const handleChange = (e) => {
-    onHandleChange({ target: { value: e } });
-    setValue(e || []);
-  };
+    onHandleChange({ target: { value: e } })
+    setValue(e || [])
+  }
 
   const options = props.data.options.map((option) => {
-    option.label = option.text;
-    return option;
-  });
+    option.label = option.text
+    return option
+  })
 
   const selectProps = {
     isMulti: true,
@@ -365,11 +361,11 @@ const Tags = (props) => {
     options,
     value: props.mutable ? value : options[0].text,
     isDisabled: props.mutable ? props.read_only : undefined,
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -380,18 +376,18 @@ const Tags = (props) => {
         <Select {...selectProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Checkboxes = (props) => {
-  let classNames = 'custom-control custom-checkbox';
+  let classNames = 'custom-control custom-checkbox'
   if (props.data.inline) {
-    classNames += ' option-inline';
+    classNames += ' option-inline'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -400,7 +396,7 @@ const Checkboxes = (props) => {
       <div className="form-group">
         <ComponentLabel {...props} />
         {props.data.options.map((option) => {
-          const this_key = `preview_${option.key}`;
+          const this_key = `preview_${option.key}`
           const inputProps = {
             name: `option_${option.key}`,
             type: 'checkbox',
@@ -411,7 +407,7 @@ const Checkboxes = (props) => {
               props.defaultValue.indexOf(option.key) > -1,
             disabled: props.read_only ? 'disabled' : undefined,
             onChange: props.handleChange,
-          };
+          }
 
           return (
             <div className={classNames} key={this_key}>
@@ -420,29 +416,26 @@ const Checkboxes = (props) => {
                 className="custom-control-input"
                 {...inputProps}
               />
-              <label
-                className="custom-control-label"
-                htmlFor={`fid_${this_key}`}
-              >
+              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
                 {option.text}
               </label>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const RadioButtons = (props) => {
-  let classNames = 'custom-control custom-radio';
+  let classNames = 'custom-control custom-radio'
   if (props.data.inline) {
-    classNames += ' option-inline';
+    classNames += ' option-inline'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -451,7 +444,7 @@ const RadioButtons = (props) => {
       <div className="form-group">
         <ComponentLabel {...props} />
         {props.data.options.map((option) => {
-          const this_key = `preview_${option.key}`;
+          const this_key = `preview_${option.key}`
           const inputProps = {
             name: props.data.field_name,
             type: 'radio',
@@ -463,7 +456,7 @@ const RadioButtons = (props) => {
                 props.defaultValue.indexOf(option.value) > -1),
             disabled: props.read_only ? 'disabled' : undefined,
             onChange: props.handleChange,
-          };
+          }
 
           return (
             <div className={classNames} key={this_key}>
@@ -472,43 +465,36 @@ const RadioButtons = (props) => {
                 className="custom-control-input"
                 {...inputProps}
               />
-              <label
-                className="custom-control-label"
-                htmlFor={`fid_${this_key}`}
-              >
+              <label className="custom-control-label" htmlFor={`fid_${this_key}`}>
                 {option.text}
               </label>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Image = (props) => {
-  const style = props.data.center ? { textAlign: 'center' } : null;
+  const style = props.data.center ? { textAlign: 'center' } : null
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
     <div style={{ ...props.style, ...style }} className={baseClasses}>
       <ComponentHeader {...props} />
       {props.data.src ? (
-        <img
-          src={props.data.src}
-          width={props.data.width}
-          height={props.data.height}
-        />
+        <img src={props.data.src} width={props.data.width} height={props.data.height} />
       ) : (
         <div className="no-image">No Image</div>
       )}
     </div>
-  );
-};
+  )
+}
 
 const Rating = (props) => {
   const ratingProps = {
@@ -516,22 +502,20 @@ const Rating = (props) => {
     ratingAmount: 5,
     rating: (() => {
       if (props.mutable) {
-        return props.defaultValue !== undefined
-          ? parseFloat(props.defaultValue, 10)
-          : 0;
+        return props.defaultValue !== undefined ? parseFloat(props.defaultValue, 10) : 0
       }
-      return undefined;
+      return undefined
     })(),
     editing: props.mutable,
     disabled: props.read_only,
     onRatingClick: (event, rating) => {
-      props.handleChange({ target: { value: rating.rating } });
+      props.handleChange({ target: { value: rating.rating } })
     },
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -542,13 +526,13 @@ const Rating = (props) => {
         <StarRating {...ratingProps} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 const HyperLink = (props) => {
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -566,13 +550,13 @@ const HyperLink = (props) => {
         </label>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Download = (props) => {
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -584,60 +568,55 @@ const Download = (props) => {
         </a>
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Camera = (props) => {
-  const [img, setImg] = React.useState(null);
-  const [previewImg, setPreviewImg] = React.useState(null);
+  const [img, setImg] = React.useState(null)
+  const [previewImg, setPreviewImg] = React.useState(null)
 
   const displayImage = (e) => {
-    const { target } = e;
+    const { target } = e
     if (target.files && target.files.length) {
-      setImg(target.files[0]);
-      setPreviewImg(URL.createObjectURL(target.files[0]));
+      setImg(target.files[0])
+      setPreviewImg(URL.createObjectURL(target.files[0]))
     }
-  };
+  }
 
   const clearImage = () => {
-    setImg(null);
-    setPreviewImg(null);
-  };
+    setImg(null)
+    setPreviewImg(null)
+  }
 
   const getImageSizeProps = ({ width, height }) => {
-    const imgProps = { width: '100%' };
+    const imgProps = { width: '100%' }
     if (width) {
-      imgProps.width =
-        width < window.innerWidth ? width : 0.9 * window.innerWidth;
+      imgProps.width = width < window.innerWidth ? width : 0.9 * window.innerWidth
     }
     if (height) {
-      imgProps.height = height;
+      imgProps.height = height
     }
-    return imgProps;
-  };
+    return imgProps
+  }
 
   const imageStyle = {
     objectFit: 'scale-down',
     objectPosition: props.data.center ? 'center' : 'left',
-  };
-
-  let baseClasses = 'SortableItem rfb-item';
-  const name = props.data.field_name;
-  const fileInputStyle = img ? { display: 'none' } : null;
-  if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
   }
 
-  let sourceDataURL;
-  if (
-    props.read_only === true &&
-    props.defaultValue &&
-    props.defaultValue.length > 0
-  ) {
+  let baseClasses = 'SortableItem rfb-item'
+  const name = props.data.field_name
+  const fileInputStyle = img ? { display: 'none' } : null
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak'
+  }
+
+  let sourceDataURL
+  if (props.read_only === true && props.defaultValue && props.defaultValue.length > 0) {
     if (props.defaultValue.indexOf(name > -1)) {
-      sourceDataURL = props.defaultValue;
+      sourceDataURL = props.defaultValue
     } else {
-      sourceDataURL = `data:image/png;base64,${props.defaultValue}`;
+      sourceDataURL = `data:image/png;base64,${props.defaultValue}`
     }
   }
 
@@ -693,29 +672,29 @@ const Camera = (props) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const FileUpload = (props) => {
-  const [fileUpload, setFileUpload] = React.useState(null);
+  const [fileUpload, setFileUpload] = React.useState(null)
 
   const displayFileUpload = (e) => {
-    const { target } = e;
-    let file;
+    const { target } = e
+    let file
 
     if (target.files && target.files.length > 0) {
-      file = target.files[0];
-      setFileUpload(file);
+      file = target.files[0]
+      setFileUpload(file)
     }
-  };
+  }
 
   const clearFileUpload = () => {
-    setFileUpload(null);
-  };
+    setFileUpload(null)
+  }
 
   const saveFile = async (e) => {
-    e.preventDefault();
-    const sourceUrl = props.defaultValue;
+    e.preventDefault()
+    const sourceUrl = props.defaultValue
     const response = await fetch(sourceUrl, {
       method: 'GET',
       headers: {
@@ -723,26 +702,26 @@ const FileUpload = (props) => {
         'Content-Type': 'application/json; charset=utf-8',
       },
       responseType: 'blob',
-    });
-    const dispositionHeader = response.headers.get('Content-Disposition');
-    const resBlob = await response.blob();
+    })
+    const dispositionHeader = response.headers.get('Content-Disposition')
+    const resBlob = await response.blob()
     const blob = new Blob([resBlob], {
       type: props.data.fileType || response.headers.get('Content-Type'),
-    });
+    })
     if (dispositionHeader && dispositionHeader.indexOf(';filename=') > -1) {
-      const fileName = dispositionHeader.split(';filename=')[1];
-      saveAs(blob, fileName);
+      const fileName = dispositionHeader.split(';filename=')[1]
+      saveAs(blob, fileName)
     } else {
-      const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1);
-      saveAs(response.url, fileName);
+      const fileName = sourceUrl.substring(sourceUrl.lastIndexOf('/') + 1)
+      saveAs(response.url, fileName)
     }
-  };
+  }
 
-  let baseClasses = 'SortableItem rfb-item';
-  const name = props.data.field_name;
-  const fileInputStyle = fileUpload ? { display: 'none' } : null;
+  let baseClasses = 'SortableItem rfb-item'
+  const name = props.data.field_name
+  const fileInputStyle = fileUpload ? { display: 'none' } : null
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -784,17 +763,12 @@ const FileUpload = (props) => {
                   </div>
                   <div style={{ display: 'inline-block', marginLeft: '5px' }}>
                     {fileUpload.size.length > 6
-                      ? `Size:  ${Math.ceil(
-                          fileUpload.size / (1024 * 1024),
-                        )} mb`
+                      ? `Size:  ${Math.ceil(fileUpload.size / (1024 * 1024))} mb`
                       : `Size:  ${Math.ceil(fileUpload.size / 1024)} kb`}
                   </div>
                 </div>
                 <br />
-                <div
-                  className="btn btn-file-upload-clear"
-                  onClick={clearFileUpload}
-                >
+                <div className="btn btn-file-upload-clear" onClick={clearFileUpload}>
                   <i className="fas fa-times"></i> Clear File
                 </div>
               </div>
@@ -803,24 +777,24 @@ const FileUpload = (props) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const Range = (props) => {
-  const { handleChange } = props;
+  const { handleChange } = props
   const [value, setValue] = React.useState(
     props.defaultValue !== undefined
       ? parseInt(props.defaultValue, 10)
-      : parseInt(props.data.default_value, 10),
-  );
+      : parseInt(props.data.default_value, 10)
+  )
 
   const changeValue = (e) => {
-    const { target } = e;
-    setValue(target.value);
-    handleChange(e);
-  };
+    const { target } = e
+    setValue(target.value)
+    handleChange(e)
+  }
 
-  const name = props.data.field_name;
+  const name = props.data.field_name
 
   const rangeProps = {
     type: 'range',
@@ -830,44 +804,44 @@ const Range = (props) => {
     step: props.data.step,
     value,
     change: changeValue,
-  };
+  }
 
-  const datalist = [];
+  const datalist = []
   for (
     let i = parseInt(rangeProps.min, 10);
     i <= parseInt(rangeProps.max, 10);
     i += parseInt(rangeProps.step, 10)
   ) {
-    datalist.push(i);
+    datalist.push(i)
   }
 
-  const oneBig = 100 / (datalist.length - 1);
+  const oneBig = 100 / (datalist.length - 1)
 
   const _datalist = datalist.map((d, idx) => (
     <option key={`${rangeProps.list}_${idx}`}>{d}</option>
-  ));
+  ))
 
   const visible_marks = datalist.map((d, idx) => {
-    const option_props = {};
-    let w = oneBig;
+    const option_props = {}
+    let w = oneBig
     if (idx === 0 || idx === datalist.length - 1) {
-      w = oneBig / 2;
+      w = oneBig / 2
     }
-    option_props.key = `${rangeProps.list}_label_${idx}`;
-    option_props.style = { width: `${w}%` };
+    option_props.key = `${rangeProps.list}_label_${idx}`
+    option_props.style = { width: `${w}%` }
     if (idx === datalist.length - 1) {
-      option_props.style = { width: `${w}%`, textAlign: 'right' };
+      option_props.style = { width: `${w}%`, textAlign: 'right' }
     }
-    return <label {...option_props}>{d}</label>;
-  });
+    return <label {...option_props}>{d}</label>
+  })
 
   if (props.read_only) {
-    rangeProps.disabled = 'disabled';
+    rangeProps.disabled = 'disabled'
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -887,33 +861,33 @@ const Range = (props) => {
         <datalist id={rangeProps.list}>{_datalist}</datalist>
       </div>
     </div>
-  );
-};
+  )
+}
 
-FormElements.Header = Header;
-FormElements.Paragraph = Paragraph;
-FormElements.Label = Label;
-FormElements.LineBreak = LineBreak;
-FormElements.TextInput = TextInput;
-FormElements.EmailInput = EmailInput;
-FormElements.PhoneNumber = PhoneNumber;
-FormElements.NumberInput = NumberInput;
-FormElements.TextArea = TextArea;
-FormElements.DataSource = DataSource;
-FormElements.Table = Table;
-FormElements.Dropdown = Dropdown;
-FormElements.Signature = Signature;
-FormElements.Checkboxes = Checkboxes;
-FormElements.DatePicker = DatePicker;
-FormElements.RadioButtons = RadioButtons;
-FormElements.Image = Image;
-FormElements.Rating = Rating;
-FormElements.Tags = Tags;
-FormElements.HyperLink = HyperLink;
-FormElements.Download = Download;
-FormElements.Camera = Camera;
-FormElements.FileUpload = FileUpload;
-FormElements.Range = Range;
-FormElements.Signature2 = Signature2;
+FormElements.Header = Header
+FormElements.Paragraph = Paragraph
+FormElements.Label = Label
+FormElements.LineBreak = LineBreak
+FormElements.TextInput = TextInput
+FormElements.EmailInput = EmailInput
+FormElements.PhoneNumber = PhoneNumber
+FormElements.NumberInput = NumberInput
+FormElements.TextArea = TextArea
+FormElements.DataSource = DataSource
+FormElements.Table = Table
+FormElements.Dropdown = Dropdown
+FormElements.Signature = Signature
+FormElements.Checkboxes = Checkboxes
+FormElements.DatePicker = DatePicker
+FormElements.RadioButtons = RadioButtons
+FormElements.Image = Image
+FormElements.Rating = Rating
+FormElements.Tags = Tags
+FormElements.HyperLink = HyperLink
+FormElements.Download = Download
+FormElements.Camera = Camera
+FormElements.FileUpload = FileUpload
+FormElements.Range = Range
+FormElements.Signature2 = Signature2
 
-export default FormElements;
+export default FormElements

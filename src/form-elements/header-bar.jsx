@@ -1,5 +1,5 @@
-import React from 'react';
-import DragHandle from './component-drag-handle';
+import React from 'react'
+import DragHandle from './component-drag-handle'
 
 const HeaderBar = (props) => (
   <div className="toolbar-header">
@@ -13,10 +13,7 @@ const HeaderBar = (props) => (
           <i className="is-isolated fas fa-edit"></i>
         </div>
       )}
-      <div
-        className="btn is-isolated"
-        onClick={props.onDestroy?.bind(props, props.data)}
-      >
+      <div className="btn is-isolated" onClick={props.onDestroy?.bind(props, props.data)}>
         <i className="is-isolated fas fa-trash"></i>
       </div>
       <DragHandle
@@ -27,6 +24,6 @@ const HeaderBar = (props) => (
       />
     </div>
   </div>
-);
+)
 
-export default HeaderBar;
+export default HeaderBar

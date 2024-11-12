@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import ComponentHeader from './component-header';
-import ComponentLabel from './component-label';
+import React, { useEffect, useState } from 'react'
+import ComponentHeader from './component-header'
+import ComponentLabel from './component-label'
 
 const Table = (props) => {
   const getInputValues = (
@@ -8,29 +8,30 @@ const Table = (props) => {
     columns = [],
     rows = 1,
     addingRows = 0,
-    rowLabels = [],
+    rowLabels = []
   ) => {
-    const result = [];
-    const isFixedRow = rowLabels?.length > 0;
-    const activeRows = (Math.max(0, isFixedRow ? rowLabels?.length : rows + addingRows)) || 1;
+    const result = []
+    const isFixedRow = rowLabels?.length > 0
+    const activeRows =
+      Math.max(0, isFixedRow ? rowLabels?.length : rows + addingRows) || 1
     Array.from(Array(Number(activeRows)).keys()).map((i) => {
-      const current = [];
+      const current = []
       columns.map((j, jIndex) => {
-        let value = defaultValue[i] ? defaultValue[i][jIndex] ?? '' : '';
+        let value = defaultValue[i] ? (defaultValue[i][jIndex] ?? '') : ''
         if (isFixedRow && jIndex === 0) {
-          value = rowLabels[i].text;
+          value = rowLabels[i].text
         }
-        current.push(value);
-      });
-      result.push(current);
-    });
+        current.push(value)
+      })
+      result.push(current)
+    })
 
-    return result;
-  };
+    return result
+  }
 
   const rowsAdded =
     (props.defaultValue ? props.defaultValue.length : Number(props.data.rows)) -
-    Number(props.data.rows);
+    Number(props.data.rows)
 
   const [state, setState] = useState({
     rows: Number(props.data.rows),
@@ -42,17 +43,17 @@ const Table = (props) => {
       props.data.columns,
       Number(props.data.rows),
       rowsAdded,
-      props.data.rowLabels,
+      props.data.rowLabels
     ),
     rowsAdded,
-  });
+  })
 
   useEffect(() => {
-    const newState = getDerivedStateFromProps(props, state);
+    const newState = getDerivedStateFromProps(props, state)
     if (newState !== state) {
-      setState(newState);
+      setState(newState)
     }
-  }, [props]);
+  }, [props])
 
   const getDerivedStateFromProps = (props, state) => {
     if (
@@ -69,20 +70,17 @@ const Table = (props) => {
           props.data.columns,
           Number(props.data.rows),
           state.rowsAdded,
-          props.data.rowLabels,
+          props.data.rowLabels
         ),
         rowsAdded: state.rowsAdded,
         rowLabels: props.data.rowLabels,
-      };
+      }
     }
 
-    if (
-      JSON.stringify(state.defaultValue) !== JSON.stringify(props.defaultValue)
-    ) {
+    if (JSON.stringify(state.defaultValue) !== JSON.stringify(props.defaultValue)) {
       const rowsAdded =
-        (props.defaultValue
-          ? props.defaultValue.length
-          : Number(props.data.rows)) - Number(props.data.rows);
+        (props.defaultValue ? props.defaultValue.length : Number(props.data.rows)) -
+        Number(props.data.rows)
       return {
         rows: Number(props.data.rows),
         columns: props.data.columns,
@@ -92,15 +90,15 @@ const Table = (props) => {
           props.data.columns,
           Number(props.data.rows),
           rowsAdded,
-          props.data.rowLabels,
+          props.data.rowLabels
         ),
         rowsAdded,
         rowLabels: props.data.rowLabels,
-      };
+      }
     }
 
-    return state;
-  };
+    return state
+  }
 
   const addRow = () => {
     setState((current) => ({
@@ -110,10 +108,10 @@ const Table = (props) => {
         current.inputs,
         current.columns,
         current.rows,
-        current.rowsAdded + 1,
+        current.rowsAdded + 1
       ),
-    }));
-  };
+    }))
+  }
 
   const removeRow = () => {
     setState((current) => ({
@@ -123,109 +121,100 @@ const Table = (props) => {
         current.inputs,
         current.columns,
         current.rows,
-        current.rowsAdded - 1,
+        current.rowsAdded - 1
       ),
-    }));
-  };
+    }))
+  }
 
   const renderRows = () => {
     const userProperties =
-      props.getActiveUserProperties && props.getActiveUserProperties();
+      props.getActiveUserProperties && props.getActiveUserProperties()
 
-    const savedEditor = props.editor;
-    let isSameEditor = true;
+    const savedEditor = props.editor
+    let isSameEditor = true
     if (savedEditor && savedEditor.userId && !!userProperties) {
-      isSameEditor = userProperties.userId === savedEditor.userId;
+      isSameEditor = userProperties.userId === savedEditor.userId
     }
 
-    const isFixedRow = state.rowLabels?.length > 0;
-    const activeRows = (isFixedRow
-      ? state.rowLabels?.length
-      : state.rows + state.rowsAdded) || 0;
+    const isFixedRow = state.rowLabels?.length > 0
+    const activeRows =
+      (isFixedRow ? state.rowLabels?.length : state.rows + state.rowsAdded) || 0
 
     return (
       <tbody>
         {Array.from(Array(Number(activeRows)).keys()).map((i) => (
           <tr key={`row${i}`}>
             {props.data?.columns?.map((j, jIndex) => {
-              const isLabel = isFixedRow && jIndex === 0;
+              const isLabel = isFixedRow && jIndex === 0
 
               if (isLabel) {
                 return (
                   <td key={`label${i}`}>
                     <label>{state.rowLabels[i].text}</label>
                   </td>
-                );
+                )
               }
 
-              const value = state.inputs[i]
-                ? state.inputs[i][jIndex] ?? ''
-                : '';
+              const value = state.inputs[i] ? (state.inputs[i][jIndex] ?? '') : ''
 
               return (
                 <td key={`cell${i}-${jIndex}`}>
                   <textarea
                     className="form-control"
-                    style={
-                      isLabel ? { border: 0, backgroundColor: 'inherit' } : {}
-                    }
+                    style={isLabel ? { border: 0, backgroundColor: 'inherit' } : {}}
                     disabled={isLabel || !isSameEditor}
                     type="text"
                     value={value}
                     rows={1}
                     onChange={(event) => {
-                      const { value } = event.target;
-                      const array = [...state.inputs];
-                      array[i][jIndex] = value;
+                      const { value } = event.target
+                      const array = [...state.inputs]
+                      array[i][jIndex] = value
                       setState({
                         ...state,
                         inputs: array,
-                      });
+                      })
                     }}
                   />
                 </td>
-              );
+              )
             })}
           </tr>
         ))}
       </tbody>
-    );
-  };
-
-  const getColumnWidth = (totalWidthCount, width) => {
-    const currentWidth = parseInt(width) ? Number(width) : 1;
-    return `${(currentWidth / totalWidthCount) * 100}%`;
-  };
-
-  const userProperties =
-    props.getActiveUserProperties && props.getActiveUserProperties();
-
-  const savedEditor = props.editor;
-  let isSameEditor = true;
-  if (savedEditor && savedEditor.userId && !!userProperties) {
-    isSameEditor = userProperties.userId === savedEditor.userId;
+    )
   }
 
-  let baseClasses = 'SortableItem rfb-item';
+  const getColumnWidth = (totalWidthCount, width) => {
+    const currentWidth = parseInt(width) ? Number(width) : 1
+    return `${(currentWidth / totalWidthCount) * 100}%`
+  }
+
+  const userProperties = props.getActiveUserProperties && props.getActiveUserProperties()
+
+  const savedEditor = props.editor
+  let isSameEditor = true
+  if (savedEditor && savedEditor.userId && !!userProperties) {
+    isSameEditor = userProperties.userId === savedEditor.userId
+  }
+
+  let baseClasses = 'SortableItem rfb-item'
   if (props?.data?.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
   const totalWidthCount = (props.data?.columns || []).reduce(
     (previous, current) =>
       previous + (parseInt(current.width) ? Number(current.width) : 1),
-    0,
-  );
-  const isFixedRow = state.rowLabels?.length > 0;
+    0
+  )
+  const isFixedRow = state.rowLabels?.length > 0
 
   return (
     <div className={baseClasses} key={`table-container-${props.id}`}>
       <ComponentHeader {...props} />
       <div className="form-group">
         <ComponentLabel {...props} />
-        <table
-          className="table table-bordered"
-          key={`table-${props.id}`}
-        >
+        <table className="table table-bordered" key={`table-${props.id}`}>
           <thead>
             <tr>
               {props.data?.columns?.map((col) => (
@@ -269,7 +258,7 @@ const Table = (props) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Table;
+export default Table

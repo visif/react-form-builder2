@@ -1,52 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { injectIntl } from 'react-intl';
-import ToolbarItem from './toolbar-draggable-item';
-import ToolbarGroupItem from './toolbar-group-item';
-import ID from './UUID';
-import store from './stores/store';
-import { groupBy } from './functions';
+import React, { useEffect, useState } from 'react'
+import { injectIntl } from 'react-intl'
+import { groupBy } from './functions'
+import store from './stores/store'
+import ToolbarItem from './toolbar-draggable-item'
+import ToolbarGroupItem from './toolbar-group-item'
+import ID from './UUID'
 
 function buildItems(items, defaultItems) {
   if (!items) {
-    return defaultItems;
+    return defaultItems
   }
   return items.map((x) => {
-    let found = defaultItems.find(
-      (y) => x.element === y.element && y.key === x.key,
-    );
+    let found = defaultItems.find((y) => x.element === y.element && y.key === x.key)
     if (!found) {
-      found = defaultItems.find(
-        (y) => (x.element || x.key) === (y.element || y.key),
-      );
+      found = defaultItems.find((y) => (x.element || x.key) === (y.element || y.key))
     }
     if (found) {
       if (x.inherited !== false) {
-        found = { ...found, ...x };
+        found = { ...found, ...x }
       } else if (x.group_name) {
-        found.group_name = x.group_name;
+        found.group_name = x.group_name
       }
     }
-    return found || x;
-  });
+    return found || x
+  })
 }
 
 function buildGroupItems(allItems) {
   if (!Array.isArray(allItems)) {
-    return null;
+    return null
   }
 
-  const items = allItems?.filter((x) => !x.group_name);
-  const gItems = allItems?.filter((x) => !!x.group_name);
-  const grouped = groupBy(gItems, (x) => x.group_name);
+  const items = allItems?.filter((x) => !x.group_name)
+  const gItems = allItems?.filter((x) => !!x.group_name)
+  const grouped = groupBy(gItems, (x) => x.group_name)
   const groupKeys = gItems
     .map((x) => x.group_name)
-    .filter((v, i, self) => self.indexOf(v) === i);
+    .filter((v, i, self) => self.indexOf(v) === i)
 
   return {
     items,
     grouped,
     groupKeys,
-  };
+  }
 }
 
 const defaultItems = (intl) => [
@@ -321,10 +317,10 @@ const defaultItems = (intl) => [
     label: intl.formatMessage({ id: 'place-holder-label' }),
     field_name: 'file_upload_',
   },
-];
+]
 
 const Toolbar = ({ intl, items: propsItems }) => {
-  const [items] = useState(buildItems(propsItems, defaultItems(intl)));
+  const [items] = useState(buildItems(propsItems, defaultItems(intl)))
 
   const _defaultItemOptions = (element) => {
     switch (element) {
@@ -345,7 +341,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
             text: intl.formatMessage({ id: 'place-holder-option-3' }),
             key: `dropdown_option_${ID.uuid()}`,
           },
-        ];
+        ]
       case 'Tags':
         return [
           {
@@ -363,7 +359,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
             text: intl.formatMessage({ id: 'place-holder-tag-3' }),
             key: `tags_option_${ID.uuid()}`,
           },
-        ];
+        ]
       case 'Checkboxes':
         return [
           {
@@ -381,7 +377,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
             text: intl.formatMessage({ id: 'place-holder-option-3' }),
             key: `checkboxes_option_${ID.uuid()}`,
           },
-        ];
+        ]
       case 'RadioButtons':
         return [
           {
@@ -399,25 +395,25 @@ const Toolbar = ({ intl, items: propsItems }) => {
             text: intl.formatMessage({ id: 'place-holder-option-3' }),
             key: `radiobuttons_option_${ID.uuid()}`,
           },
-        ];
+        ]
       default:
-        return [];
+        return []
     }
-  };
+  }
 
   const addCustomOptions = (item, elementOptions) => {
     if (item.type === 'custom') {
-      const customOptions = { ...item, ...elementOptions };
-      customOptions.custom = true;
-      customOptions.component = item.component || null;
-      customOptions.custom_options = item.custom_options || [];
-      return customOptions;
+      const customOptions = { ...item, ...elementOptions }
+      customOptions.custom = true
+      customOptions.component = item.component || null
+      customOptions.custom_options = item.custom_options || []
+      return customOptions
     }
-    return elementOptions;
-  };
+    return elementOptions
+  }
 
   const create = (item) => {
-    const elementKey = item.element || item.key;
+    const elementKey = item.element || item.key
     const elementOptions = addCustomOptions(item, {
       id: ID.uuid(),
       element: elementKey,
@@ -426,97 +422,95 @@ const Toolbar = ({ intl, items: propsItems }) => {
       static: item.static,
       required: false,
       showDescription: item.showDescription,
-    });
+    })
 
     if (item.static) {
-      elementOptions.bold = false;
-      elementOptions.italic = false;
+      elementOptions.bold = false
+      elementOptions.italic = false
     }
 
     if (item.canHaveAnswer) {
-      elementOptions.canHaveAnswer = item.canHaveAnswer;
+      elementOptions.canHaveAnswer = item.canHaveAnswer
     }
     if (item.canReadOnly) {
-      elementOptions.readOnly = false;
+      elementOptions.readOnly = false
     }
     if (item.canDefaultToday) {
-      elementOptions.defaultToday = false;
+      elementOptions.defaultToday = false
     }
     if (item.content) {
-      elementOptions.content = item.content;
+      elementOptions.content = item.content
     }
     if (item.href) {
-      elementOptions.href = item.href;
+      elementOptions.href = item.href
     }
     if (item.inherited !== undefined) {
-      elementOptions.inherited = item.inherited;
+      elementOptions.inherited = item.inherited
     }
 
-    elementOptions.canHavePageBreakBefore =
-      item.canHavePageBreakBefore !== false;
-    elementOptions.canHaveAlternateForm = item.canHaveAlternateForm !== false;
-    elementOptions.canHaveDisplayHorizontal =
-      item.canHaveDisplayHorizontal !== false;
+    elementOptions.canHavePageBreakBefore = item.canHavePageBreakBefore !== false
+    elementOptions.canHaveAlternateForm = item.canHaveAlternateForm !== false
+    elementOptions.canHaveDisplayHorizontal = item.canHaveDisplayHorizontal !== false
     if (elementOptions.canHaveDisplayHorizontal) {
-      elementOptions.inline = item.inline;
+      elementOptions.inline = item.inline
     }
-    elementOptions.canHaveOptionCorrect = item.canHaveOptionCorrect !== false;
-    elementOptions.canHaveOptionValue = item.canHaveOptionValue !== false;
-    elementOptions.canPopulateFromApi = item.canPopulateFromApi !== false;
+    elementOptions.canHaveOptionCorrect = item.canHaveOptionCorrect !== false
+    elementOptions.canHaveOptionValue = item.canHaveOptionValue !== false
+    elementOptions.canPopulateFromApi = item.canPopulateFromApi !== false
 
     if (item.class_name) {
-      elementOptions.class_name = item.class_name;
+      elementOptions.class_name = item.class_name
     }
 
     if (elementKey === 'Image') {
-      elementOptions.src = item.src;
+      elementOptions.src = item.src
     }
 
     if (elementKey === 'DatePicker') {
-      elementOptions.dateFormat = item.dateFormat;
-      elementOptions.timeFormat = item.timeFormat;
-      elementOptions.showTimeSelect = item.showTimeSelect;
-      elementOptions.showTimeSelectOnly = item.showTimeSelectOnly;
-      elementOptions.showTimeInput = item.showTimeInput;
+      elementOptions.dateFormat = item.dateFormat
+      elementOptions.timeFormat = item.timeFormat
+      elementOptions.showTimeSelect = item.showTimeSelect
+      elementOptions.showTimeSelectOnly = item.showTimeSelectOnly
+      elementOptions.showTimeInput = item.showTimeInput
     }
 
     if (elementKey === 'Download') {
-      elementOptions._href = item._href;
-      elementOptions.file_path = item.file_path;
+      elementOptions._href = item._href
+      elementOptions.file_path = item.file_path
     }
 
     if (elementKey === 'Range') {
-      elementOptions.step = item.step;
-      elementOptions.default_value = item.default_value;
-      elementOptions.min_value = item.min_value;
-      elementOptions.max_value = item.max_value;
-      elementOptions.min_label = item.min_label;
-      elementOptions.max_label = item.max_label;
+      elementOptions.step = item.step
+      elementOptions.default_value = item.default_value
+      elementOptions.min_value = item.min_value
+      elementOptions.max_value = item.max_value
+      elementOptions.min_label = item.min_label
+      elementOptions.max_label = item.max_label
     }
 
     if (item.element === 'MultiColumnRow') {
-      elementOptions.col_count = item.col_count;
+      elementOptions.col_count = item.col_count
     }
 
     if (item.key === 'DataSource') {
-      elementOptions.sourceType = item.sourceType;
-      elementOptions.formSource = item.formSource;
-      elementOptions.formField = item.formField || {};
+      elementOptions.sourceType = item.sourceType
+      elementOptions.formSource = item.formSource
+      elementOptions.formField = item.formField || {}
     }
 
     if (item.key === 'Signature2') {
-      elementOptions.position = 'Placeholder Text';
-      elementOptions.specificRole = 'specific';
+      elementOptions.position = 'Placeholder Text'
+      elementOptions.specificRole = 'specific'
     }
 
     if (item.defaultValue) {
-      elementOptions.defaultValue = item.defaultValue;
+      elementOptions.defaultValue = item.defaultValue
     }
     if (item.field_name) {
-      elementOptions.field_name = item.field_name + ID.uuid();
+      elementOptions.field_name = item.field_name + ID.uuid()
     }
     if (item.label) {
-      elementOptions.label = item.label;
+      elementOptions.label = item.label
     }
 
     if (item.options) {
@@ -524,37 +518,37 @@ const Toolbar = ({ intl, items: propsItems }) => {
         elementOptions.options = item.options.map((x) => ({
           ...x,
           key: `custom_option_${ID.uuid()}`,
-        }));
+        }))
       } else {
-        elementOptions.options = _defaultItemOptions(elementOptions.element);
+        elementOptions.options = _defaultItemOptions(elementOptions.element)
       }
     }
 
     if (item.key === 'Table') {
       if (item.columns.length > 0) {
-        elementOptions.columns = item.columns;
+        elementOptions.columns = item.columns
       } else {
         elementOptions.columns = [
           { text: 'Column1', key: `table_column_${ID.uuid()}`, width: 1 },
           { text: 'Column2', key: `table_column_${ID.uuid()}`, width: 1 },
           { text: 'Column3', key: `table_column_${ID.uuid()}`, width: 1 },
-        ];
+        ]
       }
 
       if (item.rowLabels?.length > 0) {
-        elementOptions.rowLabels = item.rowLabels;
+        elementOptions.rowLabels = item.rowLabels
       } else {
-        elementOptions.rowLabels = [];
+        elementOptions.rowLabels = []
       }
-      elementOptions.rows = item.rows || 3;
+      elementOptions.rows = item.rows || 3
     }
 
-    return elementOptions;
-  };
+    return elementOptions
+  }
 
   const _onClick = (item) => {
-    store.dispatch('create', create(item));
-  };
+    store.dispatch('create', create(item))
+  }
 
   const renderItem = (item) => (
     <ToolbarItem
@@ -563,16 +557,16 @@ const Toolbar = ({ intl, items: propsItems }) => {
       onClick={() => _onClick(item)}
       onCreate={create}
     />
-  );
+  )
 
-  const { items: groupedItems, grouped, groupKeys } = buildGroupItems(items);
+  const { items: groupedItems, grouped, groupKeys } = buildGroupItems(items)
 
   // TODO: to reccheck this useEffect
   useEffect(() => {
     // store.subscribe((state) => setItems(state));
     // const unsubscribe = store.subscribe((state) => setItems(state));
     // return () => unsubscribe && unsubscribe();
-  }, []);
+  }, [])
 
   return (
     <div className="col-md-6 react-form-builder-toolbar float-right">
@@ -589,7 +583,7 @@ const Toolbar = ({ intl, items: propsItems }) => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default injectIntl(Toolbar);
+export default injectIntl(Toolbar)

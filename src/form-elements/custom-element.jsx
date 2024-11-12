@@ -1,31 +1,31 @@
-import React, { useRef } from 'react';
-import ComponentHeader from './component-header';
-import ComponentLabel from './component-label';
+import React, { useRef } from 'react'
+import ComponentHeader from './component-header'
+import ComponentLabel from './component-label'
 
 const CustomElement = (props) => {
-  const inputField = useRef(null);
+  const inputField = useRef(null)
 
-  const { bare } = props.data;
+  const { bare } = props.data
   const elementProps = {
     name: props.data.field_name,
     defaultValue: props.defaultValue,
-  };
+  }
 
   if (props.mutable && props.data.forwardRef) {
-    elementProps.ref = inputField;
+    elementProps.ref = inputField
   }
 
   if (props.read_only) {
-    elementProps.disabled = 'disabled';
+    elementProps.disabled = 'disabled'
   }
 
   // Return if component is invalid.
-  if (!props.data.component) return null;
-  const Element = props.data.component;
+  if (!props.data.component) return null
+  const Element = props.data.component
 
-  let baseClasses = 'SortableItem rfb-item';
+  let baseClasses = 'SortableItem rfb-item'
   if (props.data.pageBreakBefore) {
-    baseClasses += ' alwaysbreak';
+    baseClasses += ' alwaysbreak'
   }
 
   return (
@@ -40,9 +40,9 @@ const CustomElement = (props) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-CustomElement.propTypes = {};
+CustomElement.propTypes = {}
 
-export default CustomElement;
+export default CustomElement

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react'
 
 /**
  * @typedef {Object} StarRatingProps
@@ -24,26 +24,26 @@ const StarRating = ({
   size = 'large',
   step = 0.5,
 }) => {
-  const min = 0;
-  const max = ratingAmount;
+  const min = 0
+  const max = ratingAmount
 
-  const rootRef = useRef(null);
-  const containerRef = useRef(null);
+  const rootRef = useRef(null)
+  const containerRef = useRef(null)
 
-  const getStars = () => '★'.repeat(ratingAmount);
+  const getStars = () => '★'.repeat(ratingAmount)
 
   const getWidthFromValue = (val) => {
-    if (val <= min || min === max) return 0;
-    if (val >= max) return 100;
-    return (val / (max - min)) * 100;
-  };
+    if (val <= min || min === max) return 0
+    if (val >= max) return 100
+    return (val / (max - min)) * 100
+  }
 
-  const getStarRatingPosition = (val) => `${getWidthFromValue(val)}%`;
+  const getStarRatingPosition = (val) => `${getWidthFromValue(val)}%`
 
   const initialCache = {
     pos: initialRating ? getStarRatingPosition(initialRating) : 0,
     rating: initialRating,
-  };
+  }
 
   const [state, setState] = useState({
     ratingCache: initialCache,
@@ -51,65 +51,61 @@ const StarRating = ({
     rating: initialCache.rating,
     pos: initialCache.pos,
     glyph: getStars(),
-  });
+  })
 
-  const getPosition = (e) =>
-    e.pageX - rootRef.current.getBoundingClientRect().left;
+  const getPosition = (e) => e.pageX - rootRef.current.getBoundingClientRect().left
 
   const applyPrecision = (val, precision) => {
-    return parseFloat(val.toFixed(precision));
-  };
+    return parseFloat(val.toFixed(precision))
+  }
 
   const getDecimalPlaces = (num) => {
-    const match = `${num}`.match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/);
+    const match = `${num}`.match(/(?:\.(\d+))?(?:[eE]([+-]?\d+))?$/)
     return !match
       ? 0
-      : Math.max(
-          0,
-          (match[1] ? match[1].length : 0) - (match[2] ? +match[2] : 0)
-        );
-  };
+      : Math.max(0, (match[1] ? match[1].length : 0) - (match[2] ? +match[2] : 0))
+  }
 
   const getValueFromPosition = (pos) => {
-    const precision = getDecimalPlaces(step);
-    const maxWidth = containerRef.current.offsetWidth;
-    const diff = max - min;
-    let factor = (diff * pos) / (maxWidth * step);
-    factor = Math.ceil(factor);
-    let val = applyPrecision(parseFloat(min + factor * step), precision);
-    val = Math.max(Math.min(val, max), min);
-    return val;
-  };
+    const precision = getDecimalPlaces(step)
+    const maxWidth = containerRef.current.offsetWidth
+    const diff = max - min
+    let factor = (diff * pos) / (maxWidth * step)
+    factor = Math.ceil(factor)
+    let val = applyPrecision(parseFloat(min + factor * step), precision)
+    val = Math.max(Math.min(val, max), min)
+    return val
+  }
 
   const calculate = (pos) => {
-    const val = getValueFromPosition(pos);
-    const width = `${getWidthFromValue(val)}%`;
-    return { width, val };
-  };
+    const val = getValueFromPosition(pos)
+    const width = `${getWidthFromValue(val)}%`
+    return { width, val }
+  }
 
   const handleMouseLeave = () => {
     setState((prev) => ({
       ...prev,
       pos: prev.ratingCache.pos,
       rating: prev.ratingCache.rating,
-    }));
-  };
+    }))
+  }
 
   const handleMouseMove = (e) => {
-    const pos = getPosition(e);
-    const { width, val } = calculate(pos);
+    const pos = getPosition(e)
+    const { width, val } = calculate(pos)
     setState((prev) => ({
       ...prev,
       pos: width,
       rating: val,
-    }));
-  };
+    }))
+  }
 
   const handleClick = (e) => {
     if (disabled) {
-      e.stopPropagation();
-      e.preventDefault();
-      return false;
+      e.stopPropagation()
+      e.preventDefault()
+      return false
     }
 
     const newCache = {
@@ -117,16 +113,16 @@ const StarRating = ({
       rating: state.rating,
       caption,
       name,
-    };
+    }
 
     setState((prev) => ({
       ...prev,
       ratingCache: newCache,
-    }));
+    }))
 
-    onRatingClick(e, newCache);
-    return true;
-  };
+    onRatingClick(e, newCache)
+    return true
+  }
 
   const containerClass = [
     'rating-container',
@@ -136,7 +132,7 @@ const StarRating = ({
     state.editing && 'rating-editing',
   ]
     .filter(Boolean)
-    .join(' ');
+    .join(' ')
 
   return (
     <div className="star-rating-wrapper">
@@ -266,7 +262,7 @@ const StarRating = ({
         </span>
       </span>
     </div>
-  );
-};
+  )
+}
 
-export default StarRating;
+export default StarRating

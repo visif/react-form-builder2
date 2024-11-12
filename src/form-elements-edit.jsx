@@ -1,11 +1,11 @@
 /* eslint-disable implicit-arrow-linebreak */
-import React, { useEffect, useState } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
-import TextAreaAutosize from 'react-textarea-autosize';
-import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import DynamicOptionList from './dynamic-option-list';
-import IntlMessages from './language-provider/IntlMessages';
+import React, { useEffect, useState } from 'react'
+import { Editor } from 'react-draft-wysiwyg'
+import TextAreaAutosize from 'react-textarea-autosize'
+import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js'
+import draftToHtml from 'draftjs-to-html'
+import DynamicOptionList from './dynamic-option-list'
+import IntlMessages from './language-provider/IntlMessages'
 
 const toolbar = {
   options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
@@ -14,117 +14,109 @@ const toolbar = {
     className: undefined,
     options: ['bold', 'italic', 'underline', 'superscript', 'subscript'],
   },
-};
+}
 
 const FormElementsEdit = (props) => {
-  const [element, setElement] = useState(props.element);
-  const [dirty, setDirty] = useState(false);
-  const [formDataSource, setFormDataSource] = useState([]);
+  const [element, setElement] = useState(props.element)
+  const [dirty, setDirty] = useState(false)
+  const [formDataSource, setFormDataSource] = useState([])
 
   useEffect(() => {
-    setElement(props.element);
-  }, [props.element]);
+    setElement(props.element)
+  }, [props.element])
 
   const updateElement = (updatedElement = element) => {
     if (dirty) {
-      props.updateElement.call(props.preview, updatedElement);
-      setDirty(false);
+      props.updateElement.call(props.preview, updatedElement)
+      setDirty(false)
     }
-  };
+  }
 
   const editElementProp = (elemProperty, targProperty, e) => {
     const updatedElement = {
       ...element,
       [elemProperty]: e.target[targProperty],
-    };
-    setElement(updatedElement);
-    setDirty(true);
+    }
+    setElement(updatedElement)
+    setDirty(true)
 
     if (targProperty === 'checked') {
-      updateElement(updatedElement);
+      updateElement(updatedElement)
     }
-  };
+  }
 
   const onEditorStateChange = (index, property, editorContent) => {
     const html = draftToHtml(convertToRaw(editorContent.getCurrentContent()))
       .replace(/<p>/g, '')
       .replace(/<\/p>/g, '')
       .replace(/&nbsp;/g, ' ')
-      .replace(/(?:\r\n|\r|\n)/g, ' ');
+      .replace(/(?:\r\n|\r|\n)/g, ' ')
 
-    const updatedElement = { ...element, [property]: html };
-    setElement(updatedElement);
-    setDirty(true);
-  };
+    const updatedElement = { ...element, [property]: html }
+    setElement(updatedElement)
+    setDirty(true)
+  }
 
   const convertFromHTMLContent = (content) => {
-    const newContent = convertFromHTML(content);
+    const newContent = convertFromHTML(content)
     if (!newContent.contentBlocks || !newContent.contentBlocks.length) {
-      return EditorState.createEmpty();
+      return EditorState.createEmpty()
     }
-    const contentState = ContentState.createFromBlockArray(newContent);
-    return EditorState.createWithContent(contentState);
-  };
+    const contentState = ContentState.createFromBlockArray(newContent)
+    return EditorState.createWithContent(contentState)
+  }
 
   const onUploadFile = async (event) => {
-    if (
-      !event ||
-      !event.target ||
-      !event.target.files ||
-      !props.onImageUpload
-    ) {
+    if (!event || !event.target || !event.target.files || !props.onImageUpload) {
       if (!props.onImageUpload) {
-        const thisElement = element;
-        thisElement.src = 'Please provide upload callback';
-        setElement(thisElement);
+        const thisElement = element
+        thisElement.src = 'Please provide upload callback'
+        setElement(thisElement)
       }
 
-      return;
+      return
     }
 
     try {
-      const file = event.target.files[0];
-      const imageUrl = await props.onImageUpload(
-        file,
-        props.element.id,
-      );
+      const file = event.target.files[0]
+      const imageUrl = await props.onImageUpload(file, props.element.id)
 
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = function readerOnLoad() {
-        const img = new Image();
+        const img = new Image()
         img.onload = function imgOnLoad() {
-          const thisElement = element;
-          thisElement.width = img.width;
-          thisElement.height = img.height;
-          thisElement.src = imageUrl;
-          setElement(thisElement);
-          props.updateElement.call(props.preview, thisElement);
-        };
-        img.src = reader.result;
-      };
-      reader.readAsDataURL(file);
+          const thisElement = element
+          thisElement.width = img.width
+          thisElement.height = img.height
+          thisElement.src = imageUrl
+          setElement(thisElement)
+          props.updateElement.call(props.preview, thisElement)
+        }
+        img.src = reader.result
+      }
+      reader.readAsDataURL(file)
     } catch (error) {
-      console.error('error upload', error);
-      const thisElement = element;
-      thisElement.src = 'cannot upload file';
-      setElement(thisElement);
+      console.error('error upload', error)
+      const thisElement = element
+      thisElement.src = 'cannot upload file'
+      setElement(thisElement)
     }
-  };
+  }
 
   const { canHaveDisplayHorizontal, canHaveOptionCorrect, canHaveOptionValue } =
-    props.element;
+    props.element
 
-  const thisFiles = props.files.length ? props.files : [];
+  const thisFiles = props.files.length ? props.files : []
   if (thisFiles.length < 1 || (thisFiles.length > 0 && thisFiles[0].id !== '')) {
-    thisFiles.unshift({ id: '', file_name: '' });
+    thisFiles.unshift({ id: '', file_name: '' })
   }
 
-  let editorState;
+  let editorState
   if (Object.prototype.hasOwnProperty.call(props.element, 'content')) {
-    editorState = convertFromHTMLContent(props.element.content);
+    editorState = convertFromHTMLContent(props.element.content)
   }
   if (Object.prototype.hasOwnProperty.call(props.element, 'label')) {
-    editorState = convertFromHTMLContent(props.element.label);
+    editorState = convertFromHTMLContent(props.element.label)
   }
 
   return (
@@ -167,12 +159,12 @@ const FormElementsEdit = (props) => {
             onChange={(e) => editElementProp('file_path', 'value', e)}
           >
             {thisFiles.map((file) => {
-              const thisKey = `file_${file.id}`;
+              const thisKey = `file_${file.id}`
               return (
                 <option value={file.id} key={thisKey}>
                   {file.file_name}
                 </option>
-              );
+              )
             })}
           </select>
         </div>
@@ -189,15 +181,11 @@ const FormElementsEdit = (props) => {
         </div>
       )}
       {Object.prototype.hasOwnProperty.call(props.element, 'src') && (
-          <div>
-            <div className="form-group">
-            <input
-              id="srcImage"
-              type="file"
-              onChange={(e) => onUploadFile(e)}
-            />
-            </div>
-            <div className="form-group">
+        <div>
+          <div className="form-group">
+            <input id="srcImage" type="file" onChange={(e) => onUploadFile(e)} />
+          </div>
+          <div className="form-group">
             <label className="control-label" htmlFor="srcInput">
               Link to:
             </label>
@@ -210,54 +198,54 @@ const FormElementsEdit = (props) => {
               onBlur={() => updateElement()}
               onChange={(e) => editElementProp('src', 'value', e)}
             />
-            </div>
-            <div className="form-group">
+          </div>
+          <div className="form-group">
             <div className="custom-control custom-checkbox">
               <input
-              id="do-center"
-              className="custom-control-input"
-              type="checkbox"
-              checked={props.element.center || false}
-              value={true}
-              onChange={(e) => editElementProp('center', 'checked', e)}
+                id="do-center"
+                className="custom-control-input"
+                type="checkbox"
+                checked={props.element.center || false}
+                value={true}
+                onChange={(e) => editElementProp('center', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="do-center">
-              Center?
+                Center?
               </label>
             </div>
-            </div>
-            <div className="row">
+          </div>
+          <div className="row">
             <div className="col-sm-3">
               <label className="control-label" htmlFor="elementWidth">
-              Width:
+                Width:
               </label>
               <input
-              id="elementWidth"
-              type="text"
-              className="form-control"
-              value={props.element.width}
-              defaultValue={props.element.width}
-              onBlur={() => updateElement()}
-              onChange={(e) => editElementProp('width', 'value', e)}
+                id="elementWidth"
+                type="text"
+                className="form-control"
+                value={props.element.width}
+                defaultValue={props.element.width}
+                onBlur={() => updateElement()}
+                onChange={(e) => editElementProp('width', 'value', e)}
               />
             </div>
             <div className="col-sm-3">
               <label className="control-label" htmlFor="elementHeight">
-              Height:
+                Height:
               </label>
               <input
-              id="elementHeight"
-              type="text"
-              className="form-control"
-              value={props.element.height}
-              defaultValue={props.element.height}
-              onBlur={() => updateElement()}
-              onChange={(e) => editElementProp('height', 'value', e)}
+                id="elementHeight"
+                type="text"
+                className="form-control"
+                value={props.element.height}
+                defaultValue={props.element.height}
+                onBlur={() => updateElement()}
+                onChange={(e) => editElementProp('height', 'value', e)}
               />
             </div>
-            </div>
           </div>
-          )}
+        </div>
+      )}
       {Object.prototype.hasOwnProperty.call(props.element, 'label') && (
         <div className="form-group">
           <label>
@@ -499,7 +487,7 @@ const FormElementsEdit = (props) => {
                       checked={
                         Object.prototype.hasOwnProperty.call(
                           props.element,
-                          `formField${item.field_name}`,
+                          `formField${item.field_name}`
                         )
                           ? props.element[`formField${item.field_name}`]
                           : false
@@ -519,9 +507,9 @@ const FormElementsEdit = (props) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-FormElementsEdit.defaultProps = { className: 'edit-element-fields' };
+FormElementsEdit.defaultProps = { className: 'edit-element-fields' }
 
-export default FormElementsEdit;
+export default FormElementsEdit

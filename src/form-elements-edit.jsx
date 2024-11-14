@@ -146,6 +146,7 @@ const FormElementsEdit = (props) => {
           />
         </div>
       )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'file_path') && (
         <div className="form-group">
           <label className="control-label" htmlFor="fileSelect">
@@ -169,6 +170,7 @@ const FormElementsEdit = (props) => {
           </select>
         </div>
       )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'href') && (
         <div className="form-group">
           <TextAreaAutosize
@@ -180,6 +182,7 @@ const FormElementsEdit = (props) => {
           />
         </div>
       )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'src') && (
         <div>
           <div className="form-group">
@@ -246,22 +249,28 @@ const FormElementsEdit = (props) => {
           </div>
         </div>
       )}
-      {Object.prototype.hasOwnProperty.call(props.element, 'label') && (
+
+      {(Object.prototype.hasOwnProperty.call(props.element, 'label') ||
+        props.element.element === 'Signature2') && (
         <div className="form-group">
-          <label>
-            <IntlMessages id="display-label" />
-          </label>
-          <Editor
-            toolbar={toolbar}
-            defaultEditorState={editorState}
-            onBlur={() => updateElement()}
-            onEditorStateChange={(editorContent) =>
-              // eslint-disable-next-line implicit-arrow-linebreak
-              onEditorStateChange(0, 'label', editorContent)
-            }
-            stripPastedStyles={true}
-          />
-          <br />
+          {props.element.element !== 'Signature2' && (
+            <>
+              <label>
+                <IntlMessages id="display-label" />
+              </label>
+              <Editor
+                toolbar={toolbar}
+                defaultEditorState={editorState}
+                onBlur={() => updateElement()}
+                onEditorStateChange={(editorContent) =>
+                  onEditorStateChange(0, 'label', editorContent)
+                }
+                stripPastedStyles={true}
+              />
+              <br />
+            </>
+          )}
+
           <div className="custom-control custom-checkbox">
             <input
               id="is-required"
@@ -369,6 +378,198 @@ const FormElementsEdit = (props) => {
             )}
         </div>
       )}
+
+      {element.element === 'Signature' && props.element.readOnly ? (
+        <div className="form-group">
+          <label className="control-label" htmlFor="variableKey">
+            Variable Key:
+          </label>
+          <input
+            id="variableKey"
+            type="text"
+            className="form-control"
+            defaultValue={props.element.variableKey}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('variableKey', 'value', e)}
+          />
+          <p className="help-block">
+            This will give the element a key that can be used to replace the content with
+            a runtime value.
+          </p>
+        </div>
+      ) : (
+        <div />
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'step') && (
+        <div className="form-group">
+          <div className="form-group-range">
+            <label className="control-label" htmlFor="rangeStep">
+              Step
+            </label>
+            <input
+              id="rangeStep"
+              type="number"
+              className="form-control"
+              defaultValue={props.element.step}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('step', 'value', e)}
+            />
+          </div>
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'min_value') && (
+        <div className="form-group">
+          <div className="form-group-range">
+            <label className="control-label" htmlFor="rangeMin">
+              Min
+            </label>
+            <input
+              id="rangeMin"
+              type="number"
+              className="form-control"
+              defaultValue={props.element.min_value}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('min_value', 'value', e)}
+            />
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={props.element.min_label}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('min_label', 'value', e)}
+            />
+          </div>
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'max_value') && (
+        <div className="form-group">
+          <div className="form-group-range">
+            <label className="control-label" htmlFor="rangeMax">
+              Max
+            </label>
+            <input
+              id="rangeMax"
+              type="number"
+              className="form-control"
+              defaultValue={props.element.max_value}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('max_value', 'value', e)}
+            />
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={props.element.max_label}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('max_label', 'value', e)}
+            />
+          </div>
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'default_value') && (
+        <div className="form-group">
+          <div className="form-group-range">
+            <label className="control-label" htmlFor="defaultSelected">
+              Default Selected
+            </label>
+            <input
+              id="defaultSelected"
+              type="number"
+              className="form-control"
+              defaultValue={props.element.default_value}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('default_value', 'value', e)}
+            />
+          </div>
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'static') &&
+        props.element.static && (
+          <div className="form-group">
+            <label className="control-label">Text Style</label>
+            <div className="custom-control custom-checkbox">
+              <input
+                id="do-bold"
+                className="custom-control-input"
+                type="checkbox"
+                checked={this_checked_bold}
+                value={true}
+                onChange={(e) => editElementProp('bold', 'checked', e)}
+              />
+              <label className="custom-control-label" htmlFor="do-bold">
+                Bold
+              </label>
+            </div>
+            <div className="custom-control custom-checkbox">
+              <input
+                id="do-italic"
+                className="custom-control-input"
+                type="checkbox"
+                checked={this_checked_italic}
+                value={true}
+                onChange={(e) => editElementProp('italic', 'checked', e)}
+              />
+              <label className="custom-control-label" htmlFor="do-italic">
+                Italic
+              </label>
+            </div>
+          </div>
+        )}
+
+      {props.element.showDescription && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="questionDescription">
+            Description
+          </label>
+          <TextAreaAutosize
+            type="text"
+            className="form-control"
+            id="questionDescription"
+            defaultValue={props.element.description}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('description', 'value', e)}
+          />
+        </div>
+      )}
+
+      {props.showCorrectColumn &&
+        props.element.canHaveAnswer &&
+        !Object.prototype.hasOwnProperty.call(props.element, 'options') && (
+          <div className="form-group">
+            <label className="control-label" htmlFor="correctAnswer">
+              Correct Answer
+            </label>
+            <input
+              id="correctAnswer"
+              type="text"
+              className="form-control"
+              defaultValue={props.element.correct}
+              onBlur={() => updateElement()}
+              onChange={(e) => editElementProp('correct', 'value', e)}
+            />
+          </div>
+        )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'header') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="header">
+            Section Header
+          </label>
+          <input
+            id="header"
+            type="text"
+            className="form-control"
+            defaultValue={props.element.header}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('header', 'value', e)}
+          />
+        </div>
+      )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'position') && (
         <div className="form-group">
           <label className="control-label" htmlFor="position">
@@ -384,6 +585,7 @@ const FormElementsEdit = (props) => {
           />
         </div>
       )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'specificRole') && (
         <div className="form-group">
           <label className="control-label">
@@ -405,6 +607,7 @@ const FormElementsEdit = (props) => {
           </select>
         </div>
       )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'options') && (
         <DynamicOptionList
           showCorrectColumn={props.showCorrectColumn}
@@ -417,6 +620,43 @@ const FormElementsEdit = (props) => {
           key={props.element.options.length}
         />
       )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'rows') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="rowInput">
+            Row Count
+          </label>
+          <input
+            id="rowInput"
+            type="text"
+            className="form-control"
+            defaultValue={props.element.rows}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('rows', 'value', e)}
+          />
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'rowLabels') && (
+        <FixedRowList
+          data={props.preview?.state?.data}
+          updateElement={props.updateElement}
+          preview={props.preview}
+          element={props.element}
+          key={`table-row-labels`}
+        />
+      )}
+
+      {Object.prototype.hasOwnProperty.call(props.element, 'columns') && (
+        <DynamicColumnList
+          data={props.preview?.state?.data}
+          updateElement={props.updateElement}
+          preview={props.preview}
+          element={props.element}
+          key={`table-columns`}
+        />
+      )}
+
       {Object.prototype.hasOwnProperty.call(props.element, 'sourceType') && (
         <div className="form-group">
           <label className="control-label" htmlFor="sourceType">
@@ -444,6 +684,7 @@ const FormElementsEdit = (props) => {
           </select>
         </div>
       )}
+
       {props.element.sourceType === 'form' && (
         <div>
           {Object.prototype.hasOwnProperty.call(props.element, 'formSource') && (

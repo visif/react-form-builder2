@@ -569,8 +569,10 @@ const Toolbar = ({ intl, items: propsItems }) => {
   }, [])
 
   return (
-    <div className="col-md-6 react-form-builder-toolbar float-right">
-      <h4>{intl.formatMessage({ id: 'toolbox' })}</h4>
+    <div className="react-form-builder-toolbar float-right">
+      <div className="toolbar-header" style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+        <h4>{intl.formatMessage({ id: 'toolbox' })}</h4>
+      </div>
       <ul>
         {groupedItems.map(renderItem)}
         {groupKeys.map((k) => (

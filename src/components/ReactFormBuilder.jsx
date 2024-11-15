@@ -65,7 +65,12 @@ const ReactFormBuilder = (props) => {
               getActiveUserProperties={props.getActiveUserProperties}
               onImageUpload={props.onImageUpload}
             />
-            <Toolbar {...toolbarProps} customItems={props.customToolbarItems} />
+            <div
+              className="col-md-6"
+              style={{ maxHeight: 'calc(100vh - 10px)', overflowY: 'auto' }}
+            >
+              <Toolbar {...toolbarProps} customItems={props.customToolbarItems} />
+            </div>
           </div>
         </div>
       </IntlProvider>

@@ -53,6 +53,17 @@ const DynamicOptionList = (props) => {
     props.updateElement.call(props.preview, newElement)
   }
 
+  const editOptionInfo = (optionIndex) => {
+    const newElement = { ...element }
+    if (Object.prototype.hasOwnProperty.call(newElement.options[optionIndex], 'info')) {
+      delete newElement.options[optionIndex].info
+    } else {
+      newElement.options[optionIndex].info = true
+    }
+    setElement(newElement)
+    props.updateElement.call(props.preview, newElement)
+  }
+
   const addOption = (index) => {
     const newElement = { ...element }
     newElement.options.splice(index + 1, 0, {
@@ -76,7 +87,7 @@ const DynamicOptionList = (props) => {
       <ul>
         <li>
           <div className="row">
-            <div className="col-sm-6">
+            <div className="col-sm-5">
               <b>
                 <IntlMessages id="options" />
               </b>
@@ -88,8 +99,15 @@ const DynamicOptionList = (props) => {
                 </b>
               </div>
             )}
+            {props.canHaveOptionValue && props.canHaveInfo && (
+              <div className="col-sm-1">
+                <b>
+                  <IntlMessages id="info" />
+                </b>
+              </div>
+            )}
             {props.canHaveOptionValue && props.canHaveOptionCorrect && (
-              <div className="col-sm-4">
+              <div className="col-sm-1">
                 <b>
                   <IntlMessages id="correct" />
                 </b>
@@ -103,7 +121,7 @@ const DynamicOptionList = (props) => {
           return (
             <li className="clearfix" key={thisKey}>
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-5">
                   <input
                     tabIndex={index + 1}
                     className="form-control"
@@ -124,6 +142,17 @@ const DynamicOptionList = (props) => {
                       name={`value_${index}`}
                       value={val}
                       onChange={(e) => editValue(index, e)}
+                    />
+                  </div>
+                )}
+                {props.canHaveOptionValue && props.canHaveInfo && (
+                  <div className="col-sm-1">
+                    <input
+                      className="form-control"
+                      type="checkbox"
+                      value="1"
+                      onChange={() => editOptionInfo(index)}
+                      checked={'info' in option}
                     />
                   </div>
                 )}

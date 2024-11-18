@@ -94,6 +94,7 @@ const defaultItems = (intl) => [
   {
     key: 'Checkboxes',
     canHaveAnswer: true,
+    canHaveInfo: true,
     name: intl.formatMessage({ id: 'checkboxes' }),
     icon: 'far fa-check-square',
     label: intl.formatMessage({ id: 'place-holder-label' }),
@@ -103,6 +104,7 @@ const defaultItems = (intl) => [
   {
     key: 'RadioButtons',
     canHaveAnswer: true,
+    canHaveInfo: true,
     name: intl.formatMessage({ id: 'multiple-choice' }),
     icon: 'far fa-dot-circle',
     label: intl.formatMessage({ id: 'place-holder-label' }),
@@ -327,17 +329,17 @@ const Toolbar = ({ intl, items: propsItems }) => {
       case 'Dropdown':
         return [
           {
-            value: 'place_holder_option_1',
+            value: '1',
             text: intl.formatMessage({ id: 'place-holder-option-1' }),
             key: `dropdown_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_option_2',
+            value: '2',
             text: intl.formatMessage({ id: 'place-holder-option-2' }),
             key: `dropdown_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_option_3',
+            value: '3',
             text: intl.formatMessage({ id: 'place-holder-option-3' }),
             key: `dropdown_option_${ID.uuid()}`,
           },
@@ -345,17 +347,17 @@ const Toolbar = ({ intl, items: propsItems }) => {
       case 'Tags':
         return [
           {
-            value: 'place_holder_tag_1',
+            value: '1',
             text: intl.formatMessage({ id: 'place-holder-tag-1' }),
             key: `tags_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_tag_2',
+            value: '2',
             text: intl.formatMessage({ id: 'place-holder-tag-2' }),
             key: `tags_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_tag_3',
+            value: '3',
             text: intl.formatMessage({ id: 'place-holder-tag-3' }),
             key: `tags_option_${ID.uuid()}`,
           },
@@ -363,17 +365,17 @@ const Toolbar = ({ intl, items: propsItems }) => {
       case 'Checkboxes':
         return [
           {
-            value: 'place_holder_option_1',
+            value: '1',
             text: intl.formatMessage({ id: 'place-holder-option-1' }),
             key: `checkboxes_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_option_2',
+            value: '2',
             text: intl.formatMessage({ id: 'place-holder-option-2' }),
             key: `checkboxes_option_${ID.uuid()}`,
           },
           {
-            value: 'place_holder_option_3',
+            value: '3',
             text: intl.formatMessage({ id: 'place-holder-option-3' }),
             key: `checkboxes_option_${ID.uuid()}`,
           },
@@ -431,6 +433,9 @@ const Toolbar = ({ intl, items: propsItems }) => {
 
     if (item.canHaveAnswer) {
       elementOptions.canHaveAnswer = item.canHaveAnswer
+    }
+    if (item.canHaveInfo) {
+      elementOptions.canHaveInfo = item.canHaveInfo
     }
     if (item.canReadOnly) {
       elementOptions.readOnly = false
@@ -570,7 +575,10 @@ const Toolbar = ({ intl, items: propsItems }) => {
 
   return (
     <div className="react-form-builder-toolbar float-right">
-      <div className="toolbar-header" style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+      <div
+        className="toolbar-header"
+        style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}
+      >
         <h4>{intl.formatMessage({ id: 'toolbox' })}</h4>
       </div>
       <ul>

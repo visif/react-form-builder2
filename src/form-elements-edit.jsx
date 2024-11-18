@@ -1,4 +1,3 @@
-/* eslint-disable implicit-arrow-linebreak */
 import React, { useEffect, useState } from 'react'
 import { Editor } from 'react-draft-wysiwyg'
 import TextAreaAutosize from 'react-textarea-autosize'
@@ -118,6 +117,8 @@ const FormElementsEdit = (props) => {
   if (Object.prototype.hasOwnProperty.call(props.element, 'label')) {
     editorState = convertFromHTMLContent(props.element.label)
   }
+  const checked_bold = props.element.bold || false
+  const checked_italic = props.element.italic || false
 
   return (
     <div>
@@ -496,7 +497,7 @@ const FormElementsEdit = (props) => {
                 id="do-bold"
                 className="custom-control-input"
                 type="checkbox"
-                checked={this_checked_bold}
+                checked={checked_bold}
                 value={true}
                 onChange={(e) => editElementProp('bold', 'checked', e)}
               />
@@ -509,7 +510,7 @@ const FormElementsEdit = (props) => {
                 id="do-italic"
                 className="custom-control-input"
                 type="checkbox"
-                checked={this_checked_italic}
+                checked={checked_italic}
                 value={true}
                 onChange={(e) => editElementProp('italic', 'checked', e)}
               />
@@ -613,6 +614,7 @@ const FormElementsEdit = (props) => {
           showCorrectColumn={props.showCorrectColumn}
           canHaveOptionCorrect={canHaveOptionCorrect}
           canHaveOptionValue={canHaveOptionValue}
+          canHaveInfo={props.element.canHaveInfo}
           data={props.preview?.state?.data}
           updateElement={props.updateElement}
           preview={props.preview}
@@ -750,7 +752,5 @@ const FormElementsEdit = (props) => {
     </div>
   )
 }
-
-FormElementsEdit.defaultProps = { className: 'edit-element-fields' }
 
 export default FormElementsEdit

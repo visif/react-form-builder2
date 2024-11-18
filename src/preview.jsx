@@ -285,7 +285,7 @@ const Preview = (props) => {
 
     const formElementEditProps = {
       showCorrectColumn: props.showCorrectColumn,
-      files: props.files,
+      files: props.files || [],
       manualEditModeOff,
       preview: this,
       element: props.editElement,
@@ -293,10 +293,10 @@ const Preview = (props) => {
       onImageUpload: props.onImageUpload,
     }
 
-    return props.renderEditForm(formElementEditProps)
+    return <FormElementsEdit {...formElementEditProps} />
   }
 
-  let classes = props.className
+  let classes = props.className || 'col-md-6 react-form-builder-preview float-left'
   if (props.editMode) {
     classes += ' is-editing'
   }
@@ -356,15 +356,6 @@ const Preview = (props) => {
       <CustomDragLayer />
     </div>
   )
-}
-
-Preview.defaultProps = {
-  showCorrectColumn: false,
-  files: [],
-  editMode: false,
-  editElement: null,
-  className: 'col-md-6 react-form-builder-preview float-left',
-  renderEditForm: (props) => <FormElementsEdit {...props} />,
 }
 
 export default Preview

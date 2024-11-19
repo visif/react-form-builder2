@@ -3,7 +3,9 @@ import { Editor } from 'react-draft-wysiwyg'
 import TextAreaAutosize from 'react-textarea-autosize'
 import { ContentState, convertFromHTML, convertToRaw, EditorState } from 'draft-js'
 import draftToHtml from 'draftjs-to-html'
+import DynamicColumnList from './dynamic-column-list'
 import DynamicOptionList from './dynamic-option-list'
+import FixedRowList from './fixed-row-list'
 import IntlMessages from './language-provider/IntlMessages'
 
 const toolbar = {

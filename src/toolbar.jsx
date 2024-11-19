@@ -469,6 +469,8 @@ const Toolbar = ({ intl, items: propsItems }) => {
 
     if (elementKey === 'Image') {
       elementOptions.src = item.src
+      elementOptions.width = item.src.width || 100
+      elementOptions.height = item.src.height || 100
     }
 
     if (elementKey === 'DatePicker') {

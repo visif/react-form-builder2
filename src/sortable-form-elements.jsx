@@ -31,6 +31,7 @@ const {
   DataSource,
   Table,
   Signature2,
+  Section,
 } = BaseFormElements
 
 const FormElements = {}
@@ -66,5 +67,6 @@ FormElements.CustomElement = SortableElement(CustomElement)
 FormElements.DataSource = SortableElement(DataSource)
 FormElements.Table = SortableElement(Table)
 FormElements.Signature2 = SortableElement(Signature2)
+FormElements.Section = SortableElement(Section)
 
 export default FormElements

@@ -306,6 +306,13 @@ const defaultItems = (intl) => [
     max_label: intl.formatMessage({ id: 'difficult' }),
   },
   {
+    key: 'Section',
+    name: 'Section',
+    icon: 'fas fa-cut',
+    field_name: 'section_',
+    header: 'Placeholder Text',
+  },
+  {
     key: 'Camera',
     name: intl.formatMessage({ id: 'camera' }),
     icon: 'fas fa-camera',
@@ -508,6 +515,10 @@ const Toolbar = ({ intl, items: propsItems }) => {
     if (item.key === 'Signature2') {
       elementOptions.position = 'Placeholder Text'
       elementOptions.specificRole = 'specific'
+    }
+
+    if (item.key === 'Section') {
+      elementOptions.header = 'Placeholder Text'
     }
 
     if (item.defaultValue) {

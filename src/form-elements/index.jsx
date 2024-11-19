@@ -11,6 +11,7 @@ import ComponentLabel from './component-label'
 import DataSource from './datasource'
 import DatePicker from './date-picker'
 import myxss from './myxss'
+import Section from './section'
 import Signature2 from './signature2'
 import StarRating from './star-rating'
 import Table from './table'
@@ -889,5 +890,6 @@ FormElements.Camera = Camera
 FormElements.FileUpload = FileUpload
 FormElements.Range = Range
 FormElements.Signature2 = Signature2
+FormElements.Section = Section
 
 export default FormElements

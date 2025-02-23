@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo } from 'react'
 import { IntlProvider } from 'react-intl'
 import { EventEmitter } from 'fbemitter'
-import FieldSet from './fieldset'
-import FormElements from './form-elements'
-import CustomElement from './form-elements/custom-element'
-import FormValidator from './form-validator'
-import AppLocale from './language-provider'
-import { MultiColumnRow, ThreeColumnRow, TwoColumnRow } from './multi-column'
-import { FormProvider, useFormStore } from './providers/FormProvider'
-import Registry from './stores/registry'
+import FieldSet from '../fieldset'
+import FormElements from '../form-elements'
+import CustomElement from '../form-elements/custom-element'
+import FormValidator from '../form-validator'
+import AppLocale from '../language-provider'
+import { MultiColumnRow, ThreeColumnRow, TwoColumnRow } from '../multi-column'
+import { FormProvider, useFormStore } from '../providers/FormProvider'
+import Registry from '../stores/registry'
 
 // Constants
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

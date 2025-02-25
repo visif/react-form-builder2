@@ -1,88 +1,16 @@
 /// root file for the react form builder
+import React from 'react'
+import ReactDOM from 'react-dom'
+import * as variables from './variables'
+import DemoBar from './demobar'
+import { ReactFormBuilder } from './src/index'
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import DemoBar from './demobar';
-import { ReactFormBuilder } from './src/index';
-import * as variables from './variables';
+require('./scss/application.scss')
 
-require('./scss/application.scss');
+const url = '/api/formdata'
+const saveUrl = '/api/formdata'
 
-const url = '/api/formdata';
-const saveUrl = '/api/formdata';
-
-// const items = [{
-//     key: 'Header',
-//   }, {
-//     key: 'TextInput',
-//   }, {
-//     key: 'TextArea',
-//   }, {
-//     key: 'RadioButtons',
-//   }, {
-//     key: 'Checkboxes',
-//   }, {
-//     key: 'Image',
-//   },
-//   {
-//     key: 'FieldSet',
-//     label:"Field Set",
-//     name:"Field Set",
-
-//   },
-//   {
-//     group_name: 'Multi Column Row',
-//     key: 'TwoColumnRow'
-//   },
-//   {
-//     group_name: 'Multi Column Row',
-//     key: 'ThreeColumnRow'
-//   },
-//   {
-//     group_name: 'Multi Column Row',
-//     key: 'FourColumnRow',
-//     element: 'MultiColumnRow',
-//   },
-//   {
-//     group_name: 'Multi Column Row',
-//     key: 'FiveColumnRow',
-//     element: 'MultiColumnRow',
-//   },
-//   {
-//     group_name: 'Multi Column Row',
-//     key: 'SixColumnRow',
-//     element: 'MultiColumnRow',
-//   },
-//   {
-//     group_name: 'Custom Element',
-//     key: 'TestComponent',
-//     element: 'CustomElement',
-//     component: TestComponent,
-//     type: 'custom',
-//     field_name: 'test_component',
-//     name: 'Something You Want',
-//     icon: 'fa fa-cog',
-//     static: true,
-//     props: { test: 'test_comp' },
-//     label: 'Label Test',
-//   },
-//   {
-//     group_name: 'Custom Element',
-//     key: 'MyInput',
-//     element: 'CustomElement',
-//     component: MyInput,
-//     type: 'custom',
-//     forwardRef: true,
-//     bare: true,
-//     field_name: 'my_input_',
-//     name: 'My Input',
-//     icon: 'fa fa-cog',
-//     props: { test: 'test_input' },
-//     label: 'Label Input',
-//   },
-// ];
-
-const root = ReactDOM.createRoot(document.getElementById('form-builder'));
+const root = ReactDOM.createRoot(document.getElementById('form-builder'))
 root.render(
   <React.StrictMode>
     <ReactFormBuilder
@@ -92,17 +20,15 @@ root.render(
       locale="en"
       saveAlways={false}
       onImageUpload={() =>
-        // return Math.random(1000).toString()
-         'http://www.isocafe.com:8080/VisiforgeDC//temp/formimage/C27E1F69-7C67-4306-8A08-5A783F27F9F3.jpeg'
+        'http://www.isocafe.com:8080/VisiforgeDC//temp/formimage/C27E1F69-7C67-4306-8A08-5A783F27F9F3.jpeg'
       }
-      // toolbarItems={items}
     />
-  </React.StrictMode>,
-);
+  </React.StrictMode>
+)
 
-const root2 = ReactDOM.createRoot(document.getElementById('demo-bar'));
+const root2 = ReactDOM.createRoot(document.getElementById('demo-bar'))
 root2.render(
   <React.StrictMode>
     <DemoBar variables={variables} />,
-  </React.StrictMode>,
-);
+  </React.StrictMode>
+)

@@ -321,7 +321,7 @@ const Preview = (props) => {
             document.dispatchEvent(event)
           }}
         >
-          <i class="fas fa-history" style={{ marginRight: 8 }} />
+          <i className="fas fa-history" style={{ marginRight: 8 }} />
           Undo
         </span>
         <span

@@ -3,6 +3,10 @@ import ComponentHeader from './component-header'
 import ComponentLabel from './component-label'
 
 const Table = (props) => {
+  const rowsAdded =
+    (props.defaultValue ? props.defaultValue.length : Number(props.data.rows)) -
+    Number(props.data.rows)
+
   const getInputValues = (
     defaultValue = [],
     columns = [],
@@ -28,10 +32,6 @@ const Table = (props) => {
 
     return result
   }
-
-  const rowsAdded =
-    (props.defaultValue ? props.defaultValue.length : Number(props.data.rows)) -
-    Number(props.data.rows)
 
   const [state, setState] = useState({
     rows: Number(props.data.rows),
@@ -101,29 +101,51 @@ const Table = (props) => {
   }
 
   const addRow = () => {
-    setState((current) => ({
-      ...current,
-      rowsAdded: current.rowsAdded + 1,
-      inputs: getInputValues(
+    setState((current) => {
+      const values = getInputValues(
         current.inputs,
         current.columns,
         current.rows,
         current.rowsAdded + 1
-      ),
-    }))
+      )
+
+      handleTableChange(values)
+
+      return {
+        ...current,
+        rowsAdded: current.rowsAdded + 1,
+        inputs: values,
+      }
+    })
   }
 
   const removeRow = () => {
-    setState((current) => ({
-      ...current,
-      rowsAdded: current.rowsAdded - 1,
-      inputs: getInputValues(
+    setState((current) => {
+      const values = getInputValues(
         current.inputs,
         current.columns,
         current.rows,
         current.rowsAdded - 1
-      ),
-    }))
+      )
+
+      handleTableChange(values)
+
+      return {
+        ...current,
+        rowsAdded: current.rowsAdded - 1,
+        inputs: values,
+      }
+    })
+  }
+
+  const handleTableChange = (inputs) => {
+    if (props.handleChange) {
+      props.handleChange({
+        target: {
+          value: inputs,
+        },
+      })
+    }
   }
 
   const renderRows = () => {
@@ -174,6 +196,7 @@ const Table = (props) => {
                         ...state,
                         inputs: array,
                       })
+                      handleTableChange(array)
                     }}
                   />
                 </td>

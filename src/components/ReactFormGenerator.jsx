@@ -124,6 +124,7 @@ const FormContent = (props) => {
         formData.push(itemData)
       }
     })
+
     return formData
   }
 

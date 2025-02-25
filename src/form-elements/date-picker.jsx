@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { DatePicker as AntDatePicker } from 'antd'
 import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
@@ -32,97 +32,80 @@ export const getCalendarType = () => {
   return key || 'EN'
 }
 
-class DatePicker extends React.Component {
-  constructor(props) {
-    super(props)
-    this.inputField = React.createRef()
-    this.mounted = false
+const DatePicker = (props) => {
+  const inputField = useRef(null)
+  const [loading, setLoading] = useState(true)
+  const [value, setValue] = useState(null)
+  const [placeholder, setPlaceholder] = useState('')
+  const [formatMask, setFormatMask] = useState(getDateFormat())
 
-    const { formatMask } = DatePicker.updateFormat(props, null)
-    this.state = {
-      ...DatePicker.updateDateTime(props, formatMask),
-      loading: true,
-    }
-  }
+  useEffect(() => {
+    const { formatMask: newFormatMask } = updateFormat(props, null)
+    const newState = updateDateTime(props, newFormatMask)
+    setValue(newState.value)
+    setPlaceholder(newState.placeholder)
+    setLoading(false)
+  }, [props])
 
-  componentDidMount() {
-    this.mounted = true
-    this.checkForValue()
-  }
+  useEffect(() => {
+    checkForValue()
+  }, [])
 
-  componentWillUnmount() {
-    this.mounted = false
-  }
-
-  checkForValue = (attempt = 0) => {
-    const { defaultValue } = this.props
+  const checkForValue = (attempt = 0) => {
+    const { defaultValue } = props
     const maxRetries = 3
 
-    if (!this.state.value && defaultValue) {
-      // If value hasn't loaded yet, check again in a moment
+    if (!value && defaultValue) {
       setTimeout(() => {
-        if (this.mounted && !this.state.value) {
-          const { formatMask } = this.state
-          this.setState({
-            ...DatePicker.updateDateTime(this.props, formatMask),
-            loading: false,
-          })
-          // Keep checking if still no value and attempts are less than maxRetries
-          if (!this.state.value && attempt < maxRetries) {
-            this.checkForValue(attempt + 1)
+        if (!value) {
+          const newState = updateDateTime(props, formatMask)
+          setValue(newState.value)
+          setLoading(false)
+          if (!newState.value && attempt < maxRetries) {
+            checkForValue(attempt + 1)
           }
         }
       }, 500)
     } else {
-      this.setState({ loading: false })
+      setLoading(false)
     }
   }
 
-  handleChange = (date) => {
-    const { formatMask } = this.state
+  const handleChange = (date) => {
     const isoDate = date ? date.toISOString() : null
-    this.setState({
-      value: isoDate,
-      placeholder: formatMask.toLowerCase(),
-    })
+    setValue(isoDate)
+    setPlaceholder(formatMask.toLowerCase())
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.defaultValue && props.defaultValue !== state.defaultValue) {
-      const { formatMask } = DatePicker.updateFormat(props, null)
-      return DatePicker.updateDateTime(props, formatMask)
-    }
-    return null
+  const updateFormat = (props, oldFormatMask) => {
+    const newFormatMask = getDateFormat()
+    const updated = newFormatMask !== oldFormatMask
+    setFormatMask(newFormatMask)
+    return { updated, formatMask: newFormatMask }
   }
 
-  static updateFormat(props, oldFormatMask) {
-    const formatMask = getDateFormat()
-    const updated = formatMask !== oldFormatMask
-    return { updated, formatMask }
-  }
-
-  static updateDateTime(props, formatMask) {
-    let value
+  const updateDateTime = (props, formatMask) => {
+    let newValue
     const { defaultToday } = props.data
 
     if (defaultToday && !props.defaultValue) {
-      value = dayjs().toISOString()
+      newValue = dayjs().toISOString()
     } else if (props.defaultValue) {
       try {
         const isMMDDYYYY = /^\d{2}\/\d{2}\/\d{4}$/.test(props.defaultValue)
         if (isMMDDYYYY) {
-          value = dayjs(props.defaultValue, 'MM/DD/YYYY').toISOString()
+          newValue = dayjs(props.defaultValue, 'MM/DD/YYYY').toISOString()
         } else {
-          value = dayjs(props.defaultValue).utc(true).toISOString()
+          newValue = dayjs(props.defaultValue).utc(true).toISOString()
         }
       } catch (error) {
         console.warn('Invalid date value:', props.defaultValue)
-        value = null
+        newValue = null
       }
     }
 
     return {
-      value,
+      value: newValue,
       placeholder: formatMask.toLowerCase(),
       defaultToday,
       formatMask,
@@ -130,86 +113,74 @@ class DatePicker extends React.Component {
     }
   }
 
-  formatDate = (date, formatMask) => {
+  const formatDate = (date, formatMask) => {
     if (!date) return ''
 
     if (getCalendarType() === 'EN') {
       return dayjs(date).utc(true).format(formatMask)
     } else {
-      // Convert to Buddhist calendar (add 543 years)
       return dayjs(date).utc(true).format(formatMask.replace('YYYY', 'BBBB'))
     }
   }
 
-  render() {
-    const { showTimeSelect } = this.props.data
-    const userProperties =
-      this.props.getActiveUserProperties && this.props.getActiveUserProperties()
+  const { showTimeSelect } = props.data
+  const userProperties = props.getActiveUserProperties && props.getActiveUserProperties()
+  const savedEditor = props.editor
+  let isSameEditor = true
+  if (savedEditor && savedEditor.userId && !!userProperties) {
+    isSameEditor = userProperties.userId === savedEditor.userId
+  }
 
-    const savedEditor = this.props.editor
-    let isSameEditor = true
-    if (savedEditor && savedEditor.userId && !!userProperties) {
-      isSameEditor = userProperties.userId === savedEditor.userId
-    }
+  const readOnly = props.data.readOnly || props.read_only || !isSameEditor
 
-    const props = {
-      type: 'date',
-      className: 'form-control',
-      name: this.props.data.field_name,
-    }
+  const datePickerProps = {
+    type: 'date',
+    className: 'form-control',
+    name: props.data.field_name,
+    defaultValue: props.mutable ? props.defaultValue : undefined,
+    ref: inputField,
+  }
 
-    const readOnly = this.props.data.readOnly || this.props.read_only || !isSameEditor
+  let baseClasses = 'SortableItem rfb-item'
+  if (props.data.pageBreakBefore) {
+    baseClasses += ' alwaysbreak'
+  }
 
-    if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue
-      props.ref = this.inputField
-    }
-
-    let baseClasses = 'SortableItem rfb-item'
-    if (this.props.data.pageBreakBefore) {
-      baseClasses += ' alwaysbreak'
-    }
-
-    return (
-      <div className={baseClasses}>
-        <ComponentHeader {...this.props} />
-        <div className="form-group">
-          <ComponentLabel {...this.props} />
-          <div>
-            {readOnly ? (
-              <input
-                type="text"
-                name={props.name}
-                ref={props.ref}
-                readOnly={readOnly}
-                placeholder={this.state.placeholder}
-                value={
-                  this.state.value
-                    ? this.formatDate(this.state.value, this.state.formatMask)
-                    : ''
-                }
-                disabled={!isSameEditor}
-                className="form-control"
-              />
-            ) : (
-              <AntDatePicker
-                name={props.name}
-                ref={props.ref}
-                onChange={this.handleChange}
-                value={this.state.value ? dayjs(this.state.value).utc(true) : null}
-                className="form-control bold-date-picker"
-                format={(value) => this.formatDate(value, this.state.formatMask)}
-                showTime={showTimeSelect}
-                disabled={!isSameEditor || this.state.loading}
-                placeholder={this.state.placeholder}
-                style={{ display: 'inline-block', width: 'auto' }}
-              />
-            )}
-          </div>
+  return (
+    <div className={baseClasses}>
+      <ComponentHeader {...props} />
+      <div className="form-group">
+        <ComponentLabel {...props} />
+        <div>
+          {readOnly ? (
+            <input
+              type="text"
+              name={datePickerProps.name}
+              ref={datePickerProps.ref}
+              readOnly={readOnly}
+              placeholder={placeholder}
+              value={value ? formatDate(value, formatMask) : ''}
+              disabled={!isSameEditor}
+              className="form-control"
+            />
+          ) : (
+            <AntDatePicker
+              name={datePickerProps.name}
+              ref={datePickerProps.ref}
+              onChange={handleChange}
+              value={value ? dayjs(value).utc(true) : null}
+              className="form-control bold-date-picker"
+              format={(value) => formatDate(value, formatMask)}
+              showTime={showTimeSelect}
+              disabled={!isSameEditor || loading}
+              placeholder={placeholder}
+              style={{ display: 'inline-block', width: 'auto' }}
+            />
+          )}
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default DatePicker

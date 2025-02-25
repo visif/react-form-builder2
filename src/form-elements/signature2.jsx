@@ -1,107 +1,100 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import dayjs from 'dayjs'
+import { formatDate } from '../functions/dateUtil'
 import ComponentHeader from './component-header'
 
 const Signature2 = (props) => {
-  const {
-    defaultValue,
-    getActiveUserProperties,
-    data,
-    editor,
-    read_only: readOnly,
-    handleChange,
-  } = props
+  const inputField = useRef(null)
+  const tableRef = useRef(null)
 
-  const [state, setState] = useState({
-    defaultValue: defaultValue?.isSigned,
-    isSigned: defaultValue?.isSigned,
-    signedPerson: defaultValue?.signedPerson,
-    signedPersonId: defaultValue?.signedPersonId,
-    isError: false,
-  })
+  const [defaultValue, setDefaultValue] = useState(
+    props.defaultValue && props.defaultValue.isSigned
+  )
+  const [isSigned, setIsSigned] = useState(
+    props.defaultValue && props.defaultValue.isSigned
+  )
+  const [signedPerson, setSignedPerson] = useState(
+    props.defaultValue && props.defaultValue.signedPerson
+  )
+  const [signedPersonId, setSignedPersonId] = useState(
+    props.defaultValue && props.defaultValue.signedPersonId
+  )
+  const [signedDateTime, setSignedDateTime] = useState(
+    props.defaultValue && props.defaultValue.signedDateTime
+  )
+  const [isError, setIsError] = useState(false)
 
   useEffect(() => {
-    if (defaultValue?.isSigned === state.defaultValue) {
-      return
+    console.log('Signature useEffect')
+    if (props.defaultValue && props.defaultValue.isSigned !== defaultValue) {
+      setDefaultValue(props.defaultValue && props.defaultValue.isSigned)
+      setIsSigned(props.defaultValue && props.defaultValue.isSigned)
+      setIsError(false)
+      setSignedPerson(props.defaultValue.signedPerson)
+      setSignedPersonId(props.defaultValue && props.defaultValue.signedPersonId)
     }
-
-    const value = {
-      isSigned: defaultValue?.isSigned,
-      signedPerson: defaultValue?.signedPerson,
-      signedPersonId: defaultValue?.signedPersonId,
-    }
-
-    handleChange({
-      target: {
-        value: { ...value },
-      },
-    })
-
-    setState({
-      defaultValue: defaultValue?.isSigned,
-      isError: false,
-      ...value,
-    })
-  }, [defaultValue])
+  }, [props.defaultValue]) // Dependency array
 
   const clickToSign = () => {
-    if (typeof getActiveUserProperties !== 'function') {
+    if (typeof props.getActiveUserProperties !== 'function') {
       return
     }
 
-    const userProperties = getActiveUserProperties()
-    let roleLists = userProperties?.role || []
-    roleLists = roleLists.concat([userProperties?.name || ''])
+    const userProperties = props.getActiveUserProperties()
+    let roleLists = (userProperties && userProperties.role) || []
+    roleLists = roleLists.concat([(userProperties && userProperties.name) || ''])
 
-    const position = `${data.position}`.toLocaleLowerCase().trim()
+    const position = `${props.data.position}`.toLocaleLowerCase().trim()
 
     if (
-      (data.specificRole === 'specific' &&
-        roleLists.some((item) => `${item}`.toLocaleLowerCase().trim() === position)) ||
-      data.specificRole === 'notSpecific'
+      props.data.specificRole === 'specific' &&
+      roleLists.find((item) => `${item}`.toLocaleLowerCase().trim() === position)
     ) {
-      setState((current) => {
-        const value = {
-          isSigned: !current.isSigned,
-          signedPerson: !current.isSigned ? userProperties.name : '',
-          signedPersonId: !current.isSigned ? userProperties.userId : '',
-        }
-
-        handleChange({
-          target: {
-            value: { ...value },
-          },
-        })
-
-        return {
-          ...current,
-          ...value,
-        }
+      setIsSigned((current) => {
+        const newSigned = !current
+        setSignedPerson(newSigned ? userProperties.name : '')
+        setSignedPersonId(newSigned ? userProperties.userId : '')
+        setSignedDateTime(newSigned ? dayjs().utc(true) : null)
+        return newSigned
+      })
+    } else if (props.data.specificRole === 'notSpecific') {
+      setIsSigned((current) => {
+        const newSigned = !current
+        setSignedPerson(newSigned ? userProperties.name : '')
+        setSignedPersonId(newSigned ? userProperties.userId : '')
+        setSignedDateTime(newSigned ? dayjs().utc(true) : null)
+        return newSigned
       })
     } else {
-      if (!state.isError) {
-        setState((current) => ({
-          ...current,
-          isError: true,
-        }))
-
+      if (!isError) {
+        setIsError(true)
         setTimeout(() => {
-          setState((current) => ({
-            ...current,
-            isError: false,
-          }))
+          setIsError(false)
         }, 5000)
       }
       console.log('role and name does not match')
     }
   }
 
-  const userProperties = getActiveUserProperties?.()
-  const isSameEditor =
-    editor?.userId && userProperties ? userProperties.userId === editor.userId : true
-  const hasRequiredLabel = data.required && !readOnly
+  const userProperties = props.getActiveUserProperties && props.getActiveUserProperties()
+  const savedEditor = props.editor
+  let isSameEditor = true
+  if (savedEditor && savedEditor.userId && !!userProperties) {
+    isSameEditor = userProperties.userId === savedEditor.userId
+  }
+
+  const hasRequiredLabel =
+    props.data.hasOwnProperty('required') &&
+    props.data.required === true &&
+    !props.read_only
 
   return (
-    <div className={`SortableItem rfb-item${data.pageBreakBefore ? ' alwaysbreak' : ''}`}>
+    <div
+      ref={tableRef}
+      className={`SortableItem rfb-item${
+        props.data.pageBreakBefore ? ' alwaysbreak' : ''
+      }`}
+    >
       <ComponentHeader {...props} />
       <div
         className="form-group"
@@ -115,28 +108,35 @@ const Signature2 = (props) => {
         {hasRequiredLabel && (
           <span
             className="label-required badge badge-danger"
-            style={{ marginLeft: '60%' }}
+            style={{
+              marginLeft: '60%',
+            }}
           >
             Required
           </span>
         )}
         <h5 style={{ textAlign: 'center' }}>
-          {state.isSigned ? 'Already signed' : '(Click to sign)'}
+          {isSigned ? 'Already signed' : '(Click to sign)'}
         </h5>
         <div
           style={{
             textAlign: 'center',
             marginTop: 8,
             marginBottom: 8,
-            color: state.isError ? 'red' : 'black',
+            color: isError ? 'red' : 'black',
           }}
         >
-          {state.isError ? 'You have no permission to sign' : '__________________'}
+          {isError ? 'You have no permission to sign' : '__________________'}
         </div>
         <h6 style={{ textAlign: 'center', minHeight: 20 }}>
-          {state.isSigned && `(${state.signedPerson})`}
+          {isSigned && `(${signedPerson})`}
         </h6>
-        <h6 style={{ textAlign: 'center' }}>{data.position || 'Placeholder Text'}</h6>
+        <h6 style={{ textAlign: 'center' }}>
+          {props.data.position || 'Placeholder Text'}
+        </h6>
+        {signedDateTime && (
+          <h6 style={{ textAlign: 'center' }}>{formatDate(signedDateTime)}</h6>
+        )}
       </div>
     </div>
   )

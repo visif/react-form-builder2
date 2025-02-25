@@ -8,9 +8,9 @@ const Section = (props) => {
   }
 
   return (
-    <div className={baseClasses}>
+    <div className={baseClasses} id={props.data.header}>
       <ComponentHeader {...props} />
-      <h6>{props.data.header}</h6>
+      <h5>{props.data.header}</h5>
       <hr />
     </div>
   )

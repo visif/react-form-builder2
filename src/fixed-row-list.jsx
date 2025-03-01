@@ -12,9 +12,7 @@ const FixedRowList = (props) => {
     }
   }, [dirty, element, props])
 
-  const _setValue = (text) => {
-    return `${text}`.replace(/[^A-Z0-9]+/gi, '_').toLowerCase()
-  }
+  const _setValue = (text) => `${text}`.replace(/[^A-Z0-9]+/gi, '_').toLowerCase()
 
   const editRow = (index, key, e) => {
     const updatedElement = { ...element }
@@ -32,7 +30,11 @@ const FixedRowList = (props) => {
 
   const addRow = (index) => {
     const updatedElement = { ...element }
-    updatedElement.rowLabels.splice(index + 1, 0, { value: '', text: '', key: ID.uuid() })
+    updatedElement.rowLabels.splice(index + 1, 0, {
+      value: '',
+      text: '',
+      key: ID.uuid(),
+    })
     setElement(updatedElement)
     setDirty(true)
   }
@@ -48,18 +50,18 @@ const FixedRowList = (props) => {
     <div className="dynamic-option-list">
       <ul key="row-labels">
         <li>
-          <div className="row"></div>
+          <div className="row" />
           <div className="col-sm-12">
             <b>Rows</b>
           </div>
         </li>
-        <li className="clearfix" key={`li_label_x`}>
+        <li className="clearfix" key="li_label_x">
           <div className="row">
             <div className="col-sm-9">Row Label</div>
             <div className="col-sm-3">
               <div className="dynamic-options-actions-buttons">
                 <button onClick={() => addRow(-1)} className="btn btn-success">
-                  <i className="fas fa-plus-circle"></i>
+                  <i className="fas fa-plus-circle" />
                 </button>
               </div>
             </div>
@@ -89,10 +91,10 @@ const FixedRowList = (props) => {
                 <div className="col-sm-3">
                   <div className="dynamic-options-actions-buttons">
                     <button onClick={() => addRow(index)} className="btn btn-success">
-                      <i className="fas fa-plus-circle"></i>
+                      <i className="fas fa-plus-circle" />
                     </button>
                     <button onClick={() => removeRow(index)} className="btn btn-danger">
-                      <i className="fas fa-minus-circle"></i>
+                      <i className="fas fa-minus-circle" />
                     </button>
                   </div>
                 </div>

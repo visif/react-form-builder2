@@ -590,7 +590,12 @@ const Toolbar = ({ intl, items: propsItems }) => {
     <div className="react-form-builder-toolbar float-right">
       <div
         className="toolbar-header"
-        style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}
+        style={{
+          position: 'sticky',
+          top: 0,
+          backgroundColor: 'white',
+          zIndex: 1,
+        }}
       >
         <h4>{intl.formatMessage({ id: 'toolbox' })}</h4>
       </div>

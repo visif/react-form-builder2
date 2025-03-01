@@ -111,15 +111,30 @@ const FormContent = (props) => {
     value: values[item.field_name] || '',
   })
 
+  const getEditor = (item) => {
+    if (!props.answer_data || !Array.isArray(props.answer_data)) {
+      return null
+    }
+    const itemAns = props.answer_data.find((x) => x.name === item.field_name)
+    return itemAns && itemAns.editor
+  }
+
   const collectFormData = (data) => {
+    debugger
     const formData = []
     data.forEach((item) => {
       if (item.field_name) {
+        const activeUser = props.getActiveUserProperties()
+        const oldEditor = getEditor(item)
+
+        const valueItem = getItemValue(item)
+
         const itemData = {
           id: item.id,
           name: item.field_name,
           custom_name: item.custom_name || item.field_name,
-          value: getItemValue(item).value,
+          value: valueItem.value,
+          editor: oldEditor ? oldEditor : valueItem.value ? activeUser : null,
         }
         formData.push(itemData)
       }

@@ -62,6 +62,8 @@ const ReactFormBuilder = (props) => {
               renderEditForm={props.renderEditForm}
               saveAlways={props.saveAlways}
               getDataSource={props.getDataSource}
+              getFormSource={props.getFormSource}
+              getFormContent={props.getFormContent}
               getActiveUserProperties={props.getActiveUserProperties}
               onImageUpload={props.onImageUpload}
             />

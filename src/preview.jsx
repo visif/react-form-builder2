@@ -241,7 +241,7 @@ const Preview = (props) => {
         mutable={false}
         parent={props.parent}
         editModeOn={props.editModeOn}
-        isDraggable={true}
+        isDraggable
         key={item.id}
         sortData={item.id}
         data={item}
@@ -291,6 +291,8 @@ const Preview = (props) => {
       element: props.editElement,
       updateElement: handleUpdateElement,
       onImageUpload: props.onImageUpload,
+      getFormSource: props.getFormSource,
+      getFormContent: props.getFormContent,
     }
 
     return <FormElementsEdit {...formElementEditProps} />

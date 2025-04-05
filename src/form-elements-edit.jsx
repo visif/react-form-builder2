@@ -27,6 +27,28 @@ const FormElementsEdit = (props) => {
     setElement(props.element)
   }, [props.element])
 
+  useEffect(() => {
+    const fetchFormData = async () => {
+      if (element.element === 'DataSource' && props.getFormSource) {
+        // call api to get form data
+        const formData = (await props.getFormSource()) || []
+        setFormDataSource(formData)
+
+        if (formData) {
+          const currentForm = formData.find((item) => item.id == element.formSource)
+
+          // Call api to get current form field
+          if (currentForm && props.getFormContent) {
+            const formContent = (await props.getFormContent(currentForm)) || {}
+            setActiveForm(formContent)
+          }
+        }
+      }
+    }
+
+    fetchFormData()
+  }, [element.element, element.formSource, props.getFormSource, props.getFormContent])
+
   const updateElement = (updatedElement = element) => {
     if (dirty) {
       props.updateElement.call(props.preview, updatedElement)
@@ -129,7 +151,7 @@ const FormElementsEdit = (props) => {
         <i
           className="float-right fas fa-times dismiss-edit"
           onClick={props.manualEditModeOff}
-        ></i>
+        />
       </div>
       {Object.prototype.hasOwnProperty.call(element, 'content') && (
         <div className="form-group">
@@ -145,7 +167,7 @@ const FormElementsEdit = (props) => {
               // eslint-disable-next-line implicit-arrow-linebreak
               onEditorStateChange(0, 'content', editorContent)
             }
-            stripPastedStyles={true}
+            stripPastedStyles
           />
         </div>
       )}
@@ -212,7 +234,7 @@ const FormElementsEdit = (props) => {
                 className="custom-control-input"
                 type="checkbox"
                 checked={element.center || false}
-                value={true}
+                value
                 onChange={(e) => editElementProp('center', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="do-center">
@@ -268,7 +290,7 @@ const FormElementsEdit = (props) => {
                 onEditorStateChange={(editorContent) =>
                   onEditorStateChange(0, 'label', editorContent)
                 }
-                stripPastedStyles={true}
+                stripPastedStyles
               />
               <br />
             </>
@@ -280,7 +302,7 @@ const FormElementsEdit = (props) => {
               className="custom-control-input"
               type="checkbox"
               checked={element.required || false}
-              value={true}
+              value
               onChange={(e) => editElementProp('required', 'checked', e)}
             />
             <label className="custom-control-label" htmlFor="is-required">
@@ -294,7 +316,7 @@ const FormElementsEdit = (props) => {
                 className="custom-control-input"
                 type="checkbox"
                 checked={element.readOnly || false}
-                value={true}
+                value
                 onChange={(e) => editElementProp('readOnly', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="is-read-only">
@@ -309,7 +331,7 @@ const FormElementsEdit = (props) => {
                 className="custom-control-input"
                 type="checkbox"
                 checked={element.defaultToday || false}
-                value={true}
+                value
                 onChange={(e) => editElementProp('defaultToday', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="is-default-to-today">
@@ -324,7 +346,7 @@ const FormElementsEdit = (props) => {
                 className="custom-control-input"
                 type="checkbox"
                 checked={element.showTimeSelect || false}
-                value={true}
+                value
                 onChange={(e) => editElementProp('showTimeSelect', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="show-time-select">
@@ -340,7 +362,7 @@ const FormElementsEdit = (props) => {
                   className="custom-control-input"
                   type="checkbox"
                   checked={element.showTimeSelectOnly || false}
-                  value={true}
+                  value
                   onChange={(e) => editElementProp('showTimeSelectOnly', 'checked', e)}
                 />
                 <label className="custom-control-label" htmlFor="show-time-select-only">
@@ -355,7 +377,7 @@ const FormElementsEdit = (props) => {
                 className="custom-control-input"
                 type="checkbox"
                 checked={element.showTimeInput || false}
-                value={true}
+                value
                 onChange={(e) => editElementProp('showTimeInput', 'checked', e)}
               />
               <label className="custom-control-label" htmlFor="show-time-input">
@@ -371,7 +393,7 @@ const FormElementsEdit = (props) => {
                   className="custom-control-input"
                   type="checkbox"
                   checked={element.inline || false}
-                  value={true}
+                  value
                   onChange={(e) => editElementProp('inline', 'checked', e)}
                 />
                 <label className="custom-control-label" htmlFor="display-horizontal">
@@ -499,7 +521,7 @@ const FormElementsEdit = (props) => {
               className="custom-control-input"
               type="checkbox"
               checked={checked_bold}
-              value={true}
+              value
               onChange={(e) => editElementProp('bold', 'checked', e)}
             />
             <label className="custom-control-label" htmlFor="do-bold">
@@ -512,7 +534,7 @@ const FormElementsEdit = (props) => {
               className="custom-control-input"
               type="checkbox"
               checked={checked_italic}
-              value={true}
+              value
               onChange={(e) => editElementProp('italic', 'checked', e)}
             />
             <label className="custom-control-label" htmlFor="do-italic">
@@ -646,7 +668,7 @@ const FormElementsEdit = (props) => {
           updateElement={props.updateElement}
           preview={props.preview}
           element={element}
-          key={`table-row-labels`}
+          key="table-row-labels"
         />
       )}
 
@@ -656,7 +678,7 @@ const FormElementsEdit = (props) => {
           updateElement={props.updateElement}
           preview={props.preview}
           element={element}
-          key={`table-columns`}
+          key="table-columns"
         />
       )}
 

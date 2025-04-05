@@ -134,7 +134,7 @@ const FormContent = (props) => {
           name: item.field_name,
           custom_name: item.custom_name || item.field_name,
           value: valueItem.value,
-          editor: oldEditor ? oldEditor : valueItem.value ? activeUser : null,
+          editor: oldEditor || (valueItem.value ? activeUser : null),
         }
         formData.push(itemData)
       }
@@ -200,6 +200,8 @@ const FormContent = (props) => {
       },
       getDataSource: props.getDataSource,
       getActiveUserProperties: props.getActiveUserProperties,
+      getFormSource: props.getFormSource,
+      getFormContent: props.getFormContent,
     }
 
     const renderContainer = (activeItem, Container) => {
@@ -210,7 +212,7 @@ const FormContent = (props) => {
 
       return (
         <Container
-          mutable={true}
+          mutable
           key={`form_${activeItem.id}`}
           data={activeItem}
           controls={controls}

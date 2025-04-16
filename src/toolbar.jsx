@@ -81,6 +81,7 @@ const defaultItems = (intl) => [
     label: intl.formatMessage({ id: 'place-holder-label' }),
     field_name: 'dropdown_',
     options: [],
+    formularKey: '',
   },
   {
     key: 'Tags',
@@ -110,6 +111,7 @@ const defaultItems = (intl) => [
     label: intl.formatMessage({ id: 'place-holder-label' }),
     field_name: 'radiobuttons_',
     options: [],
+    formularKey: '',
   },
   {
     key: 'TextInput',
@@ -118,6 +120,15 @@ const defaultItems = (intl) => [
     label: intl.formatMessage({ id: 'place-holder-label' }),
     icon: 'fas fa-font',
     field_name: 'text_input_',
+    formularKey: '',
+  },
+  {
+    key: 'FormulaInput',
+    name: 'Formula Input',
+    label: 'Placeholder Label',
+    icon: 'fas fa-calculator',
+    field_name: 'formula_input_',
+    formula: '',
   },
   {
     key: 'EmailInput',
@@ -134,6 +145,7 @@ const defaultItems = (intl) => [
     label: intl.formatMessage({ id: 'place-holder-label' }),
     icon: 'fas fa-plus',
     field_name: 'number_input_',
+    formularKey: '',
   },
   {
     key: 'PhoneNumber',
@@ -559,6 +571,14 @@ const Toolbar = ({ intl, items: propsItems }) => {
         elementOptions.rowLabels = []
       }
       elementOptions.rows = item.rows || 3
+    }
+
+    if (item.formularKey !== undefined) {
+      elementOptions.formularKey = item.formularKey
+    }
+
+    if (item.key === 'FormulaInput') {
+      elementOptions.formula = item.formula
     }
 
     return elementOptions

@@ -10,6 +10,7 @@ import ComponentHeader from './component-header'
 import ComponentLabel from './component-label'
 import DataSource from './datasource'
 import DatePicker from './date-picker'
+import FormulaInput from './formula-input'
 import myxss from './myxss'
 import Section from './section'
 import Signature2 from './signature2'
@@ -321,7 +322,7 @@ const Signature = (props) => {
             className="fas fa-times clear-signature"
             onClick={clear}
             title="Clear Signature"
-          ></i>
+          />
         )}
         <input {...inputProps} />
       </div>
@@ -540,13 +541,14 @@ const HyperLink = (props) => {
     <div style={{ ...props.style }} className={baseClasses}>
       <ComponentHeader {...props} />
       <div className="form-group">
-        <label className={'form-label'}>
+        <label className="form-label">
           <a
             target="_blank"
             href={props.data.href}
             dangerouslySetInnerHTML={{
               __html: myxss.process(props.data.content),
             }}
+            rel="noreferrer"
           />
         </label>
       </div>
@@ -649,7 +651,7 @@ const Camera = (props) => {
               />
               <div className="image-upload-control">
                 <div className="btn btn-default">
-                  <i className="fas fa-camera"></i> Upload Photo
+                  <i className="fas fa-camera" /> Upload Photo
                 </div>
                 <p>Select an image from your computer or device.</p>
               </div>
@@ -665,7 +667,7 @@ const Camera = (props) => {
                 />
                 <br />
                 <div className="btn btn-image-clear" onClick={clearImage}>
-                  <i className="fas fa-times"></i> Clear Photo
+                  <i className="fas fa-times" /> Clear Photo
                 </div>
               </div>
             )}
@@ -735,7 +737,7 @@ const FileUpload = (props) => {
         props.defaultValue.length > 0 ? (
           <div>
             <button className="btn btn-default" onClick={saveFile}>
-              <i className="fas fa-download"></i> Download File
+              <i className="fas fa-download" /> Download File
             </button>
           </div>
         ) : (
@@ -750,7 +752,7 @@ const FileUpload = (props) => {
               />
               <div className="image-upload-control">
                 <div className="btn btn-default">
-                  <i className="fas fa-file"></i> Upload File
+                  <i className="fas fa-file" /> Upload File
                 </div>
                 <p>Select a file from your computer or device.</p>
               </div>
@@ -770,7 +772,7 @@ const FileUpload = (props) => {
                 </div>
                 <br />
                 <div className="btn btn-file-upload-clear" onClick={clearFileUpload}>
-                  <i className="fas fa-times"></i> Clear File
+                  <i className="fas fa-times" /> Clear File
                 </div>
               </div>
             )}
@@ -891,5 +893,6 @@ FormElements.FileUpload = FileUpload
 FormElements.Range = Range
 FormElements.Signature2 = Signature2
 FormElements.Section = Section
+FormElements.FormulaInput = FormulaInput
 
 export default FormElements

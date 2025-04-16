@@ -120,7 +120,6 @@ const FormContent = (props) => {
   }
 
   const collectFormData = (data) => {
-    debugger
     const formData = []
     data.forEach((item) => {
       if (item.field_name) {
@@ -161,7 +160,7 @@ const FormContent = (props) => {
     }
   }
 
-  const handleChange = (fieldName, value, element) => {
+  const handleChange = (fieldName, value, element, propKey) => {
     if (element === 'Checkboxes') {
       toggleCheckbox(fieldName, value)
     } else {
@@ -171,6 +170,10 @@ const FormContent = (props) => {
     if (props.onChange) {
       const formData = collectFormData(props.data)
       props.onChange(formData)
+    }
+
+    if (propKey) {
+      emitter.emit('variableChange', { propKey, value })
     }
   }
 
@@ -196,12 +199,21 @@ const FormContent = (props) => {
       read_only: props.read_only || item.readOnly,
       defaultValue: values[item.field_name],
       handleChange: (event) => {
-        handleChange(item.field_name, event.target.value, item.element)
+        handleChange(
+          item?.field_name,
+          event?.target?.value,
+          item?.element,
+          item?.formularKey
+        )
+      },
+      onValueChage: (field_name, value) => {
+        handleChange(field_name, value)
       },
       getDataSource: props.getDataSource,
       getActiveUserProperties: props.getActiveUserProperties,
       getFormSource: props.getFormSource,
       getFormContent: props.getFormContent,
+      emitter,
     }
 
     const renderContainer = (activeItem, Container) => {

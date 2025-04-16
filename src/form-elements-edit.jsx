@@ -737,6 +737,7 @@ const FormElementsEdit = (props) => {
               </select>
             </div>
           )}
+
           {element.sourceType === 'form' && (
             <div className="form-group">
               <label className="control-label" htmlFor="formSource">
@@ -770,6 +771,38 @@ const FormElementsEdit = (props) => {
                 ))}
             </div>
           )}
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(element, 'formula') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="formula">
+            Formula
+          </label>
+          <input
+            id="formula"
+            type="text"
+            className="form-control"
+            defaultValue={element.formula}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('formula', 'value', e)}
+          />
+        </div>
+      )}
+
+      {Object.prototype.hasOwnProperty.call(element, 'formularKey') && (
+        <div className="form-group">
+          <label className="control-label" htmlFor="formularKey">
+            Formula Key
+          </label>
+          <input
+            id="formularKey"
+            type="text"
+            className="form-control"
+            defaultValue={element.formularKey}
+            onBlur={() => updateElement()}
+            onChange={(e) => editElementProp('formularKey', 'value', e)}
+          />
         </div>
       )}
     </div>
